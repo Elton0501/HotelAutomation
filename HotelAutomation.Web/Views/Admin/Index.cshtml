@@ -1,0 +1,616 @@
+﻿@model ViewModels.AdminIndexViewModel
+@{
+    int Count = 0;
+    ViewBag.Title = "Dashboard";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    .dis-badge .badge {
+        padding: 8px;
+        font-size: 2vh;
+    }
+    .wave {
+  animation-name: wave-animation;  /* Refers to the name of your @@keyframes element below */
+  animation-duration: 2.5s;        /* Change to speed up or slow down */
+  animation-iteration-count: infinite;  /* Never stop waving :) */
+  transform-origin: 70% 70%;       /* Pivot around the bottom-left palm */
+  display: inline-block;
+}
+
+@@keyframes wave-animation {
+    0% { transform: rotate( 0.0deg) }
+   10% { transform: rotate(14.0deg) }  /* The following five values can be played with to make the waving more or less extreme */
+   20% { transform: rotate(-8.0deg) }
+   30% { transform: rotate(14.0deg) }
+   40% { transform: rotate(-4.0deg) }
+   50% { transform: rotate(10.0deg) }
+   60% { transform: rotate( 0.0deg) }  /* Reset for the last half to pause */
+  100% { transform: rotate( 0.0deg) }
+}
+/* For demonstration purposes only: */
+
+</style>
+
+<title>Dashboard</title>
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <div>
+            <h5 class="mb-0 text-gray-800">Hi! <span class="wave">👋</span> @Model.OwnerName</h5>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Earnings (Monthly)
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">₹ <span id="MonthlyEarnings">@Model.MonthlyIncome</span></div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-cash fa-2x text-primary fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Monthly Orders
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800"> <span id="MonthlyOrders">@Model.MOrdersCount </span></div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi-box-seam fa-2x text-success"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Earnings (Annual)
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">₹ <span id="EarningsAnnual">@Model.YearlyIncome</span></div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-cash-stack fa-2x text-warning"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-danger shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                Yearly Orders
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800"><span id="YearlyOrders">@Model.YOrdersCount</span> </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-bag-check fa-2x text-danger"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bg-white my-4 p-4 border-bottom-primary text-sm-center" style="border-radius:4px;">
+        <div class="mb-2">
+            <span style="font-size: 16px; text-transform: uppercase; font-weight: 700;">Discounts <span class="text-success">& Coupons</span></span>
+        </div>
+        @if (Model.BillDiscounts.Count > 0)
+        {
+            <div class="table-responsive">
+                <table class="table table-bordered" cellspacing="0">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Sr No</th>
+                            <th>Table</th>
+                            <th>Home Delivery</th>
+                            <th>Take Away</th>
+                            <th>Discount %</th>
+                            <th>Discount ₹</th>
+                            <th>Coupon Name</th>
+                            <th>Coupon Expiry </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.BillDiscounts)
+                        {
+                            Count = Count + 1;
+                        <tr>
+                            <td>@Count</td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.HomeDelivery)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.TakeAway)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.forFoodOrBevrage)
+                            </td>
+                            <td>@item.DiscountPercentage</td>
+                            <td>@item.DiscountAmount</td>
+                            <td>@item.CouponName</td>
+                            <td>@item.ExpiredDateTime.ToString("d-MMM-yy h:mm tt")</td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <span>No Discount and Coupon available.</span>
+        }
+        @*<div class="dis-badge">
+            <span class="badge bg-gradient-warning text-white">Dine in @(Model.Discount != null && Model.Discount != "" ? Model.Discount : "0") %</span>
+            <span class="badge bg-gradient-primary text-white">Take Away @(Model.TADiscount != null && Model.TADiscount != "" ? Model.TADiscount : "0") %</span>
+            <span class="badge bg-gradient-success text-white">Home Delivery @(Model.HDDiscount != null && Model.HDDiscount != "" ? Model.HDDiscount : "0") %</span>
+            <button onclick="discinputshow()" class="btn btn-outline-primary"><i class="bi bi-tags"></i></button>
+        </div>*@
+
+        @*<div class="disc-input bg-white p-3 justify-content-center text-left" style="display: flex; background: whitesmoke !important;">
+            <div class="mr-1">
+                <small>Dine In</small>
+                <input type="number" id="DineIn" class="form-control" style="width: 85px !important; font-size: 14px;" value="@(Model.Discount != null && Model.Discount != "" ? Model.Discount : "0")" />
+            </div>
+            <div class="mr-1">
+                <small>Take Away</small>
+                <input type="number" id="TakeAway" class="form-control" style=" width: 85px !important; font-size: 14px;" value="@(Model.TADiscount != null && Model.TADiscount != "" ? Model.TADiscount : "0")" />
+            </div>
+            <div class="mr-1">
+                <small>Home Delivery</small>
+                <input type="number" id="HomeDelivery" class="form-control" style=" width: 85px !important; font-size: 14px;" value="@(Model.HDDiscount != null && Model.HDDiscount != "" ? Model.HDDiscount : "0")" />
+            </div>
+            <div class="align-self-end d-flex">
+                <div>
+                    <button onclick="Discmenu()" class="editbtn btn btn-outline-primary ml-2" style=" padding: 4px 8px;"><i class="bi bi-chevron-double-right"></i></button>
+                </div>
+                <div class="align-self-center">
+                    <a class="app-x ml-2"> <i class="bi bi-x-circle" style="color: red; cursor:pointer"></i> </a>
+                </div>
+            </div>
+        </div>*@
+    </div>
+    <div class="row bg-white p-3">
+        <div class="charts col-lg-6 col-md-6 col-sm-12">
+            <h6 class="text-center p-0 m-0 text-uppercase">
+               Popular Dish
+            </h6>
+            <canvas id="myChart4"></canvas>
+        </div>
+        <div class="charts col-lg-6 col-md-6 col-sm-12">
+            <h6 class="text-center p-0 m-0 text-uppercase">
+               Day Orders percentage %
+            </h6>
+            <canvas id="myChart"></canvas>
+        </div>
+    </div>
+    <div class="charts bg-gradient-light p-3">
+        <h6 class="text-center p-0 m-0 pt-3 text-uppercase">
+            Monthly Orders
+        </h6>
+        <canvas id="myChart3"></canvas>
+    </div>
+    <div class="Newcharts mt-3 bg-white p-3">
+        <h6 class="text-center p-0 m-0 pt-3 text-uppercase">
+            No. of Orders Between two dates
+        </h6>
+        <div class="d-flex flex-wrap">
+            <div class="mr-2">
+                <small class="pr-2">Start Date</small><input type="date" id="StartDate" class="form-control" />
+            </div>
+            <div class="mr-2">
+                <small class="pr-2">End Date</small><input type="date" id="EndDate" class="form-control" />
+            </div>
+            <div class="align-self-end">
+                <button onclick="daySale()" class="btn btn-primary">Search</button>
+            </div>
+        </div>
+        <canvas id="myChart2"></canvas>
+    </div>
+    <div class="row">
+        <div class="adminpage-head mt-3 col-lg-6 col-md-6" style="padding: 0rem 0.5rem;">
+            <div class="col-12">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                        <h6 class="m-0 font-weight-bold text-primary text-uppercase">User</h6>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-bordered" id="itemTable" cellspacing="0">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th>Sr No</th>
+                                    <th>User</th>
+                                    <th>Visit Count</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.User)
+                                {
+                                    Count = Count + 1;
+                                    <tr>
+                                        <td>@Count</td>
+                                        <td>@item.User</td>
+                                        <td>@item.Count</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="adminpage-head mt-3 col-lg-6 col-md-6" style=" padding: 0rem 0.5rem;">
+            <div class="col-12">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                        <h6 class="m-0 font-weight-bold text-primary text-uppercase">Orders Type</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" cellspacing="0">
+                                <thead class="thead-dark text-center">
+                                    <tr>
+                                        <th scope="col">Dine In</th>
+                                        <th scope="col">Take Away</th>
+                                        <th scope="col">Parcel</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-center">
+                                    <tr>
+                                        <th>@(Model.DineIn + "%")</th>
+                                        <th>@(Model.TakeAway + "%")</th>
+                                        <th>@(Model.Parcel + "%")</th>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#itemTable').DataTable({
+            "ordering": true,
+            "dom": 'Bfrtip',
+            buttons: true,
+            "sEmptyTable": "You do not have records."
+        });
+
+        $(".disc-input").hide();
+        TriCharts();
+    });
+    let myChart2 = new Chart();
+    daySale();
+    function daySale() {
+        if ($("#StartDate").val() > $("#EndDate").val()) {
+            alert("End date should be greater then start date");
+        }
+        else {
+            myChart2.destroy();
+            daySaleData();
+        }
+    }
+    function TriCharts() {
+        $.ajax({
+            url: '/Admin/pieChart',
+            success: function (response) {
+                var Days = [];
+                var value = [];
+                for (var i = 0; i < response.length; i++) {
+                    Days.push(response[i].Key);
+                    value.push(response[i].Value);
+                }
+                const ctx = document.getElementById('myChart').getContext('2d');
+                const myChart = new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: Days,
+                        datasets: [{
+                            label: '% of Orders',
+                            data: value,
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.2)',
+                                'rgba(54, 162, 235, 0.2)',
+                                'rgba(255, 206, 86, 0.2)',
+                                'rgba(75, 192, 192, 0.2)',
+                                'rgba(153, 102, 255, 0.2)',
+                                'rgba(255, 159, 64, 0.2)',
+                                'rgb(231, 216, 84)'
+                            ],
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            },
+                            title: {
+                                display: true,
+                            }
+                        }
+                    },
+                });
+            },
+            error: function (response) {
+                alert("Something went wrong!");
+            }
+        })
+        $.ajax({
+            url: '/Admin/doughnut',
+            success: function (response) {
+                var Month = [];
+                var value = [];
+                for (var i = 0; i < response.length; i++) {
+                    Month.push(response[i].Key);
+                    value.push(response[i].Value);
+                }
+                const ctx = document.getElementById('myChart3').getContext('2d');
+                const myChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: Month,
+                        datasets: [{
+                            label: 'No. of Orders',
+                            data: value,
+                            backgroundColor: [
+                                '#f44336a6',
+                                'aliceblue',
+                                '00800070',
+                                'deepskyblue',
+                                'Yellow',
+                                'Pink',
+                                '#607d8b',
+                                '#2e2f32',
+                                '#ff9800',
+                                'Grey',
+                                'Purpel',
+                                '#795548',
+                            ],
+                            borderColor: [
+                                '#f44336a6',
+                                'aliceblue',
+                                '00800070',
+                                'deepskyblue',
+                                'Yellow',
+                                'Pink',
+                                '#607d8b',
+                                '#2e2f32',
+                                '#ff9800',
+                                'Grey',
+                                'Purpel',
+                                '#795548',
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            },
+                            title: {
+                                display: true,
+                            }
+                        }
+                    },
+                });
+            },
+            error: function (response) {
+                alert("Something went wrong!");
+            }
+        })
+        $.ajax({
+            url: '/Admin/lineChart',
+            success: function (response) {
+                var Month = [];
+                var value = [];
+                for (var i = 0; i < response.length; i++) {
+                    Month.push(response[i].Key);
+                    value.push(response[i].Value);
+                }
+                const ctx = document.getElementById('myChart4').getContext('2d');
+                const myChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: Month,
+                        datasets: [{
+                            label: 'No. of Orders',
+                            data: value,
+                            backgroundColor: [
+                                '#f44336a6',
+                                'aliceblue',
+                                '#00800070',
+                                'deepskyblue',
+                                '#ffff0061',
+                                'Pink',
+                                '#607d8b',
+                                '#2e2f32',
+                                '#ff9800',
+                                'Grey',
+                                'Purpel',
+                                '#795548',
+                            ],
+                            borderColor: [
+                                '#f44336a6',
+                                'aliceblue',
+                                '#00800070',
+                                'deepskyblue',
+                                '#ffff0061',
+                                'Pink',
+                                '#607d8b',
+                                '#2e2f32',
+                                '#ff9800',
+                                'Grey',
+                                'Purpel',
+                                '#795548',
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            },
+                            title: {
+                                display: true,
+                            }
+                        }
+                    },
+                });
+            },
+            error: function (response) {
+                alert("Something went wrong!");
+            }
+        })
+    };
+    function daySaleData() {
+        var first = $("#StartDate").val();
+        var second = $("#EndDate").val();
+        $.ajax({
+            url: '/Admin/barChart',
+            data: {
+                First: first,
+                Second: second
+            },
+            success: function (response) {
+                $("#StartDate").val(first);
+                $("#EndDate").val(second);
+                var Days = [];
+                var value = [];
+                for (var i = 0; i < response.length; i++) {
+                    Days.push(response[i].Key);
+                    value.push(response[i].Value);
+                }
+                let config = {
+                    type: 'bar',
+                    data: {
+                        labels: Days,
+                        datasets: [{
+                            label: 'No. of Orders',
+                            data: value,
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.2)',
+                                'rgba(54, 162, 235, 0.2)',
+                                'rgba(255, 206, 86, 0.2)',
+                                'rgba(75, 192, 192, 0.2)',
+                                'rgba(153, 102, 255, 0.2)',
+                                'rgba(255, 159, 64, 0.2)',
+                                'rgb(231, 216, 84)'
+                            ],
+                            borderColor: [
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)',
+                                'rgba(255, 159, 64, 1)',
+                                'rgb(231, 216, 84)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            },
+                            title: {
+                                display: true,
+                            }
+                        }
+                    },
+                };
+                if (myChart2 != null) {
+                    myChart2.destroy();
+                }
+                myChart2 = new Chart(document.getElementById('myChart2'), config);
+            },
+            error: function (response) {
+                alert("Something went wrong!");
+            }
+        })
+    }
+
+    function discinputshow() {
+        $(".disc-input").show();
+        $(".dis-badge").hide();
+    }
+    $(".app-x").click(function () {
+        $(".disc-input").hide();
+        $(".dis-badge").show();
+    });
+    function Discmenu(id) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You want to discount!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Change it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: 'Status',
+                    text: 'Changed',
+                    icon: 'success',
+                    showConfirmButton: false,
+                })
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("RestaurantDiscount", "Admin")',
+                    data: {
+                        Discount: $("#DineIn").val(),
+                        TADiscount: $("#TakeAway").val(),
+                        HDDiscount: $("#HomeDelivery").val()
+                    }
+                })
+                    .done(function (response) {
+                        if (response == "true") {
+                            window.location.reload();
+                        }
+                        else {
+                            alert("Something went wrong!");
+                        }
+                    })
+                    .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                        $('.loadermodel').hide();
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Something went wrong!',
+                        })
+                    });
+            }
+        });
+    }
+</script>

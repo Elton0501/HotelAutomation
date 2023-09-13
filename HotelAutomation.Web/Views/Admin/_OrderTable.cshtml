@@ -1,0 +1,190 @@
+﻿﻿@using ViewModels;
+@using Services;
+@model List<Models.Orders>
+@{
+    Layout = null;
+    int Count = 0;
+    var restDetails = RestaurantService.Instance.GetRestaurantByID(ViewBag.RCode.ToString());
+}
+
+@if (restDetails != null)
+{
+    <table class="table table-bordered " id="OrderViewTable" cellspacing="0">
+        <thead class="thead-dark">
+            <tr>
+                <th>#</th>
+                <th style="width:20px;">Action</th>
+                <th title="Oreder Id">Order</th>
+                <th style="width:20px;">Table</th>
+                <th>Address</th>
+                <th title="Payment Type">P Type</th>
+                <th>₹ Amount</th>
+                <th>₹ Food</th>
+                @if (restDetails.Vat > 0)
+                {
+                    <th>₹ Bar</th>
+                }
+                <th>₹ Beverage</th>
+                <th>₹ Discount</th>
+                <th>₹ SGST</th>
+                <th>₹ CGST</th>
+                @if (restDetails.Vat > 0)
+                {
+                    <th>₹ Vat</th>
+                }
+                @if (restDetails.ServiceTax > 0)
+                {
+                    <th>₹ Service</th>
+                }
+                <th>₹ Total Tax</th>
+                <th title="Total Amount">₹ Total</th>
+                <th>User</th>
+                <th title="Order On">Date</th>
+                <th>Punched By</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                Count = Count + 1;
+                <tr id="@("nofc" + item.OrderId)">
+                    <td>@Count</td>
+                    <td>
+                        <div class="d-flex">
+                            <div>
+                                <a class="btn btn-primary mr-1" href="@Url.Action("SaveBillForPrint","Admin",new {RCode= item.RCode,OrderId =item.OrderId })" id="PrintBtn" title="Printer"><i class="bi bi-printer"></i></a>
+                            </div>
+                            <div>
+                                <a class="btn btn-outline-info" href="@Url.Action("OrderDetails","Admin",new {OrderId =item.OrderId })"><i class="bi bi-eye"></i></a>
+                            </div>
+                        </div>
+                    </td>
+                    <td>@item.OrderId</td>
+                    <td>@(item.Table == Constant.HomeDelivery ? "HomeDelivery": item.Table == Constant.TakeAway ? "TakeAway": item.Table)</td>
+                    <td>@item.UserAddress</td>
+                    <td>@(item.PaymentType != null ? Enum.GetName(typeof(PaymentType),item.PaymentType): "-")</td>
+                    <td><span class="p-1 bg-danger text-light" style="font-weight: 700; letter-spacing: 1px;">@(item.FoodTotalAmount + item.BevrageTotalAmount + item.BarTotalAmount) </span></td>
+                    <td><span class="p-1 bg-secondary text-light" style="font-weight: 700; letter-spacing: 1px;">@(item.FoodTotalAmount.HasValue ? item.FoodTotalAmount.Value : 0)</span></td>
+                    @if (restDetails.Vat > 0)
+                    {
+                        <td><span class="p-1 bg-secondary text-light" style="font-weight: 700; letter-spacing: 1px;">@(item.BarTotalAmount.HasValue ? item.BarTotalAmount.Value : 0)</span></td>
+                    }
+                    <td><span class="p-1 bg-secondary text-light" style="font-weight: 700; letter-spacing: 1px;">@(item.BevrageTotalAmount.HasValue ? item.BevrageTotalAmount.Value : 0)</span></td>
+                    <td><span class="p-1 bg-secondary text-light" style="font-weight: 700; letter-spacing: 1px;">@(item.DiscountAmount.HasValue ? item.DiscountAmount.Value : 0)</span></td>
+                    <td><span class="p-1 bg-secondary text-light" style="font-weight: 700; letter-spacing: 1px;">@(Math.Round((item.TaxAmount / 2), 2)) </span></td>
+                    <td><span class="p-1 bg-success text-light" style="font-weight: 700; letter-spacing: 1px;">@(Math.Round((item.TaxAmount / 2), 2)) </span></td>
+                    @if (restDetails.Vat > 0)
+                    {
+                        <td><span class="p-1 bg-success text-light" style="font-weight: 700; letter-spacing: 1px;">@(item.VatAmount != null ? item.VatAmount : 0) </span></td>
+                    }
+                    @if (restDetails.ServiceTax > 0)
+                    {
+                        <td><span class="p-1 bg-primary text-light" style="font-weight: 700; letter-spacing: 1px;">@(item.ServiceAmount != null ? item.ServiceAmount : 0)</span></td>
+                    }
+                    <td><span class="p-1 bg-primary text-light" style="font-weight: 700; letter-spacing: 1px;">@(item.TaxAmount + item.VatAmount + item.ServiceAmount != null ? item.ServiceAmount : 0)</span></td>
+                    <td><span class="p-1 bg-primary text-light" style="font-weight: 700; letter-spacing: 1px;">@item.TotalAmount </span></td>
+                    <td>@item.CreatedBy</td>
+                    <td>@Convert.ToDateTime(item.CreatedOn).ToString("MMM-d")</td>
+                    <td>@item.PunchedBy</td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="6" id="minmax-td" class="text-left" style="color: black; font-size: 14px; font-weight: 600;">Total</td>
+                <td style="color: black; font-size: 14px;">₹ @(Model.Select(x => x.TotalAmount).Sum() - Model.Select(x => x.TaxAmount).Sum())</td>
+                <td style="color: black; font-size: 14px;">₹ @(Model.Select(x => x.FoodTotalAmount).Sum())</td>
+                <td style="color: black; font-size: 14px;">₹ @(Model.Select(x => x.BarTotalAmount).Sum())</td>
+                <td style="color: black; font-size: 14px;">₹ @(Model.Select(x => x.BevrageTotalAmount).Sum())</td>
+                <td style="color: black; font-size: 14px;">₹ @(Model.Select(x => x.DiscountAmount).Sum())</td>
+                <td style="color: black; font-size: 14px;">₹ @(Model.Select(x=>x.TaxAmount).Sum() / 2)</td>
+                <td style="color: black; font-size: 14px;">₹ @(Model.Select(x=>x.TaxAmount).Sum() / 2)</td>
+                <td style="color: black; font-size: 14px;">₹ @(Model.Select(x=>x.VatAmount).Sum())</td>
+                <td style="color: black; font-size: 14px;">₹ @(Model.Select(x=>x.ServiceAmount).Sum())</td>
+                <td style="color: black; font-size: 14px;">₹ @(Model.Select(x=>x.TaxAmount).Sum() + Model.Select(x=>x.VatAmount).Sum() + Model.Select(x=>x.ServiceAmount).Sum())</td>
+                <td class="text-left" colspan="4" style="color: black; font-size: 14px;">₹ @Model.Select(x => x.TotalAmount).Sum()</td>
+            </tr>
+        </tfoot>
+    </table>
+    <script>
+    $(document).ready(function () {
+	        setTimeout(() => {
+            var existing = $.cookie('newOrders' + @ViewBag.RCode);
+            if (existing != undefined && existing != "" && existing != null && existing != "null") {
+                $.cookie('newOrders' + @ViewBag.RCode, null, { path: '/' });
+            }
+        }, 8000);
+            $('#OrderViewTable').DataTable({
+                "ordering": true,
+                "dom": 'Bfrtip',
+                buttons: true,
+                "sEmptyTable": "You do not have records."
+            });
+        $(".minmax").prop("checked", false);
+        $(".minmax-td").attr('colspan', 5);
+        var table = $('#OrderViewTable').DataTable();
+        table.column(4).visible(false);
+        table.column(7).visible(false);
+        table.column(8).visible(false);
+        table.column(9).visible(false);
+        table.column(11).visible(false);
+        table.column(12).visible(false);
+        table.column(13).visible(false);
+        table.column(14).visible(false);
+
+
+        $('#OrderViewTable').on('page.dt', function (e, settings, len) {
+            if ($('input[name="table-minmax"]').prop("checked") == false) {
+                table.column(4).visible(false);
+                table.column(7).visible(false);
+                table.column(8).visible(false);
+                table.column(9).visible(false);
+                table.column(11).visible(false);
+                table.column(12).visible(false);
+                table.column(13).visible(false);
+                table.column(14).visible(false);
+                $("#minmax-td").attr('colspan', 5);
+            }
+            else if ($('input[name="table-minmax"]').prop("checked") == true) {
+                table.column(4).visible(true);
+                table.column(7).visible(true);
+                table.column(8).visible(true);
+                table.column(9).visible(true);
+                table.column(11).visible(true);
+                table.column(12).visible(true);
+                table.column(13).visible(true);
+                table.column(14).visible(true);
+                $("#minmax-td").attr('colspan', 6);
+            }
+        }).DataTable();
+
+		$("#OrderViewTable").css("width", "100%");
+    });
+
+    $('input[name="table-minmax"]').on('change', function () {
+        var table = $('#OrderViewTable').DataTable();
+         if ($(this).prop("checked") == false) {
+             table.column(4).visible(false);
+             table.column(7).visible(false);
+             table.column(8).visible(false);
+             table.column(9).visible(false);
+             table.column(11).visible(false);
+             table.column(12).visible(false);
+             table.column(13).visible(false);
+             table.column(14).visible(false);
+            $("#minmax-td").attr('colspan', 5);
+        }
+         else if ($(this).prop("checked") == true) {
+             table.column(4).visible(true);
+             table.column(7).visible(true);
+             table.column(8).visible(true);
+             table.column(9).visible(true);
+             table.column(11).visible(true);
+             table.column(12).visible(true);
+             table.column(13).visible(true);
+             table.column(14).visible(true);
+            $("#minmax-td").attr('colspan', 6);
+        }
+    });
+    </script>
+}

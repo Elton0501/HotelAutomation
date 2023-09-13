@@ -1,0 +1,400 @@
+﻿@{
+    Layout = null;
+}
+<head>
+    <link rel="stylesheet" href="style.css" type="text/css">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryval")
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css"> @*cutlery icon*@
+    <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@500&display=swap" rel="stylesheet">
+
+    <title>B Foodie</title>
+    <style>
+        /* general*/
+        * {
+            font-family: "league spartan";
+        }
+
+        body {
+            overflow-x: hidden;
+        }
+        .navbar-brand {
+            font-weight: 900;
+            font-size: 35px;
+            letter-spacing: 1px;
+            color: #ffeb3b;
+        }
+
+        a {
+            text-decoration: none !important;
+            color: white;
+        }
+
+        h2 {
+            font-size: 3.5rem;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+        }
+
+        h5 {
+            font-size: 0.5rem;
+        }
+
+        .container {
+            max-width: 1080px;
+        }
+
+        /*nav */
+        #logo {
+            max-width: 150px;
+        }
+
+        #Home {
+            background-color: #131313;
+            top: 0;
+            position: sticky;
+            z-index: 5;
+        }
+
+        .nav-link {
+            color: white !important;
+        }
+
+        /* carousel*/
+        #Home-Wrapper {
+            background-color: #131313;
+            padding: 0px 0 50px 0;
+        }
+
+        /*menu*/
+        .menu {
+            background-color: #131313;
+            padding-bottom: 50px;
+        }
+
+            .menu .menu-content {
+                margin-top: 30px;
+                overflow: hidden;
+                display: flex;
+                justify-content: space-between;
+                position: relative;
+                color: white;
+            }
+
+                .menu .menu-content::after {
+                    content: "......................................................................" "...................................................................." "....................................................................";
+                    position: absolute;
+                    left: 20px;
+                    right: 0;
+                    top: -4px;
+                    color: white;
+                }
+
+                .menu .menu-content a {
+                    padding-right: 10px;
+                    background: black;
+                    position: relative;
+                    z-index: 3;
+                    font-weight: 700;
+                    color: white;
+                }
+
+                .menu .menu-content span {
+                    background: black;
+                    position: relative;
+                    z-index: 3;
+                    padding: 0 10px;
+                    font-weight: 600;
+                }
+
+            .menu .menu-ingredients {
+                font-style: italic;
+                font-size: 14px;
+                font-family: "Comic Neue", sans-serif;
+                color: white;
+            }
+
+        .overflow-auto {
+            height: 400px;
+        }
+
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        ::-webkit-scrollbar-track {
+            -webkit-box-shadow: inset 0 0 6px rgba(200,200,200,0);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            border-radius: 10px;
+            background-color: rgba(0,0,0,0.5);
+            -webkit-box-shadow: inset 0 0 6px rgba(200,200,200,0.5);
+        }
+
+        /* quem somos */
+        #Restaurant {
+            background-color: #131313;
+        }
+
+        .place {
+            padding-bottom: 50px;
+        }
+
+        .img-fluid {
+            border-radius: 5px;
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+        .pic {
+            position: relative;
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 100%;
+            width: 100%;
+            opacity: 0;
+            border-radius: 5px;
+            transition: .5s ease;
+            background-color: #F68116;
+        }
+
+        .place:hover .overlay {
+            opacity: 0.7;
+        }
+
+        .subtitle {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bolder;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            -webkit-transform: translate(-50%, -50%);
+            -ms-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        /* fale conosco*/
+        #Contact {
+            background-color: #131313;
+            padding: 50px 0 50px 0;
+        }
+
+        .title-contato {
+            line-height: 0;
+            /*footer*/
+        }
+
+        .fa-brands {
+            color: white;
+        }
+
+            .fa-brands:hover {
+                color: #F68116;
+            }
+
+        .contact-section {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            width: 100%;
+            padding-top: 10px;
+            background: #131313;
+            color: white;
+        }
+
+        .contact-links {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            max-width: 980px;
+            flex-wrap: wrap;
+        }
+
+        .contact-details {
+            font-size: 1.4rem;
+            transition: transform 0.3s ease-out;
+        }
+
+            .contact-details:hover {
+                transform: translateY(4px);
+            }
+
+        .btn.focus, .btn:focus {
+            outline: 0;
+            box-shadow: none !important;
+        }
+    </style>
+</head>
+<body>
+    <section id="Home">
+        <div class="container">
+            <nav class="navbar navbar-expand-lg" id="nav">
+                <div class="container-fluid">
+                    <span class="navbar-brand">
+                        B<small style="font-size: 25px;font-weight: 100;color: white;font-family: 'League Spartan';">foodie</small>
+                    </span>
+                    <button class="navbar-toggler d-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span><i class="fa-solid fa-bars text-white"></i>
+                    </button>
+                    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                        <ul class="navbar-nav">
+                            <li class="nav-item">
+                                <a class="nav-link active" aria-current="page" href="#Home-Wrapper">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#About">About</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#Restaurant">Restaurant</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#Contact">Contact</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </section>
+    <section id="Home-Wrapper">
+        <div class="carousel slide carousel-fade carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                <div class="carousel-item active" data-bs-interval="5000">
+                    <a href="#">
+                        <img src="~/Content/Images/BannerBfoodie.jpg" class="w-100" />
+                    </a>
+                </div>
+                @*<div class="carousel-item" data-bs-interval="5000">
+                        <a href="#">
+                            <img src="~/Content/Images/4749629.jpg" class="w-100" />
+                        </a>
+                    </div>
+                    <div class="carousel-item" data-bs-interval="5000">
+                        <a href="#">
+                            <img src="~/Content/Images/Error2.jpg" class="w-100" />
+                        </a>
+                    </div>*@
+            </div>
+            <a class="carousel-control-prev" href="#carouselExampleFade" role="button" data-slide="prev">
+            </a>
+            <a class="carousel-control-next" href="#carouselExampleFade" role="button" data-slide="next">
+            </a>
+        </div>
+    </section>
+    <section id="menu">
+        <section id="About" class="menu">
+            <div class="container overflow-auto">
+                <div class="section-title">
+                    <h2 class="text-center text-white">About Bfoodie</h2>
+                </div>
+                <div class="row menu-container">
+                    <h3 class="text-white px-1 pt-5" style="text-transform: uppercase; letter-spacing: 1.1px; color: #ffeb3b !important;">Next generation restaurant management software.</h3>
+                    <p class="text-white px-1 pt-1" style=" letter-spacing: 1px;">
+                        Now you can manage clients and your customers can access restaurant menu from wherever they want.
+                        Restaurants Billing, online orders, menu search, customer can access restaurant from wherever they want.
+                    </p>
+                    <h1 class="text-white px-1 pt-3">Journey</h1>
+                    <p class="text-white px-1 pt-1">
+                        Starting out in 2022, Bfoodie provides an F&B retail services, Our main focus is on startups, newly opened small or large chain restaurants and cafes. And usually these types of software are costly and not compatible to all the printers.
+                        Bfoodie POS is offered at most affordable price, and can be easily optimised by both the biller, staff and the restaurant owner
+                        Bfoodie provides Bar Code Scan to access the menu, Automatic Bill Print, Easy UI for users.
+                    </p>
+                </div>
+            </div>
+        </section>
+    </section>
+    <section id='Restaurant'>
+        <div class="container">
+            <div class="section-title text-center text-white">
+                <h2>Our Clients</h2>
+            </div>
+            <div class="row">
+                <div class="col-lg-4 col-md-6">
+                    <div class='place'>
+                        <div class="pic">
+                            <img src="https://i.ibb.co/vZbhf8g/2.png" class="img-fluid" alt="pizza-camarao">
+                            <div class="overlay">
+                                <div class="subtitle">nossas pizzas</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class='place'>
+                        <div class="pic">
+                            <img src="https://i.ibb.co/Z6XGRmj/3.png" class="img-fluid" alt="menu-e-vinho">
+                            <div class="overlay">
+                                <div class="subtitle">nosso espaço</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class='place'>
+                        <div class="pic">
+                            <img src="https://i.ibb.co/HqK3ks3/1.png" class="img-fluid" alt="clientes">
+                            <div class="overlay">
+                                <div class="subtitle">nossos clientes</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section id='Contact'>
+        <div class='text-center text-white contato'>
+            <h2>Contact Us</h2><br>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-12 col-md-5 text-end text-white  pt-0">
+                    <div class='title-contato'><h3>BFoodie<br></h3><p>Restaurant POS Software</p></div>
+                    <br><p>Dehradun miyanwala uttarakhand, 248005<br>(+91)9082968558</p>
+                    <div class='social-icons h3'>
+                        <a href="'https://api.whatsapp.com/send?phone=' + 90082968558 + '&text=Hi%20There!%20I%20want%20to%20book%20the%20trek'"><i class="fa fa-whatsapp"></i></a>
+                        <a href='https://www.instagram.com/tech.bfoodiee/?igshid=YmMyMTA2M2Y%3D' target="_blank"><i class="fa fa-instagram"></i></a>
+                        <a href='https://youtube.com/channel/UCQN_mqm1NjdmEoNZ2NuFpMg' target="_blank"><i class="fa fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="col-12 col-md-5 mb-5 mb-md-0">
+                    <img style="border:0; width: 100%; height: 350px;" src="~/Content/Images/Contact-location.jpeg" />
+                </div>
+            </div>
+        </div>
+    </section>
+    <footer id="contact" class="contact-section border-top">
+        <div class="contact-section-header">
+            <p class='h3'>B foodie</p>
+            <p class='h6'><em>NEXT GENERATION RESTAURANT MANAGEMENT SOFTWARE.</em></p>
+        </div>
+        <div class="contact-links border-top">
+            <a href="tel: 9082968558" class="btn text-white contact-details" target="_blank"><i class="fa fa-phone"></i> Contact</a>
+            <a href="https://www.instagram.com/tech.bfoodiee/?igshid=YmMyMTA2M2Y%3D"
+               target="_blank"
+               class="btn text-white contact-details"><i class="fa fa-instagram"></i> Instagram</a>
+            <a href="https://youtube.com/channel/UCQN_mqm1NjdmEoNZ2NuFpMg" class="btn text-white contact-details" target="_blank"><i class="fa fa-youtube"></i> Youtube</a>
+            <a href="'https://api.whatsapp.com/send?phone=' + 9082968558 + '&text=Hi%20There!'" class="btn text-white contact-details" target="_blank"><i class="fa fa-whatsapp"></i> whatsapp</a>
+        </div>
+    </footer>
+    @Scripts.Render("~/bundles/bootstrap")
+</body>
+

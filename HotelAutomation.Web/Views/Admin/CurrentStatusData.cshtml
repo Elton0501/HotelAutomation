@@ -1,0 +1,218 @@
+﻿@using ViewModels;
+@model ViewModels.AdminIndexViewModel
+@{ 
+    int CartCount = 0;
+    var Captain = Context.Session["Captain"] != null ? Context.Session["Captain"].ToString() : "";
+    var Admin = Context.Session["Admin"] != null ? Context.Session["Admin"].ToString() : "";
+}
+<div class="accordion" id="accordionExample">
+    @if (Model.AdminCartViewModel.Count > 0)
+    {
+        foreach (var data in Model.AdminCartViewModel)
+        {
+            CartCount = CartCount + 1;
+
+            <div class="card mb-2 border-0" style="position:relative;" id="@("POrder"+data.POId)">
+                <div class="card__pricing d-none" id="@("card__pricing"+data.POId)">
+                    <span class="card__pricing-month">New</span>
+                </div>
+                <div class="card-header @(data.Table == Constant.HomeDelivery ? "bg-warning": data.Table == Constant.TakeAway ? "bg-gray-400" : "bg-gray-100")" id="@("heading" + CartCount)">
+                    <h2 class="mb-0 d-flex flex-wrap justify-content-between">
+                        <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="@("#collapse" + CartCount)" aria-expanded="true" aria-controls="@("collapse" + CartCount)">
+                            <div class="d-flex flex-wrap justify-content-between">
+                                @if (data.Table != Constant.HomeDelivery && data.Table != Constant.TakeAway)
+                                {<span>Table : <small style="color: black; font-weight: 600;">@data.Table</small></span> }
+                            else if (data.Table == Constant.HomeDelivery)
+                            {<small style="color: black; font-weight: 600;">HomeDelivery</small> }
+                            else if (data.Table == Constant.TakeAway)
+                            {<small style="color: black; font-weight: 600;">TakeAway</small>}
+                                <span>User: <small style="color: black; font-weight: 600;">@data.User</small></span>
+                                <span>Time: <small style="color: black; font-weight: 600;">@data.OrderAt.ToString("h:mm tt")</small></span>
+                                <a href="@Url.Action("addItemForUser","Admin",new {Rcode= data.RCode,TCode=data.Table,UCode = data.User,isPlacedOrder = true})" class="btn btn-primary">Add Item</a>
+                            </div>
+                        </button>
+                    </h2>
+                </div>
+                <div id="@("collapse" + CartCount)" class="collapse" aria-labelledby="@("heading" + CartCount)" data-parent="#accordionExample">
+                    <div class="card-body table-responsive">
+                        <table class="table table-bordered">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Action</th>
+                                    <th scope="col">Item</th>
+                                    <th scope="col">Quantity</th>
+                                    <th scope="col">price <small class="text-warning" style="text-transform:capitalize;">(price x quan)</small> </th>
+                                    <th scope="col">Type</th>
+                                    <th scope="col">Discount</th>
+                                    <th scope="col">Punched By</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (int i = 0; i < data.PlaceOrderItems.Count; i++)
+                                {
+                                    int count = i + 1;
+                                    <tr id="@("PlaceOrderItem" + data.PlaceOrderItems[i].Id)" class="@("PlaceOrderItem" + data.PlaceOrderItems[i].PlaceOrderId)">
+                                        <th>@count</th>
+                                        <th>
+                                            <button style="margin-bottom: 2px;" class="btn btn-outline-success OpenDiscBox @("OpenDiscBox"+ data.PlaceOrderItems[i].Id)" id="openDiscBox" data-id="@data.PlaceOrderItems[i].Id"><i class="bi bi-tags"></i></button>
+                                            <button style="margin-bottom: 2px;" @(Captain != null && Captain.Length > 0 || Captain != "" ? "hidden" : "") class="btn btn-outline-danger @("Trash" + data.PlaceOrderItems[i].Id) @(data.PlaceOrderItems.Count < 2 ? "d-none":"")" onclick="RemovePlaceOrderItem('@data.PlaceOrderItems[i].Id')"><i class="bi-trash3-fill"></i></button>
+                                        </th>
+                                        <th>@data.PlaceOrderItems[i].menu.MDesc</th>
+                                        <th>@data.PlaceOrderItems[i].Quantity</th>
+                                        <th id="@("PriceValue" + data.PlaceOrderItems[i].Id)">@data.PlaceOrderItems[i].price</th>
+                                        <th>@data.PlaceOrderItems[i].menuType</th>
+                                        <th class="DiscContainer">
+                                            <div class="disclabel" id="@("disclabel" + data.PlaceOrderItems[i].Id)">
+                                                <label id="@("disclabelValue" + data.PlaceOrderItems[i].Id)">@(data.PlaceOrderItems[i].Discount != null ? data.PlaceOrderItems[i].Discount : "0")</label>
+                                            </div>
+                                            <div class="discbox" style="display: flex !important;" id="@("discbox" + data.PlaceOrderItems[i].Id)">
+                                                <input type="number" value="@data.PlaceOrderItems[i].Discount" class="form-control" id="@("discount" + data.PlaceOrderItems[i].Id)" /><button onclick="editPlaceOrder('@data.PlaceOrderItems[i].Id')" class="btn btn-info ml-2">Apply</button>
+                                            </div>
+                                        </th>
+                                        <th>@data.PlaceOrderItems[i].PunchedBy</th>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                        <div class="comments">
+                            <p @(data.PlaceOrderItems.FirstOrDefault().PlaceOrder.Comment != null && data.PlaceOrderItems.FirstOrDefault().PlaceOrder.Comment != "" ? "" : "hidden")> Comment : @data.PlaceOrderItems.FirstOrDefault().PlaceOrder.Comment</p>
+                        </div>
+                        <div class="text-right">
+                            <button @(Captain != null && Captain.Length > 0 || Captain != "" ? "hidden" : "") class="btn btn-danger m-1" onclick="RemoveOrder('@data.Table', '@data.User', '@data.POId')"><i class="bi-trash3-fill"></i></button>
+                            <a onclick="SaveKotForPrint('@data.POId')" class="btn btn-dark m-1">Kot Print</a>
+                        </div>
+                    </div>
+                    <div class="d-flex mt-3 justify-content-between flex-wrap">
+                        <div class="@(data.Table == Constant.HomeDelivery ? "d-flex" :"d-none")">
+                            <textarea class="form-control" id="@("User-Address" + data.POId)" placeholder="Address" cols="32">@(data.Address != null && data.Address != "" ? data.Address : "")</textarea>
+                            <div class="align-self-center ml-2">
+                                <button type="button" class="btn btn-primary" onclick="SaveAddress('@data.POId')">@(data.Address != null && data.Address != "" ? "Edit" : "Save")</button>
+                            </div>
+                        </div>
+                        <div>
+                            <button class="btn btn-outline-info" onclick="saveorder('@data.Table', '@data.User')"
+                                    @(data.Table == Constant.HomeDelivery ? "" : data.Table == Constant.TakeAway ? "" : "hidden")>
+                                Payment Received
+                            </button>
+                            <a href="@Url.Action("SaveDemoBillForPrint","Admin",new {RCode =data.RCode ,PlaceOrderId= data.POId })" class="btn btn-outline-dark m-1"
+                               @(data.Table == Constant.HomeDelivery ? "" : data.Table == Constant.TakeAway ? "" : "hidden")>Bill Print</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        }
+    }
+    else
+    {
+        <h6 class="p-3 text-center">No data available.</h6>
+    }
+</div>
+<script>
+    $(document).ready(function () {
+        $(".discbox").hide();
+    });
+    $(".OpenDiscBox").click(function () {
+        $(this).children().toggleClass("bi bi-x");
+        $(this).toggleClass("btn-danger");
+        var pOId = $(this).attr('data-id');
+        $("#discbox" + pOId).toggle();
+        $("#disclabel" + pOId).toggle();
+    });
+        function editPlaceOrder(pOId) {
+        Swal.fire({
+            title: 'Please fill Captain Code',
+            input: 'text',
+            inputAttributes: {
+                autocapitalize: 'off'
+            },
+            showCancelButton: true,
+            confirmButtonText: 'Look up',
+            showLoaderOnConfirm: true,
+            preConfirm: (login) => {
+                $.ajax({
+                    type: "Post",
+                    url: "/Admin/CaptainCodeCheck",
+                    data: {
+                        Code: login,
+                    },
+                    success: function (data) {
+                        if (data == "true") {
+                            $("#PunchedBy").val(login);
+                            editFormPlaceOrder(pOId);
+                        }
+                        else {
+                            alert("Sorry Its not right code!");
+                        }
+                    }
+                });
+            },
+            allowOutsideClick: () => !Swal.isLoading()
+        }).then((result) => {
+            if (result.isConfirmed) {
+
+            }
+        })
+    }
+    function editFormPlaceOrder(pOId) {
+            Swal.fire({
+        title: 'Are you sure?',
+        text: "You want to discount this item!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, Change it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Swal.fire({
+                title: 'Status',
+                text: 'Changed',
+                icon: 'success',
+                showConfirmButton: false,
+            })
+            var discount = $("#discount" + pOId).val();
+            $.ajax({
+                url: '@Url.Action("DiscountPerItem", "Admin")',
+                data: {
+                    POId: pOId,
+                    Discount: discount,
+                    PunchedBy: $("#PunchedBy").val(),
+                }
+            })
+            .done(function (response) {
+                if (response.result == "true") {
+                    Swal.fire({
+                        title: 'Done',
+                        text: 'Successfully Added!',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $("#disclabelValue" + pOId).html(response.Discount);
+                            $("#PriceValue" + pOId).html(response.Amount);
+                            $(".OpenDiscBox" + pOId).children().toggleClass("bi bi-x");
+                            $(".OpenDiscBox" + pOId).toggleClass("btn-danger");
+                            $("#discbox" + pOId).toggle();
+                            $("#disclabel" + pOId).toggle();
+                        }
+                    });
+                }
+                else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Something went wrong!',
+                    })
+                }
+            })
+            .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Something went wrong!',
+                })
+            });
+        }
+    });
+    }
+</script>

@@ -1,0 +1,946 @@
+﻿@using ViewModels;
+@{
+    ViewBag.Title = "Home Page";
+}
+<style>
+    .popup-close {
+        width: 28px;
+        height: 28px;
+        padding-top: 4px;
+        display: inline-block;
+        position: absolute;
+        top: 20px;
+        right: 10px;
+        border-radius: 100%;
+        background: transparent;
+        border: solid 3px #ff3636;
+    }
+
+        .popup-close:after,
+        .popup-close:before {
+            content: "";
+            position: absolute;
+            top: 9px;
+            left: 4.5px;
+            height: 3px;
+            width: 13px;
+            border-radius: 25px;
+            background: #ff3636;
+            -webkit-transform: rotate(45deg);
+            transform: rotate(45deg);
+        }
+        .popup-close:after {
+            -webkit-transform: rotate(-45deg);
+            transform: rotate(-45deg);
+        }
+
+        .popup-close:hover {
+            background: #f00;
+            text-decoration: none !important;
+            border: solid 3px #f00;
+        }
+
+            .popup-close:hover:after,
+            .popup-close:hover:before {
+                background: #fff;
+            }
+    .menu-img img {
+        cursor: pointer;
+    }
+    .example > .row {
+        margin-top: 2rem;
+        height: 5rem;
+        vertical-align: middle;
+        text-align: center;
+        border: 1px solid rgba(189, 193, 200, 0.5);
+    }
+
+        .example > .row:first-of-type {
+            border: none;
+            height: auto;
+            text-align: left;
+        }
+
+    .example h3 {
+        font-weight: 400;
+    }
+
+        .example h3 > small {
+            font-weight: 200;
+            font-size: 0.75em;
+            color: #939aa5;
+        }
+
+    .example h6 {
+        font-weight: 700;
+        font-size: 0.65rem;
+        letter-spacing: 3.32px;
+        text-transform: uppercase;
+        color: #bdc1c8;
+        margin: 0;
+        line-height: 5rem;
+    }
+
+    .example .btn-toggle {
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    .btn-toggle {
+        margin: 0 4rem;
+        padding: 0;
+        position: relative;
+        border: none;
+        height: 1.5rem;
+        width: 3rem;
+        border-radius: 1.5rem;
+        color: #6b7381;
+        background: #bdc1c8;
+    }
+
+        .btn-toggle:focus,
+        .btn-toggle.focus,
+        .btn-toggle:focus.active,
+        .btn-toggle.focus.active {
+            outline: none;
+        }
+
+        .btn-toggle:before,
+        .btn-toggle:after {
+            line-height: 1.5rem;
+            width: 4rem;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: absolute;
+            bottom: 0;
+            transition: opacity 0.25s;
+        }
+
+        .btn-toggle:before {
+            content: 'Off';
+            left: -4rem;
+        }
+
+        .btn-toggle:after {
+            content: 'Non Veg';
+            right: -4rem;
+            opacity: 0.5;
+        }
+
+        .btn-toggle > .handle {
+            position: absolute;
+            top: 0.1875rem;
+            left: 0.1875rem;
+            width: 1.125rem;
+            height: 1.125rem;
+            border-radius: 1.125rem;
+            background: #fff;
+            transition: left 0.25s;
+        }
+
+        .btn-toggle.active {
+            transition: background-color 0.25s;
+        }
+
+            .btn-toggle.active > .handle {
+                left: 1.6875rem;
+                transition: left 0.25s;
+            }
+
+            .btn-toggle.active:before {
+                opacity: 0.5;
+            }
+
+            .btn-toggle.active:after {
+                opacity: 1;
+            }
+
+        .btn-toggle.btn-sm:before,
+        .btn-toggle.btn-sm:after {
+            line-height: -0.5rem;
+            color: #fff;
+            letter-spacing: 0.75px;
+            left: 0.4125rem;
+            width: 2.325rem;
+        }
+
+        .btn-toggle.btn-sm:before {
+            text-align: right;
+        }
+
+        .btn-toggle.btn-sm:after {
+            text-align: left;
+            opacity: 0;
+        }
+
+        .btn-toggle.btn-sm.active:before {
+            opacity: 0;
+        }
+
+        .btn-toggle.btn-sm.active:after {
+            opacity: 1;
+        }
+
+        .btn-toggle.btn-xs:before,
+        .btn-toggle.btn-xs:after {
+            display: none;
+        }
+
+        .btn-toggle:before,
+        .btn-toggle:after {
+            color: #6b7381;
+        }
+
+        .btn-toggle.active {
+            background-color: #29b5a8;
+        }
+
+        .btn-toggle.btn-lg {
+            margin: 0 5rem;
+            padding: 0;
+            position: relative;
+            border: none;
+            height: 2.5rem;
+            width: 5rem;
+            border-radius: 2.5rem;
+        }
+
+            .btn-toggle.btn-lg:focus,
+            .btn-toggle.btn-lg.focus,
+            .btn-toggle.btn-lg:focus.active,
+            .btn-toggle.btn-lg.focus.active {
+                outline: none;
+            }
+
+            .btn-toggle.btn-lg:before,
+            .btn-toggle.btn-lg:after {
+                line-height: 2.5rem;
+                width: 5rem;
+                text-align: center;
+                font-weight: 600;
+                font-size: 1rem;
+                text-transform: uppercase;
+                letter-spacing: 2px;
+                position: absolute;
+                bottom: 0;
+                transition: opacity 0.25s;
+            }
+
+            .btn-toggle.btn-lg:before {
+                content: '';
+                left: -5rem;
+            }
+
+            .btn-toggle.btn-lg:after {
+                content: 'Non Veg';
+                right: -5rem;
+                opacity: 0.5;
+            }
+
+            .btn-toggle.btn-lg > .handle {
+                position: absolute;
+                top: 0.3125rem;
+                left: 0.3125rem;
+                width: 1.875rem;
+                height: 1.875rem;
+                border-radius: 1.875rem;
+                background: #fff;
+                transition: left 0.25s;
+            }
+
+            .btn-toggle.btn-lg.active {
+                transition: background-color 0.25s;
+            }
+
+                .btn-toggle.btn-lg.active > .handle {
+                    left: 2.8125rem;
+                    transition: left 0.25s;
+                }
+
+                .btn-toggle.btn-lg.active:before {
+                    opacity: 0.5;
+                }
+
+                .btn-toggle.btn-lg.active:after {
+                    opacity: 1;
+                }
+
+            .btn-toggle.btn-lg.btn-sm:before,
+            .btn-toggle.btn-lg.btn-sm:after {
+                line-height: 0.5rem;
+                color: #fff;
+                letter-spacing: 0.75px;
+                left: 0.6875rem;
+                width: 3.875rem;
+            }
+
+            .btn-toggle.btn-lg.btn-sm:before {
+                text-align: right;
+            }
+
+            .btn-toggle.btn-lg.btn-sm:after {
+                text-align: left;
+                opacity: 0;
+            }
+
+            .btn-toggle.btn-lg.btn-sm.active:before {
+                opacity: 0;
+            }
+
+            .btn-toggle.btn-lg.btn-sm.active:after {
+                opacity: 1;
+            }
+
+            .btn-toggle.btn-lg.btn-xs:before,
+            .btn-toggle.btn-lg.btn-xs:after {
+                display: none;
+            }
+
+        .btn-toggle.btn-sm {
+            margin: 0 0.5rem;
+            padding: 0;
+            position: relative;
+            border: none;
+            height: 1.5rem;
+            width: 3rem;
+            border-radius: 1.5rem;
+        }
+
+            .btn-toggle.btn-sm:focus,
+            .btn-toggle.btn-sm.focus,
+            .btn-toggle.btn-sm:focus.active,
+            .btn-toggle.btn-sm.focus.active {
+                outline: none;
+            }
+
+            .btn-toggle.btn-sm:before,
+            .btn-toggle.btn-sm:after {
+                line-height: 1.5rem;
+                width: 0.5rem;
+                text-align: center;
+                font-weight: 600;
+                font-size: 0.55rem;
+                text-transform: uppercase;
+                letter-spacing: 2px;
+                position: absolute;
+                bottom: 0;
+                transition: opacity 0.25s;
+            }
+
+            .btn-toggle.btn-sm:before {
+                content: 'Off';
+                left: -0.5rem;
+            }
+
+            .btn-toggle.btn-sm:after {
+                content: 'Non Veg';
+                right: -0.5rem;
+                opacity: 0.5;
+            }
+
+            .btn-toggle.btn-sm > .handle {
+                position: absolute;
+                top: 0.1875rem;
+                left: 0.1875rem;
+                width: 1.125rem;
+                height: 1.125rem;
+                border-radius: 1.125rem;
+                background: #fff;
+                transition: left 0.25s;
+            }
+
+            .btn-toggle.btn-sm.active {
+                transition: background-color 0.25s;
+            }
+
+                .btn-toggle.btn-sm.active > .handle {
+                    left: 1.6875rem;
+                    transition: left 0.25s;
+                }
+
+                .btn-toggle.btn-sm.active:before {
+                    opacity: 0.5;
+                }
+
+                .btn-toggle.btn-sm.active:after {
+                    opacity: 1;
+                }
+
+            .btn-toggle.btn-sm.btn-sm:before,
+            .btn-toggle.btn-sm.btn-sm:after {
+                line-height: -0.5rem;
+                color: #fff;
+                letter-spacing: 0.75px;
+                left: 0.4125rem;
+                width: 2.325rem;
+            }
+
+            .btn-toggle.btn-sm.btn-sm:before {
+                text-align: right;
+            }
+
+            .btn-toggle.btn-sm.btn-sm:after {
+                text-align: left;
+                opacity: 0;
+            }
+
+            .btn-toggle.btn-sm.btn-sm.active:before {
+                opacity: 0;
+            }
+
+            .btn-toggle.btn-sm.btn-sm.active:after {
+                opacity: 1;
+            }
+
+            .btn-toggle.btn-sm.btn-xs:before,
+            .btn-toggle.btn-sm.btn-xs:after {
+                display: none;
+            }
+
+        .btn-toggle.btn-xs {
+            margin: 0 0;
+            padding: 0;
+            position: relative;
+            border: none;
+            height: 1rem;
+            width: 2rem;
+            border-radius: 1rem;
+        }
+
+            .btn-toggle.btn-xs:focus,
+            .btn-toggle.btn-xs.focus,
+            .btn-toggle.btn-xs:focus.active,
+            .btn-toggle.btn-xs.focus.active {
+                outline: none;
+            }
+
+            .btn-toggle.btn-xs:before,
+            .btn-toggle.btn-xs:after {
+                line-height: 1rem;
+                width: 0;
+                text-align: center;
+                font-weight: 600;
+                font-size: 0.75rem;
+                text-transform: uppercase;
+                letter-spacing: 2px;
+                position: absolute;
+                bottom: 0;
+                transition: opacity 0.25s;
+            }
+
+            .btn-toggle.btn-xs:before {
+                content: 'Off';
+                left: 0;
+            }
+
+            .btn-toggle.btn-xs:after {
+                content: 'Non Veg';
+                right: 0;
+                opacity: 0.5;
+            }
+
+            .btn-toggle.btn-xs > .handle {
+                position: absolute;
+                top: 0.125rem;
+                left: 0.125rem;
+                width: 0.75rem;
+                height: 0.75rem;
+                border-radius: 0.75rem;
+                background: #fff;
+                transition: left 0.25s;
+            }
+
+            .btn-toggle.btn-xs.active {
+                transition: background-color 0.25s;
+            }
+
+                .btn-toggle.btn-xs.active > .handle {
+                    left: 1.125rem;
+                    transition: left 0.25s;
+                }
+
+                .btn-toggle.btn-xs.active:before {
+                    opacity: 0.5;
+                }
+
+                .btn-toggle.btn-xs.active:after {
+                    opacity: 1;
+                }
+
+            .btn-toggle.btn-xs.btn-sm:before,
+            .btn-toggle.btn-xs.btn-sm:after {
+                line-height: -1rem;
+                color: #fff;
+                letter-spacing: 0.75px;
+                left: 0.275rem;
+                width: 1.55rem;
+            }
+
+            .btn-toggle.btn-xs.btn-sm:before {
+                text-align: right;
+            }
+
+            .btn-toggle.btn-xs.btn-sm:after {
+                text-align: left;
+                opacity: 0;
+            }
+
+            .btn-toggle.btn-xs.btn-sm.active:before {
+                opacity: 0;
+            }
+
+            .btn-toggle.btn-xs.btn-sm.active:after {
+                opacity: 1;
+            }
+
+            .btn-toggle.btn-xs.btn-xs:before,
+            .btn-toggle.btn-xs.btn-xs:after {
+                display: none;
+            }
+
+        .btn-toggle.btn-secondary {
+            color: #6b7381;
+            background: #bdc1c8;
+        }
+
+            .btn-toggle.btn-secondary:before,
+            .btn-toggle.btn-secondary:after {
+                color: #6b7381;
+            }
+
+            .btn-toggle.btn-secondary.active {
+                background-color: #ff8300;
+            }
+
+</style>
+<div class="tabtog align-items-center">
+    <div class="filter-search mb-2">
+        <span class="FilterBy d-none" style="font-size: 12px;">Filter By : <label id="FilterBy" style="color: darkgrey;font-size: 11px;"></label></span>
+        <span class="SearchBy d-none mr-3" style="font-size: 12px;">Search By : <label id="SearchBy" style="color: darkgrey; font-size: 11px;"></label></span>
+    </div>
+    <div class="p-0 MenuCat-Type">
+        <div class="tab-wrap">
+            <input type="radio" id="tab1" name="tabGroup1" class="tab" value="@Constant.Food" checked>
+            <label for="tab1" class="tab1">
+                <i class="bi bi-emoji-heart-eyes pr-1"></i>
+                Food
+            </label>
+            <input type="radio" id="tab2" name="tabGroup1" value="@Constant.Bar" class="tab">
+            <label for="tab2" class="tab2">
+                <i class="bi bi-emoji-smile-upside-down"></i>
+                Bar
+            </label>
+            <input type="radio" id="tab3" name="tabGroup1" value="@Constant.Beverage" class="tab">
+            <label for="tab3" class="tab3">
+                <i class="bi bi-emoji-sunglasses  pr-1"></i>
+                Beverage
+            </label>
+        </div>
+    </div>
+    <div class="mt-3 p-0 text-center tog" id="foodtype" style="text-align: -webkit-right;">
+        <div class="foodType-checkbox">
+            <label class="switch">
+                <input type="checkbox" name="@Constant.Veg" checked>
+                <span class="slider round" id="veg-radio"></span>
+            </label>
+            <label class="type-name">Veg</label>
+            <label class="switch">
+                <input type="checkbox" name="@Constant.NonVeg" checked>
+                <span class="slider round" id="nonveg-radio"></span>
+            </label>
+            <label class="">Non-Veg</label>
+        </div>
+    </div>
+</div>
+<div class="menu-container">
+    <div class="Menu-Heading mt-4">
+
+    </div>
+    <div class="Browse-Category">
+        <div id="one" class="button">Browse Menu <i class="fa fa-cutlery" aria-hidden="true"></i></div>
+        <div id="modal-container">
+            <div class="modal-background">
+                <div class="modal">
+                    <div class="heading d-flex">
+                        <div>
+                            <span style="color: black;">Categories</span>
+                        </div>
+                        <div>
+                            <a class="popup-close" pd-popup-close="popupNew" href="#"> </a>
+                        </div>
+                    </div>
+                    <ul class="MenuCategorieslist">
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <input type="number" id="FilterType" value="" hidden />
+    </div>
+    <div class="menuData">
+    </div>
+</div>
+<div class="BottomCartbar">
+    <div class="d-flex pl-2 pr-2 m-2 justify-content-between">
+        <div class="cartAction d-flex">
+            <div class="mr-2"><i class="bi bi-cart4" style="font-size: 22px;"></i></div>
+            <div style=" line-height: initial;">
+                <h6 class="mb-0">Subtotal : &#8377;<span id="cartTAmount" style="font-size: 14px; letter-spacing: 0.7px;"> @*@(Model.CartModel != null ? Model.CartModel.Select(x=>x.price * x.Quantity).Sum().ToString() : "0.00")*@</span></h6>
+                <span>Items once ordered cannot be canceled*</span>
+            </div>
+        </div>
+        <div class="cartBtn">
+            <button onclick="cartPage()" class="Add">Order Summary</button>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $("#veg-radio").css("background", "#4caf50ad");
+    $("#nonveg-radio").css("background", "#f44336d1");
+    function cartPage() {
+        window.location.href = "/Cart";
+    }
+    $(document).ready(function () {
+        getMenuData();
+        setTimeout(() => {
+        }, 1000);
+    });
+    function MenuImageClick(i, d) {
+        $(".modal-body").html("<img src='" + i + "' class='modal-img'>");
+        $(".modal-body").append("<div class='modal-desc mt-2 text-center'>" + d + "</div>");
+        $("#myModal").modal("show");
+    }
+    function getMenuData() {
+        $(".loadermodel").show();
+        var searchvalue = $("#search-bar").val();
+        var veg = $('input[name="Veg"]').prop("checked");
+        var RestType = "@Constant.Food";
+        if ($("#tab2").prop("checked") == true) {
+            RestType = "@Constant.Bar";
+        }
+        else if ($("#tab3").prop("checked") == true) {
+            RestType = "@Constant.Beverage";
+        }
+        var MCCode = $("#FilterType").val();
+        var nonveg = $('input[name="NonVeg"]').prop("checked");
+
+        $.ajax({
+            type: "POST",
+            url: "/Home/Menu",
+            dataType: 'json',
+            data: {
+                SearchValue: searchvalue,
+                MCCode: MCCode,
+                restType: RestType,
+                Vegstatus: veg,
+                Vegstatus: veg,
+                NonVegstatus: nonveg,
+            },
+            success: function (response) {
+                $(".Menu-Heading").html("");
+                $(".menuData").html("");
+                $(".MenuCategorieslist").html("");
+                var returnedData = JSON.parse(response);
+                $("#FilterType").val(returnedData.CategoryType);
+                if (returnedData.MenuHeading.length > 0 && returnedData.MenuHeading != '@Constant.Food' && returnedData.MenuHeading != '@Constant.Bar' && returnedData.MenuHeading != '@Constant.Beverage') {
+                    $("#FilterBy").html(returnedData.MenuHeading);
+                    $(".FilterBy").removeClass("d-none");
+                }
+                else {
+                    $("#FilterBy").html("");
+                    $(".FilterBy").addClass("d-none");
+                }
+                if (returnedData.Veg != true || returnedData.NonVeg != true) {
+                    $(".tab1").hide();
+                    $("#tab1").hide();
+                }
+                else if (returnedData.Bar != true) {
+                    $(".tab2").hide();
+                    $("#tab2").hide();
+                }
+                else if (returnedData.Beverages != true) {
+                    $(".tab3").hide();
+                    $("#tab3").hide();
+                }
+                if (returnedData.CartModel != null && returnedData.CartModel != "") {
+                    $("#cartTAmount").text(" " + Math.round(returnedData.CartModel.map(o => o.TotalPrice).reduce((a, c) => { return a + c })) + ".00");
+                }
+                else {
+                    $("#cartTAmount").text(" " + "0.00");
+                }
+                if (returnedData.MenuModel == "" || returnedData.MenuModel == null) {
+                    var variable = '<h5 class="text-center mt-2">No Item available!</h5>';
+                    $(".menuData").append(variable);
+                }
+                jQuery.each(returnedData.MenuModel, function (index, item) {
+                    var variable = '' +
+'        <div class="menu-box ">' +
+'            <div class="menu row">' +
+'                <div class="menu-desc col-lg-10 col-md-10 col-8">' +
+                        '                    <h3>' +
+                        '                        <i class="bi bi-triangle-fill neg-non-icon" ' + (item.MenuType == "@Constant.NonVeg" ? "" : "hidden") + '></i>' +
+                        '                        <i class="bi bi-triangle-fill neg-non-icon" style="color: #4caf50 !important;" ' + (item.MenuType == "@Constant.Veg" ? "" : "hidden") + '></i>' +
+                        '                        ' + item.MDesc +'' +
+                        '                    </h3>' +
+                        '                        <h3 class="' + (item.Amount == item.DisAmount ? "" : "d-none") + '">&#8377; ' + Math.round(item.Amount) + ' </h3>' +
+                        '                        <h3 class="' + (item.Amount == item.DisAmount ? "d-none" : "") + '">&#8377; ' + Math.round(item.DisAmount) +' <span style="color: #ff3d2f; text-decoration: line-through; "> &#8377; ' + Math.round(item.Amount) +' </span> </h3>' +
+                        '                    <p class="item-desc">' + (item.MComment != null ? item.MComment : "") +'</p>' +
+'                </div>' +
+                        '                <div class="menu-img col-lg-2 col-md-2 col-4">' +
+                        '                    <img src="' + item.Image + '" onclick="MenuImageClick(\'' + item.Image + '\',\'' + item.MDesc + '\' )" class="MenuImage' + (item.Image != "" && item.Image != null ? "" : "d-none") + '" alt="' + item.MDesc + '"/>' +
+'                    <div id="myModal" class="modal fade" role="dialog">' +
+'                        <div class="modal-dialog">' +
+'                            <div class="modal-content">' +
+'                                <div class="modal-body">' +
+'                                </div>' +
+'                            </div>' +
+'                        </div>' +
+'                    </div>' +
+                        '                    <div class="menu-btn">' +
+                        '                        <button id="' + item.MCode + '" onclick="cart(\'' + item.MCode + '\')" class="Add ' + (item.isAvailCart == true ? "d-none" : "") + '"> Add <i class="bi bi-plus item-plus"></i></button>' +
+                        '                        <button id="added" type="button" onclick="Removecart(\'' + item.MCode + '\')" class="' + item.MCode + ' ' + (item.isAvailCart == true ? "" : "d-none") + '" >Added <i class="bi bi-check"></i></button>' +
+'                    </div>' +
+'                </div>' +
+'            </div>' +
+'        </div>' +
+                        '';
+                    $(".menuData").append(variable);
+                });
+                var variable2 = '' +
+                    '        <h6 style="font-weight: 600; letter-spacing: 1px; font-size: 18px;" id="Heading-Menu">' + returnedData.MenuHeading   +'</h6>' +
+                    '    <hr />' +
+                    '';
+                $(".Menu-Heading").append(variable2);
+
+var variable3 = '' +
+'                    <li><button onclick="RemoveFilter()">All</button> <span class="cat-count align-self-sm-center mr-2"></span></li>' +
+'                    <li><button onclick="CatFilter(\'@Constant.Speciality\')">Restaurant Speciality</button> <span class="cat-count align-self-sm-center mr-2"></span></li>' +
+'' +
+                    '';
+                $(".MenuCategorieslist").append(variable3);
+
+                jQuery.each(returnedData.menuCatagories, function (index, item) {
+                    var variable4 = '' +
+                        '                        <li class="d-flex"><button onclick="CatFilter(\'' + item.MCCode + '\')" class="' + (returnedData.MenuHeading != null ? item.MCDesc == returnedData.MenuHeading  ? "active" : "" : "") + '">'+
+' ' + item.MCDesc + ' </button > <span class="cat-count align-self-sm-center mr-2">' + item.Count +'</span></li > ' +
+'';
+                    $(".MenuCategorieslist").append(variable4);
+                });
+            }
+        });
+        setTimeout(function () {
+            $(".loadermodel").hide();
+        }, 1000);
+    }
+    $('.button').click(function () {
+        var buttonId = $(this).attr('id');
+        $('#modal-container').removeAttr('class').addClass(buttonId);
+        $('body').addClass('modal-active');
+    })
+    $('.popup-close').click(function () {
+        $("#modal-container").addClass('out');
+        $('body').removeClass('modal-active');
+    });
+    function focusActionup() {
+        $('html, body').animate({
+            scrollTop: $("div.Menu-Heading").offset().top - 100
+        }, 200);
+    }
+    function CatFilter(id) {
+         $(".loadermodel").show();
+        $(".Menu-Heading").html("");
+        $(".menuData").html("");
+        $(".MenuCategorieslist").html("");
+        $("#FilterType").val(id);
+        getMenuData();
+   /*     focusActionup();*/
+        $(".loadermodel").hide();
+    }
+    function RemoveFilter() {
+        $(".loadermodel").show();
+        $("#FilterType").val("0");
+        $(".Menu-Heading").html("");
+        $(".menuData").html("");
+        $(".MenuCategorieslist").html("");
+        getMenuData();
+/*        focusActionup();*/
+        $(".loadermodel").hide();
+    }
+    function cart(id) {
+        $("#" + id).prop('disabled', true);
+        if (id != null) {
+            $.ajax({
+                type:"POST",
+                url: '@Url.Action("AddInCart", "Cart")',
+                data: {
+                    MCode: id
+                },
+                success: function (result) {
+                    if (result.Result == true) {
+                        $("#cart-quantity").text(result.Count);
+                        $("#cartTAmount").text(" " + Math.round(result.TotalAmount) + ".00");
+                        $("#" + id).addClass("d-none");
+                        $("." + id).removeClass("d-none");
+                        $(".Add").prop('disabled', false);
+                    }
+                },
+                 error: function () {
+                     alert("Something Went Wrong");
+                     $(".Add").prop('disabled', false);
+                }
+            })
+        }
+    }
+    function Removecart(id) {
+        $("." + id).prop('disabled', true);
+        if (id != null) {
+            $.ajax({
+                type:"POST",
+                url: '@Url.Action("RemoveInCart", "Cart")',
+                data: {
+                    CartItemId: id,
+                    menu: true
+                },
+                success: function (result) {
+                    if (result.Result == true) {
+                        $("#cart-quantity").text(result.Count);
+                        $("#cartTAmount").text(" " + Math.round(result.TotalAmount) + ".00");
+                        $("#" + id).removeClass("d-none");
+                        $("." + id).addClass("d-none");
+                        $("." + id).prop('disabled', false);
+                        
+                    }
+                },
+                 error: function () {
+                     alert("Something Went Wrong");
+                     $("." + id).prop('disabled', false);
+                }
+            })
+        }
+    }
+    $('input[name="tabGroup1"]').on('change', function () {
+        var data = $(this).val();
+        if (data == '@Constant.Bar') { $("#foodtype").hide() }
+        else if (data == '@Constant.Beverage') { $("#foodtype").hide() } else { $("#foodtype").show() }
+        $("#FilterType").val("");
+        getMenuData();
+        //focusActionup();
+    });
+    $('input[name="Veg"]').on('change', function () {
+        $(".Menu-Heading").html("");
+        $(".menuData").html("");
+        $(".MenuCategorieslist").html("");
+        if ($(this).prop("checked") == true) {
+            $("#veg-radio").css("background", "#4caf50ad");
+            $('input[name="Veg"]').prop("checked", true);
+            getMenuData();
+        }
+        else {
+            $("#veg-radio").css("background", "#d9d9d9");
+            $('input[name="Veg"]').prop("checked", false);
+            getMenuData();
+        }
+    });
+    $('input[name="NonVeg"]').on('change', function () {
+        $(".Menu-Heading").html("");
+        $(".menuData").html("");
+        $(".MenuCategorieslist").html("");
+        if ($(this).prop("checked") == true) {
+            $("#nonveg-radio").css("background", "#f44336d1");
+            $('input[name="NonVeg"]').prop("checked", true);
+            getMenuData();
+        }
+        else {
+            $("#nonveg-radio").css("background", "#d9d9d9");
+            $('input[name="NonVeg"]').prop("checked", false);
+            getMenuData();
+        }
+    });
+
+    //search bar
+    let keyupTimer;
+    $("#search-bar").keyup(function () {
+        clearTimeout(keyupTimer);
+        keyupTimer = setTimeout(function () {
+        var searchvalue = $("#search-bar").val();
+        var veg = $('input[name="Veg"]').prop("checked");
+        var RestType = "@Constant.Food";
+        if ($("#tab2").prop("checked") == true) {
+            RestType = "@Constant.Bar";
+        }
+        else if ($("#tab3").prop("checked") == true) {
+            RestType = "@Constant.Beverage";
+        }
+        var MCCode = $("#FilterType").val();
+        var nonveg = $('input[name="NonVeg"]').prop("checked");
+            $(".menuData").html("");
+        $.ajax({
+            type: "POST",
+            url: "/Home/Menu",
+            dataType: 'json',
+            data: {
+                SearchValue: searchvalue,
+                MCCode: MCCode,
+                restType: RestType,
+                Vegstatus: veg,
+                Vegstatus: veg,
+                NonVegstatus: nonveg,
+            },
+            success: function (response) {
+                var returnedData = JSON.parse(response);
+                if (searchvalue.length > 0) {
+                    $("#SearchBy").html(searchvalue);
+                    $(".SearchBy").removeClass("d-none");
+                }
+                else {
+                    $("#SearchBy").html("");
+                    $(".SearchBy").addClass("d-none");
+                }
+                if (returnedData.MenuModel == "" || returnedData.MenuModel == null) {
+                    var variable = '<h5 class="text-center mt-2">No Item available!</h5>';
+                    $(".menuData").append(variable);
+                }
+                jQuery.each(returnedData.MenuModel, function (index, item) {
+
+                    var variable = '' +
+'        <div class="menu-box ">' +
+'            <div class="menu row">' +
+'                <div class="menu-desc col-lg-10 col-md-10 col-8">' +
+                        '                    <h3>' +
+                        '                        <i class="bi bi-triangle-fill neg-non-icon" ' + (item.MenuType == "@Constant.NonVeg" ? "" : "hidden") + '></i>' +
+                        '                        <i class="bi bi-triangle-fill neg-non-icon" style="color: #4caf50 !important;" ' + (item.MenuType == "@Constant.Veg" ? "" : "hidden") + '></i>' +
+                        '                        ' + item.MDesc +'' +
+                        '                    </h3>' +
+                        '                        <h3 class="' + (item.Amount == item.DisAmount ? "" : "d-none") + '">&#8377; ' + Math.round(item.Amount) + ' </h3>' +
+                        '                        <h3 class="' + (item.Amount == item.DisAmount ? "d-none" : "") + '">&#8377; ' + Math.round(item.DisAmount) +' <span style="color: #ff3d2f; text-decoration: line-through; "> &#8377; ' + Math.round(item.Amount) +' </span> </h3>' +
+                        '                    <p class="item-desc">' + (item.MComment != null ? item.MComment : "") +'</p>' +
+'                </div>' +
+'                <div class="menu-img col-lg-2 col-md-2 col-4">' +
+                        '                    <img src="' + item.Image + '" onclick="MenuImageClick(\'' + item.Image + '\',\'' + item.MDesc + '\' )" class="MenuImage' + (item.Image != "" && item.Image != null ? "" : "d-none") + '" alt="' + item.MDesc +'"/>' +
+'                    <div id="myModal" class="modal fade" role="dialog">' +
+'                        <div class="modal-dialog">' +
+'                            <div class="modal-content">' +
+'                                <div class="modal-body">' +
+'                                </div>' +
+'                            </div>' +
+'                        </div>' +
+'                    </div>' +
+                        '                    <div class="menu-btn">' +
+                        '                        <button id="' + item.MCode + '" onclick="cart(\'' + item.MCode + '\')" class="Add ' + (item.isAvailCart == true ? "d-none" : "") + '">Add <i class="bi bi-plus item-plus"></i></button>' +
+                        '                        <button id="added" type="button" onclick="Removecart(\'' + item.MCode + '\')" class="' + item.MCode + ' ' + (item.isAvailCart == true ? "" : "d-none") +'" >Added <i class="bi bi-check"></i></button>' +
+'                    </div>' +
+'                </div>' +
+'            </div>' +
+'        </div>' +
+                        '';
+                    $(".menuData").append(variable);
+                });
+            }
+        });
+        }, 600);
+    });
+</script>

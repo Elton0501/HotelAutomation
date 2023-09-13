@@ -1,0 +1,175 @@
+﻿@model Models.Menu
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var rid = ViewBag.rid;
+    var errmsg = ViewBag.ErrMsg;
+    var imageurl = "/Content/Images/DefaultImage.jpg";
+    string rname = ViewBag.RestName;
+}
+<style>
+    .card-header {
+        padding: 0.35rem 1.25rem;
+        border-radius: 0 !important;
+    }
+
+    .btn {
+        font-size: 14px;
+        margin: 0;
+        padding: 4px 10px;
+    }
+
+    .btn-link.focus, .btn-link:focus {
+        text-decoration: none !important;
+    }
+
+    .btn-link:hover {
+        text-decoration: none !important;
+    }
+
+    .btn.focus, .btn:focus {
+        outline: none;
+        box-shadow: none !important;
+    }
+
+    .collapse .card-body {
+        border: 1px solid lightgrey;
+        margin-top: 6px;
+        border-radius: 4px;
+    }
+
+    .card-header {
+        border-bottom: none !important;
+    }
+
+    .card {
+        border-radius: 0 !important;
+    }
+</style>
+<div class="row adminpage-head">
+    <div class="col-12">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary text-uppercase">Add Menu</h6>
+            </div>
+            <div class="card-body">
+                @using (Html.BeginForm())
+                {
+                    @Html.AntiForgeryToken()
+
+                    <div class="form-horizontal">
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.MCCode, "Menu Category", htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.DropDownList("MCCode", (IEnumerable<SelectListItem>)ViewBag.menuCatItem, htmlAttributes: new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.MCCode, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <input value="@rid" name="RCode" hidden />
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.MDesc, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.MDesc, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.MDesc, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Price, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.Price, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.Price, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.MComment, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.MComment, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.MComment, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.MTCode, "Menu Type", htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.DropDownList("MTCode", (IEnumerable<SelectListItem>)ViewBag.tp, htmlAttributes: new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.MTCode, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="exampleFormControlInput1">Logo</label>
+                            <br />
+                            <input name="img" id="Image" required hidden />
+                            <input id="imageUpload" type="file" name="ImageOne" accept="image/*" class="form-control-file" required>
+                            <br />
+                            <img id="PlaceImage" alt="" src="@imageurl" style="width: 20%; margin-top: 5px;" />
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.CreatedBy, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                <input type="text" name="CreatedBy" value="@rname" class="form-control" readonly />
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-md-offset-2 col-md-10">
+                                <input type="submit" value="Create" class="btn btn-default btn-primary" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <label>@errmsg</label>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="text-right mr-5">
+    @Html.ActionLink("Back to List", "AdminMenu")
+</div>
+
+<script>
+     $("#imageUpload").change(function () {
+        var element = this;
+
+        var formData = new FormData();
+        var totlaFiles = element.files.length;
+
+        for (var i = 0; i < totlaFiles; i++) {
+            var file = element.files[i];
+            formData.append("Photo", file)
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("UploadMenuImage", "Image")',
+            data: formData,
+            dataType: 'json',
+            contentType: false,
+            processData: false
+        })
+            .done(function (response) {
+                if (response.Success == true)
+                {
+                    $("#Image").val(response.ImageURL);
+                    $("#PlaceImage").attr("src", response.ImageURL);
+                }
+        })
+        .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Something went wrong!',
+            })
+        });
+    });
+</script>

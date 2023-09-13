@@ -1,0 +1,24 @@
+@font-face {
+    font-family: 'sanb';
+    src: url('fonts/Sansation-Bold.ttf') format('truetype');
+}
+@font-face {
+    font-family: 'sanbi';
+    src: url('fonts/Sansation-BoldItalic.ttf') format('truetype');
+}
+@font-face {
+    font-family: 'sani';
+    src: url('fonts/Sansation-Italic.ttf') format('truetype');
+}
+@font-face {
+    font-family: 'sanl';
+    src: url('fonts/Sansation-Light.ttf') format('truetype');
+}
+@font-face {
+    font-family: 'sanli';
+    src: url('fonts/Sansation-LightItalic.ttf') format('truetype');
+}
+@font-face {
+    font-family: 'sanr';
+    src: url('fonts/Sansation-Regular.ttf') format('truetype');
+}

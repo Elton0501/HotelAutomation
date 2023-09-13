@@ -1,0 +1,58 @@
+﻿@{
+    Layout = null;
+    ViewBag.Title = "Error";
+    bool NotFound = ViewBag.NotFound;
+    bool maintainance = ViewBag.Maintainance;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Error</title>
+    <style>
+        body {
+            overflow: hidden;
+            background: url(../../Content/Images/Error4.jpg);
+            color: white;
+            font-family: sans-serif;
+            background-repeat: no-repeat;
+            background-position: top;
+        }
+        h2 {
+            font-size: 18px;
+            font-weight: 100;
+            font-family: system-ui;
+            letter-spacing: 1px;
+        }
+        div {
+             background: #000000ad; 
+            padding: 1rem;
+            margin: 18rem 1rem;
+            width: 65%;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <hgroup>
+            @if (NotFound == true)
+            {
+                <h1 class="text-danger">404 Error.</h1>
+                <h2 class="text-danger">Look like you're lost <small>the page you are looking for not avaible!</small></h2>
+            }
+            else if (maintainance == true)
+            {
+                <h1 class="text-danger">Maintainace Break.</h1>
+                <h2 class="text-danger">An error occurred while processing your request.</h2>
+            }
+            else
+            {
+                <h1 class="text-danger">Session Ended.</h1>
+                <h2 class="text-danger">Please Close this app and again scan the barcode.</h2>
+            }
+        </hgroup>
+    </div>
+</body>
+</html>

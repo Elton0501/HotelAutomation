@@ -1,0 +1,332 @@
+﻿﻿@using ViewModels;
+@using Services;
+@{
+    int Count = 0;
+    ViewBag.Title = "Orders";
+    var Tax = Convert.ToInt32(ViewBag.Tax);
+    int Table = Convert.ToInt32(ViewBag.TableCount + 1);
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<style>
+    .btn {
+        font-size: 12px;
+    }
+
+    .filter-col {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+    /*    #itemTable_filter{
+        display:none;
+    }*/
+    .dt-buttons {
+        float: left;
+    }
+    /* The switch - the box around the slider */
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 53px;
+        height: 26px;
+    }
+
+        /* Hide default HTML checkbox */
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+    /* The slider */
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        -webkit-transition: .4s;
+        transition: .4s;
+    }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 19px;
+            width: 19px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+    input:checked + .slider {
+        background-color: #2196F3;
+    }
+
+    input:focus + .slider {
+        box-shadow: 0 0 1px #2196F3;
+    }
+
+    input:checked + .slider:before {
+        -webkit-transform: translateX(26px);
+        -ms-transform: translateX(26px);
+        transform: translateX(26px);
+    }
+
+    /* Rounded sliders */
+    .slider.round {
+        border-radius: 34px;
+    }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+    .filter-label label {
+        font-size: 15px;
+    }
+</style>
+<div class="adminpage-head">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+            <h6 class="m-0 font-weight-bold text-primary text-uppercase">Total Orders - <span style="color: var(--success);">@ViewBag.OrdersCount</span></h6>
+            <button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#filter-panel">
+                <span class="glyphicon glyphicon-cog"></span> Advanced Settings
+            </button>
+        </div>
+        <div class="card-body table-responsive">
+            <div class="row pl-2">
+                <div id="filter-panel" class="collapse filter-panel p-2 bg-white mb-3 w-100 shadow">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <div class="form-Filter row px-3 py-1">
+                                <div class="form-group col-lg-3 col-6">
+                                    <label class="filter-col" style="margin-right:0;" for="pref-orderby">Filter By:</label>
+                                    <select id="Filter-Day" class="form-control">
+                                        <option value="0">All</option>
+                                        <option value="1">Today</option>
+                                        <option value="2">Week</option>
+                                        <option value="3">Month</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-lg-2 col-6">
+                                    <label class="filter-col" style="margin-right:0;" for="pref-orderby">Payment Type:</label>
+                                    <select id="Filter-PaymentType" class="form-control">
+                                        <option value="0">All</option>
+                                        @foreach (PaymentType val in Enum.GetValues(typeof(PaymentType)))
+                                        {
+                                            <option value="@((int)val)">@val</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="form-group col-lg-2 col-6">
+                                    <label class="filter-col" style="margin-right:0;" for="pref-orderby">Table:</label>
+                                    <select id="Filter-TableNo" class="form-control">
+                                        <option value="0">All</option>
+                                        @for (int i = 1; i < Table; i++)
+                                        {
+                                            <option value="@i">@i</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="form-group col-lg-2 col-6">
+                                    <label class="filter-col" style="margin-right:0;" for="pref-orderby">Date:</label>
+                                    <input type="date" id="FilterBy-Date" value="" class="form-control" />
+                                </div>
+                                <div class="form-group col-lg-2 col-6 text-center">
+                                    <label>Table Details: </label><br />
+                                    <label>Min</label>
+                                    <label class="switch">
+                                        <input type="checkbox" id="minmax" name="table-minmax">
+                                        <span class="slider round" id=""></span>
+                                    </label>
+                                    <label>Max</label>
+                                </div>
+                                <div class="form-group col-lg-1 col-3 align-self-end text-center">
+                                    <button class="btn btn-outline-danger" onclick="window.location.reload()">Reset</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="DataLoad">
+                <div class="px-app m-5">
+                    <div class="" style="text-align: -webkit-center;">
+                        <div class="px-griditem">
+                            <div id="qt-loading-qtload008" class="qt-loading">
+                                <div></div>
+                                <div></div>
+                                <div></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="OrderTable">
+                @*@{
+                    Html.RenderPartial("_OrderTable", Model);
+                }*@
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        loadOrdersPartial();
+    });
+    $("#Filter-Day").change(function () {
+        loadOrdersPartial();
+    });
+    $("#Filter-PaymentType").change(function () {
+        loadOrdersPartial();
+    });
+    $("#Filter-TableNo").change(function () {
+        loadOrdersPartial();
+    });
+    $("#FilterBy-Date").change(function () {
+        loadOrdersPartial();
+    });
+    function loadOrdersPartial(){
+        var filterByDay = $("#Filter-Day").val();
+        var filterPaymentType = $("#Filter-PaymentType").val();
+        var filterTableNo = $("#Filter-TableNo").val();
+        var filterByDate = $("#FilterBy-Date").val();
+            $.ajax({
+            url: "/Admin/_OrderTable",
+            data: {
+                FilterByDay: filterByDay,
+                FilterPaymentType: filterPaymentType,
+                FilterTableNo: filterTableNo,
+                FilterByDate: filterByDate,
+            },
+            success: function (response) {
+                $(".OrderTable").html(response);
+                $(".DataLoad").addClass("d-none");
+                var rCode = '@ViewBag.RCode.ToString()';
+                var existing = $.cookie('newOrders' + rCode);
+                setTimeout(() => {
+                    if (existing != undefined && existing != "" && existing != null && existing != "null") {
+                        newOrdersList = existing.split('-');
+                        $("#ordersCountCookie").removeClass("d-none");
+                        $("#ordersCountCookie").html(newOrdersList.length);
+                        $.each(newOrdersList, function (index, value) {
+                            $('#nofc' + value).css({ 'background-color': 'rgb(243 243 243)' });
+                        });
+                    }
+                }, 1000);
+            }
+        });
+    }
+</script>
+
+@*<script>
+
+    $("#Filter-Day").change(function () {
+        var value = $("#Filter-Day").val();
+        var value1 = $("#Filter-PaymentType").val();
+        var value2 = $("#Filter-TableNo").val();
+        var value3 = $("#FilterBy-Date").val();
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("_OrderTable", "Admin")',
+            data: {
+                FilterByDay: value,
+                FilterPaymentType: value1,
+                FilterTableNo: value2,
+                FilterByDate: value3,
+            }
+        })
+        .done(function (response) {
+            $(".OrderTable").html(response);
+        })
+        .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Something went wrong!',
+                    })
+                });
+    });
+    $("#Filter-PaymentType").change(function () {
+        var value = $("#Filter-Day").val();
+        var value1 = $("#Filter-PaymentType").val();
+        var value2 = $("#Filter-TableNo").val();
+        var value3 = $("#FilterBy-Date").val();
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("_OrderTable", "Admin")',
+            data: {
+                FilterByDay: value,
+                FilterPaymentType: value1,
+                FilterTableNo: value2,
+                FilterByDate: value3,
+            }
+        })
+        .done(function (response) {
+            $(".OrderTable").html(response);
+        })
+        .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Something went wrong!',
+                    })
+                });
+    });
+    $("#Filter-TableNo").change(function () {
+        var value = $("#Filter-Day").val();
+        var value1 = $("#Filter-PaymentType").val();
+        var value2 = $("#Filter-TableNo").val();
+        var value3 = $("#FilterBy-Date").val();
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("_OrderTable", "Admin")',
+            data: {
+                FilterByDay: value,
+                FilterPaymentType: value1,
+                FilterTableNo: value2,
+                FilterByDate: value3,
+            }
+        })
+        .done(function (response) {
+            $(".OrderTable").html(response);
+        })
+        .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Something went wrong!',
+                    })
+                });
+    });
+    $("#FilterBy-Date").change(function () {
+        var value = $("#Filter-Day").val();
+        var value1 = $("#Filter-PaymentType").val();
+        var value2 = $("#Filter-TableNo").val();
+        var value3 = $("#FilterBy-Date").val();
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("_OrderTable", "Admin")',
+            data: {
+                FilterByDay: value,
+                FilterPaymentType: value1,
+                FilterTableNo: value2,
+                FilterByDate: value3,
+            }
+        })
+        .done(function (response) {
+            $(".OrderTable").html(response);
+        })
+        .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Something went wrong!',
+                    })
+                });
+    });
+</script>*@

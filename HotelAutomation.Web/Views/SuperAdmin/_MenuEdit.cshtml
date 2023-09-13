@@ -1,0 +1,157 @@
+﻿@model Models.Menu
+@{ 
+    Layout = "~/Views/SuperAdmin/_SuperAdminLayout.cshtml";
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    
+<div class="form-horizontal">
+    <h4>Menu -<span style="font-weight:100;">RCode(@Model.RCode)</span> </h4>
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.HiddenFor(model => model.MCode)
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.MCCode, "Menu Category", htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.DropDownList("MCCode", (IEnumerable<SelectListItem>)ViewBag.cat, htmlAttributes: new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.MCCode, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-10">
+            @Html.HiddenFor(model => model.RCode, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.RCode, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.MDesc, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.MDesc, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.MDesc, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Price, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Price, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Price, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.MComment, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.MComment, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.MComment, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.MTCode, "Menu Type", htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.DropDownList("MTCode", (IEnumerable<SelectListItem>)ViewBag.tp, htmlAttributes: new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.MTCode, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="exampleFormControlInput1">Image</label>
+        <br />
+        <input name="img" id="Image" value="@Model.img" hidden />
+        <input id="imageUpload" type="file" name="ImageOne" accept="image/*" class="form-control-file">
+        <br />
+        <img id="PlaceImage" alt="" src="@Model.img" style="width: 20%; margin-top: 5px;" />
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-10">
+            @Html.HiddenFor(model => model.CreatedOn, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.CreatedOn, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-10">
+            @Html.HiddenFor(model => model.CreatedBy, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.CreatedBy, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-10">
+            <div class="checkbox">
+                @Html.HiddenFor(model => model.IsActive)
+                @Html.ValidationMessageFor(model => model.IsActive, "", new { @class = "text-danger" })
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Save" class="btn btn-outline-primary" />
+        </div>
+        <div class="col-md-offset-2 col-md-2 align-self-end">
+            @Html.ActionLink("Back to List", "Menu", new { id = Model.RCode })
+        </div>
+    </div>
+</div>
+}
+
+
+<script>
+    $("#imageUpload").change(function () {
+        var checkimg = check();
+        if (checkimg == true) {
+        var element = this;
+        var formData = new FormData();
+        var totlaFiles = element.files.length;
+        for (var i = 0; i < totlaFiles; i++) {
+            var file = element.files[i];
+            formData.append("Photo", file)
+        }
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("UploadMenuImage", "Image")',
+            data: formData,
+            dataType: 'json',
+            contentType: false,
+            processData: false
+        })
+            .done(function (response) {
+                if (response.Success == true)
+                {
+                    $("#Image").val(response.ImageURL);
+                    $("#PlaceImage").attr("src", response.ImageURL);
+                }
+        })
+        .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Something went wrong!',
+            })
+        });
+        }
+        else {
+            alert("Image size should be less then 80Kb");
+        }
+    });
+    function check() {
+        var imgpath = document.getElementById('imageUpload');
+        if (!imgpath.value == "") {
+            var img = imgpath.files[0].size;
+            var imgsize = img / 1024;
+            if (imgsize > 81) {
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+    }
+</script>

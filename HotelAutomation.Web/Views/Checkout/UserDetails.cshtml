@@ -1,0 +1,737 @@
+﻿@using ViewModels;
+@model ViewModels.CheckOutViewModel
+@{
+    ViewBag.Title = "Checkout";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/Content/sweetalert2.min.css" rel="stylesheet" />
+<script src="~/Scripts/sweetalert2.all.min.js"></script>
+<style>
+    .bear {
+        width: 240px;
+        -webkit-animation: updown 2s infinite alternate;
+        animation: updown 2s infinite alternate;
+    }
+
+    .bear__ears {
+        display: -webkit-box;
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-pack: justify;
+        -webkit-justify-content: space-between;
+        -ms-flex-pack: justify;
+        justify-content: space-between;
+        -webkit-animation: updown 2s infinite alternate;
+        animation: updown 2s infinite alternate;
+        -webkit-transform: translateY(10px);
+        -ms-transform: translateY(10px);
+        transform: translateY(10px);
+    }
+
+        .bear__ears .ear {
+            width: 50px;
+            height: 60px;
+            background: #000;
+        }
+
+    .bear__ears__left {
+        -webkit-border-radius: 50% 100%;
+        border-radius: 50% 100%;
+    }
+
+    .bear__ears__right {
+        -webkit-border-radius: 100% 50%;
+        border-radius: 100% 50%;
+    }
+
+    .bear__body {
+        width: 100%;
+        height: 230px;
+        background: #000;
+        -webkit-border-radius: 50%/40% 40% 60% 60%;
+        border-radius: 50%/40% 40% 60% 60%;
+    }
+
+    .bear__eyes {
+        display: -webkit-box;
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-justify-content: space-around;
+        -ms-flex-pack: distribute;
+        justify-content: space-around;
+        position: relative;
+        -webkit-transform: translateY(60px);
+        -ms-transform: translateY(60px);
+        transform: translateY(60px);
+        -webkit-transition: all 0.3s linear;
+        -o-transition: all 0.3s linear;
+        transition: all 0.3s linear;
+    }
+
+        .bear__eyes .eye {
+            width: 20px;
+            background: #fff;
+            height: 15px;
+            position: absolute;
+            -webkit-border-radius: 50%/40% 40% 60% 60%;
+            border-radius: 50%/40% 40% 60% 60%;
+            -webkit-animation: blink 0.5s infinite alternate;
+            animation: blink 0.5s infinite alternate;
+            -webkit-transition: all 0.3s ease;
+            -o-transition: all 0.3s ease;
+            transition: all 0.3s ease;
+        }
+
+    .bear__eyes--left {
+        left: 50px;
+        -webkit-transform: skewY(5deg);
+        -ms-transform: skewY(5deg);
+        transform: skewY(5deg);
+    }
+
+    .bear__eyes--right {
+        right: 50px;
+        -webkit-transform: skewY(-5deg);
+        -ms-transform: skewY(-5deg);
+        transform: skewY(-5deg);
+    }
+
+    .bear__nose {
+        width: 80px;
+        background: #fff;
+        height: 100px;
+        margin: auto;
+        -webkit-transform: translateY(80px);
+        -ms-transform: translateY(80px);
+        transform: translateY(80px);
+        -webkit-border-radius: 50%/60% 60% 30% 30%;
+        border-radius: 50%/60% 60% 30% 30%;
+        position: relative;
+        -webkit-animation: moveNose 3s infinite;
+        animation: moveNose 3s infinite;
+        -webkit-transition: 0.4s ease;
+        -o-transition: 0.4s ease;
+        transition: 0.4s ease;
+    }
+
+    .bear__nose--inner {
+        width: 50px;
+        height: 26px;
+        background: #000;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        -webkit-transform: translate(-50%, -50%);
+        -ms-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+        -webkit-border-radius: 50%/40% 40% 60% 60%;
+        border-radius: 50%/40% 40% 60% 60%;
+        -webkit-animation: flip 0.5s infinite alternate;
+        animation: flip 0.5s infinite alternate;
+    }
+
+        .bear__nose--inner:after {
+            content: "";
+            width: 20px;
+            height: 20px;
+            background: #000;
+            position: absolute;
+            bottom: -6px;
+            left: 50%;
+            -webkit-border-radius: 50px;
+            border-radius: 50px;
+            -webkit-transform: translate(-50%);
+            -ms-transform: translate(-50%);
+            transform: translate(-50%);
+            -webkit-box-shadow: 20px 5px 0 #fff, -20px 5px 0 #fff;
+            box-shadow: 20px 5px 0 #fff, -20px 5px 0 #fff;
+        }
+
+    .shadow {
+        width: 200px;
+        height: 30px;
+        margin: auto;
+        margin-top: -20px;
+        background: #000;
+        opacity: 0.6;
+        display: block;
+        -webkit-border-radius: 100%;
+        border-radius: 100%;
+        -webkit-transform: translateY(60px);
+        -ms-transform: translateY(60px);
+        transform: translateY(60px);
+        -webkit-filter: blur(17px);
+        filter: blur(17px);
+        -webkit-animation: shadow 2s infinite alternate;
+        animation: shadow 2s infinite alternate;
+    }
+
+    @@-webkit-keyframes updown {
+        to {
+            -webkit-transform: translateY(40px);
+            transform: translateY(40px);
+        }
+    }
+
+    @@keyframes updown {
+        to {
+            -webkit-transform: translateY(40px);
+            transform: translateY(40px);
+        }
+    }
+
+    @@-webkit-keyframes blink {
+        from {
+            height: 0;
+        }
+
+        to {
+            height: 15px;
+        }
+    }
+
+    @@keyframes blink {
+        from {
+            height: 0;
+        }
+
+        to {
+            height: 15px;
+        }
+    }
+
+    @@-webkit-keyframes moveNose {
+        0%, 100%, 90% {
+            -webkit-transform: translateY(80px);
+            transform: translateY(80px);
+        }
+
+        20%, 30% {
+            -webkit-transform: translate(20px, 60px);
+            transform: translate(20px, 60px);
+        }
+
+        60%, 70% {
+            -webkit-transform: translate(-20px, 60px);
+            transform: translate(-20px, 60px);
+        }
+    }
+
+    @@keyframes moveNose {
+        0%, 100%, 90% {
+            -webkit-transform: translateY(80px);
+            transform: translateY(80px);
+        }
+
+        20%, 30% {
+            -webkit-transform: translate(20px, 60px);
+            transform: translate(20px, 60px);
+        }
+
+        60%, 70% {
+            -webkit-transform: translate(-20px, 60px);
+            transform: translate(-20px, 60px);
+        }
+    }
+
+    @@-webkit-keyframes shadow {
+        from {
+            width: 200px;
+        }
+
+        to {
+            width: 150px;
+        }
+    }
+
+    @@keyframes shadow {
+        from {
+            width: 200px;
+        }
+
+        to {
+            width: 150px;
+        }
+    }
+</style>
+
+<div class="container p-0" style="text-align: -webkit-center;">
+    <div class="bear">
+        <div class="bear__ears">
+            <div class="bear__ears__left ear"></div>
+            <div class="bear__ears__right ear"></div>
+        </div>
+        <div class="bear__body">
+            <div class="bear__eyes">
+                <div class="bear__eyes--left eye"></div>
+                <div class="bear__eyes--right eye"></div>
+            </div>
+            <div class="bear__nose">
+                <div class="bear__nose--inner"></div>
+            </div>
+        </div>
+    </div>
+    <div class="shadow"></div>
+</div>
+<div class="personal-info">
+    <h2><i class="bi bi-bag-check-fill"></i> Checkout</h2>
+    <form class="checkout" id="checkoutHomeDelivery" action="/Checkout/UserDetails" method="post">
+        <div class="form-group input-box col-lg-6 col-md-8 col-mb-12" hidden>
+            <input type="number" name="Id" class="form-control input-tb" id="" aria-describedby="" value="@Model.UserDetail.Id" placeholder="" required>
+        </div>
+        <div class="form-group input-box col-lg-6 col-md-8 col-mb-12">
+            <input type="text" name="MobileNumber" class="form-control input-tb" id="MobileNumber" aria-describedby="" value="@Model.UserDetail.MobileNumber" placeholder="Mobile Number*" required readonly>
+        </div>
+        <div class="form-group input-box col-lg-6 col-md-8 col-mb-12">
+            <input type="text" name="Name" class="form-control input-tb" id="Name" aria-describedby="" value="@Model.UserDetail.Name" placeholder="Name*" required>
+        </div>
+        <div class="form-group input-box col-lg-6 col-md-8 col-mb-12">
+            <input type="Email" name="Email" class="form-control input-tb" id="Email" value="@Model.UserDetail.Email" aria-describedby="" placeholder="Email*" required>
+        </div>
+        <div class="form-group input-box col-lg-6 col-md-8 col-mb-12">
+            <label class="form-check-label pl-3">DOB</label>
+            <input type="date" name="DOB" class="form-control input-tb" id="" aria-describedby="" value="@Model.UserDetail.DOB" placeholder="DOB">
+        </div>
+        <input type="text" name="Comment" value="@Model.Comment" hidden />
+        <div class="form-group input-box col-lg-6 col-md-8 col-mb-12" @(Model.TableNo == Constant.HomeDelivery ? "" : "hidden")>
+            <input type="text" name="HouseNo" class="form-control input-tb" id="HouseNo" aria-describedby="" value="@Model.UserDetail.HouseNo" placeholder="*House No">
+        </div>
+        <div class="form-group input-box col-lg-6 col-md-8 col-mb-12" @(Model.TableNo == Constant.HomeDelivery ? "" : "hidden")>
+            <input type="text" name="Street" class="form-control input-tb" id="Street" aria-describedby="" value="@Model.UserDetail.Street" placeholder="Street*">
+        </div>
+        <div class="form-group input-box col-lg-6 col-md-8 col-mb-12" @(Model.TableNo == Constant.HomeDelivery ? "" : "hidden")>
+            <input type="text" name="LocalArea" class="form-control input-tb" id="LocalArea" aria-describedby="" value="@Model.UserDetail.LocalArea" placeholder="*Local Area">
+        </div>
+        <div class="form-group input-box col-lg-6 col-md-8 col-mb-12" @(Model.TableNo == Constant.HomeDelivery ? "" : "hidden")>
+            <input type="text" name="LandMark" class="form-control input-tb" id="LandMark" aria-describedby="" value="@Model.UserDetail.LandMark" placeholder="Land Mark*">
+        </div>
+        <div class="form-group input-box col-lg-6 col-md-8 col-mb-12" @(Model.TableNo == Constant.HomeDelivery ? "" : "hidden")>
+            <input type="text" name="Pincode" class="form-control input-tb" id="Pincode" aria-describedby="" maxlength="6" minlength="6" value="@Model.UserDetail.Pincode" placeholder="Pincode*">
+        </div>
+        <div class="form-group input-box col-lg-6 col-md-8 col-mb-12" id="addressSave">
+            <div class="d-flex">
+                <input data-val="true"
+                       data-val-required="The isActive field is required."
+                       id="isActive"
+                       name="isChange"
+                       type="checkbox"
+                       value="true" />
+
+                <input name="isChange" type="hidden" value="false" />
+                <label class="ml-2">You want to set this as your default details.</label>
+            </div>
+        </div>
+        <div class="PaymentMode mb-2">
+            <label class="text-body pb-1">Payment Mode</label>
+            <br />
+            @foreach (PaymentType val in Enum.GetValues(typeof(PaymentType)))
+            {
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="PaymentType" id="inlineRadio1" value="@((int)val)">
+                    <label class="form-check-label" for="inlineRadio1">@val</label>
+                </div>
+            }
+        </div>
+        <button class="input-btn mb-2 mt-0" id="Place-Order" type="button">
+            <div class="spinner-border" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+            Place Order
+        </button>
+        <br />
+
+        <span style="color: red; font-size: 12px;">*Please check your details before submit.</span>
+        <input type="hidden" name="isEbill" value="false" id="eBill" />
+    </form>
+</div>
+<script>
+    $("#addressSave").show();
+    if ('@Model.UserDetail.Name' == '' || '@Model.UserDetail.Name' == null) {
+        $("#addressSave").hide();
+        $('#isActive').prop('checked', true);
+    }
+    $(".spinner-border").hide();
+    $(".search-icon").hide();
+    $("#checkoutHomeDelivery").validate({
+        rules: {
+            MobileNumber: {
+                number: true,
+                required: true,
+                minlength: 10,
+                maxlength: 10,
+            },
+            Name: {
+                required: true,
+                minlength: 2,
+            },
+            Email: {
+                required: true,
+                email: true,
+            },
+            HouseNo: {
+                required: true,
+            },
+            Street: {
+                required: true,
+            },
+            LocalArea: {
+                required: true,
+            },
+            LandMark: {
+                required: true,
+            },
+            Pincode: {
+                number: true,
+                required: true,
+                minlength: 6,
+                maxlength: 6,
+            },
+        },
+        messages: {
+            MobileNumber: {
+                number: '* Enter your valid contact number',
+                required: '* Contact Number is required',
+                minlength: '* Enter your valid contact number',
+                maxlength: '* Enter your valid contact number',
+            },
+            Name: {
+                required: '* Your name is required',
+            },
+            Email: {
+                required: '* Email required',
+                email: '* Enter your valid email'
+            },
+            HouseNo: {
+                required: '* House No is required',
+            },
+            Street: {
+                required: '* Street is required',
+            },
+            LocalArea: {
+                required: '* Local Area is required',
+            },
+            LandMark: {
+                required: '* Land Mark is required',
+            },
+            Pincode: {
+                number: '* Enter valid Pincode',
+                required: '* Pincode is required',
+                minlength: '* Enter valid Pincode',
+                maxlength: '* Enter valid Pincode',
+            },
+        }
+    });
+    $(".checkout").validate({
+        rules: {
+            MobileNumber: {
+                number: true,
+                required: true,
+                minlength: 10,
+                maxlength:10,
+            },
+            Name: {
+                required: true,
+                minlength: 2,
+            },
+            Email: {
+                required: true,
+                email: true,
+            },
+        },
+        messages: {
+            MobileNumber: {
+                number: '* Enter your valid contact number',
+                required: '* Contact Number is required',
+                minlength: '* Enter your valid contact number',
+                maxlength: '* Enter your valid contact number',
+            },
+            Name: {
+                required: '* Your name is required',
+            },
+            Email: {
+                required: '* Email required',
+                email: '* Enter your valid email'
+            },
+        }
+    });
+    @*$("#Place-Order").click(function () {
+        $(".loadermodel").show();
+        $(".spinner-border").show();
+        $("#Place-Order").prop('disabled', true);
+        var PaymentType = $("input[name=PaymentType]:checked").val();
+        if (PaymentType == null) {
+            alert("Please select the payment type!");
+            $(".loadermodel").hide();
+            $(".spinner-border").hide();
+            $("#Place-Order").prop('disabled', false);
+        } else {
+                    if ('@Model.TableNo' == '@Constant.HomeDelivery') {
+            if ($("#checkoutHomeDelivery").valid()) {
+                $.ajax({
+                    type: 'POST',
+                    url: '/Checkout/UserDetails',
+                    data: $("#checkoutHomeDelivery").serialize()
+                })
+                    .done(function (response) {
+                        if (response == true) {
+                            var url = "/ThankYouPage"
+                            window.location.href = url;
+                            $(".loadermodel").hide();
+                            $(".spinner-border").hide();
+                            $("#Place-Order").prop('disabled', false);
+                        }
+                        else {
+                            alert("Something went wrong!");
+                            $(".loadermodel").hide();
+                            $(".spinner-border").hide();
+                            $("#Place-Order").prop('disabled', false);
+                        }
+                    })
+                    .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                        alert("Something went wrong!");
+                        $(".loadermodel").hide();
+                        $(".spinner-border").hide();
+                        $("#Place-Order").prop('disabled', false);
+                    });
+            }
+            else {
+                $(".loadermodel").hide();
+                $(".spinner-border").hide();
+                $("#Place-Order").prop('disabled', false);
+            }
+        }
+        else {
+            if ($(".checkout").valid()) {
+                $.ajax({
+                    type: 'POST',
+                    url: '/Checkout/UserDetails',
+                    data: $(".checkout").serialize()
+                })
+                    .done(function (response) {
+                        if (response == true) {
+                            var url = "/ThankYouPage"
+                               window.location.href = url;
+                               $(".loadermodel").hide();
+                               $(".spinner-border").hide();
+                               $("#Place-Order").prop('disabled', false);
+                        }
+                        else {
+                            alert("Something went wrong!");
+                            $(".loadermodel").hide();
+                            $(".spinner-border").hide();
+                            $("#Place-Order").prop('disabled', false);
+                        }
+                    })
+                    .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                        alert("Something went wrong!");
+                        $(".loadermodel").hide();
+                        $(".spinner-border").hide();
+                        $("#Place-Order").prop('disabled', false);
+                    });
+            }
+            else {
+                $(".loadermodel").hide();
+                $(".spinner-border").hide();
+                $("#Place-Order").prop('disabled', false);
+            }
+        }
+        }
+        $(".loadermodel").hide();
+    });*@
+    $("#Place-Order").click(function () {
+        Swal.fire({
+            title: 'Do you want to opt for an E-Bill?',
+            text: 'An E-Bill today can save the environment',
+            showDenyButton: true,
+            showCancelButton: false,
+            confirmButtonText: 'E-Bill',
+            denyButtonText: `Receipt`,
+        }).then((result) => {
+            /* Read more about isConfirmed, isDenied below */
+            if (result.isConfirmed) {
+                $("#eBill").val(true);
+                $(".loadermodel").show();
+                $(".spinner-border").show();
+                $("#Place-Order").prop('disabled', true);
+                var PaymentType = $("input[name=PaymentType]:checked").val();
+                if (PaymentType == null) {
+                    alert("Please select the payment type!");
+                    $(".loadermodel").hide();
+                    $(".spinner-border").hide();
+                    $("#Place-Order").prop('disabled', false);
+                } else {
+                            if ('@Model.TableNo' == '@Constant.HomeDelivery') {
+                    if ($("#checkoutHomeDelivery").valid()) {
+                        $.ajax({
+                            type: 'POST',
+                            url: '/Checkout/UserDetails',
+                            data: $("#checkoutHomeDelivery").serialize(),
+                            ebill: false
+                        })
+                            .done(function (response) {
+                                if (response.result == true) {
+                                    
+                                    var url = "@Url.Action("ThankYouPage","Checkout")";
+                                    window.location.href = url;
+                                    $(".loadermodel").hide();
+                                    $(".spinner-border").hide();
+                                    $("#Place-Order").prop('disabled', false);
+                                }
+                                else {
+                                    alert("Something went wrong!");
+                                    $(".loadermodel").hide();
+                                    $(".spinner-border").hide();
+                                    $("#Place-Order").prop('disabled', false);
+                                }
+                            })
+                            .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                                alert("Something went wrong!");
+                                $(".loadermodel").hide();
+                                $(".spinner-border").hide();
+                                $("#Place-Order").prop('disabled', false);
+                            });
+                    }
+                    else {
+                        $(".loadermodel").hide();
+                        $(".spinner-border").hide();
+                        $("#Place-Order").prop('disabled', false);
+                    }
+                }
+                else {
+                    if ($(".checkout").valid()) {
+                        $.ajax({
+                            type: 'POST',
+                            url: '/Checkout/UserDetails',
+                            data: $(".checkout").serialize()
+                        })
+                            .done(function (response) {
+                                if (response.result == true) {
+                                    var orderId = response.orderId;
+                                    var url = "ThankYouPage";
+                                    if (response.orderId != "") {
+                                        url = "ThankYouPage?OrderId=" + orderId;
+                                    }
+                                       window.location.href = url;
+                                       $(".loadermodel").hide();
+                                       $(".spinner-border").hide();
+                                       $("#Place-Order").prop('disabled', false);
+                                }
+                                else {
+                                    alert("Something went wrong!");
+                                    $(".loadermodel").hide();
+                                    $(".spinner-border").hide();
+                                    $("#Place-Order").prop('disabled', false);
+                                }
+                            })
+                            .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                                alert("Something went wrong!");
+                                $(".loadermodel").hide();
+                                $(".spinner-border").hide();
+                                $("#Place-Order").prop('disabled', false);
+                            });
+                    }
+                    else {
+                        $(".loadermodel").hide();
+                        $(".spinner-border").hide();
+                        $("#Place-Order").prop('disabled', false);
+                    }
+                }
+                }
+                $(".loadermodel").hide();
+            }
+            else if (result.isDenied) {
+                $("#eBill").val(false);
+                $(".loadermodel").show();
+                $(".spinner-border").show();
+                $("#Place-Order").prop('disabled', true);
+                var PaymentType = $("input[name=PaymentType]:checked").val();
+                if (PaymentType == null) {
+                    alert("Please select the payment type!");
+                    $(".loadermodel").hide();
+                    $(".spinner-border").hide();
+                    $("#Place-Order").prop('disabled', false);
+                } else {
+                            if ('@Model.TableNo' == '@Constant.HomeDelivery') {
+                    if ($("#checkoutHomeDelivery").valid()) {
+                        $.ajax({
+                            type: 'POST',
+                            url: '/Checkout/UserDetails',
+                            data: $("#checkoutHomeDelivery").serialize(),
+                            ebill: false
+                        })
+                            .done(function (response) {
+                                if (response.result == true) {
+                                    var url = "/ThankYouPage"
+                                    window.location.href = url;
+                                    $(".loadermodel").hide();
+                                    $(".spinner-border").hide();
+                                    $("#Place-Order").prop('disabled', false);
+                                }
+                                else {
+                                    alert("Something went wrong!");
+                                    $(".loadermodel").hide();
+                                    $(".spinner-border").hide();
+                                    $("#Place-Order").prop('disabled', false);
+                                }
+                            })
+                            .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                                alert("Something went wrong!");
+                                $(".loadermodel").hide();
+                                $(".spinner-border").hide();
+                                $("#Place-Order").prop('disabled', false);
+                            });
+                    }
+                    else {
+                        $(".loadermodel").hide();
+                        $(".spinner-border").hide();
+                        $("#Place-Order").prop('disabled', false);
+                    }
+                }
+                else {
+                    if ($(".checkout").valid()) {
+                        $.ajax({
+                            type: 'POST',
+                            url: '/Checkout/UserDetails',
+                            data: $(".checkout").serialize()
+                        })
+                            .done(function (response) {
+                                if (response.result == true) {
+                                    var orderId = response.orderId;
+                                    var url = "ThankYouPage";
+                                    if (response.orderId != "") {
+                                        url = "ThankYouPage?OrderId=" + orderId;
+                                    }
+                                    
+                                       window.location.href = url;
+                                       $(".loadermodel").hide();
+                                       $(".spinner-border").hide();
+                                       $("#Place-Order").prop('disabled', false);
+                                }
+                                else {
+                                    alert("Something went wrong!");
+                                    $(".loadermodel").hide();
+                                    $(".spinner-border").hide();
+                                    $("#Place-Order").prop('disabled', false);
+                                }
+                            })
+                            .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                                alert("Something went wrong!");
+                                $(".loadermodel").hide();
+                                $(".spinner-border").hide();
+                                $("#Place-Order").prop('disabled', false);
+                            });
+                    }
+                    else {
+                        $(".loadermodel").hide();
+                        $(".spinner-border").hide();
+                        $("#Place-Order").prop('disabled', false);
+                    }
+                }
+                }
+                $(".loadermodel").hide();
+            }
+        })
+    });
+</script>

@@ -1,0 +1,290 @@
+﻿<!--@using ViewModels;
+@{
+    ViewBag.Title = "Menu";
+    Layout = null;
+}
+<style>
+    .menu-img img {
+        cursor: pointer;
+    }
+</style>
+<div class="Menu-Heading mt-4">
+
+</div>
+<div class="Browse-Category">
+    <div id="one" class="button">Browse Menu <i class="fa fa-cutlery" aria-hidden="true"></i></div>
+    <div id="modal-container">
+        <div class="modal-background">
+            <div class="modal">
+                <div class="heading d-flex">
+                    <div>
+                        <span>Categories</span>
+                    </div>
+                    <div>
+                        <button class="modal-close">X</button>
+                    </div>
+                </div>
+                <ul class="MenuCategorieslist">-->
+                    @*<li><button onclick="RemoveFilter()">All</button> <span class="cat-count align-self-sm-center mr-2"></span></li>
+                    <li><button onclick="CatFilter('@Constant.Speciality')">Restaurant Speciality</button> <span class="cat-count align-self-sm-center mr-2"></span></li>
+                    @foreach (var item in Model.menuCatagories)
+                    {
+                        <li class="d-flex"><button onclick="CatFilter('@item.MCCode')" class="@(ViewBag.CatId != null ? Convert.ToInt32(ViewBag.CatId) == item.MCCode ? "active":"" : "")">@item.MCDesc </button> <span class="cat-count align-self-sm-center mr-2">@item.Count</span></li>
+                    }*@
+                <!--</ul>
+            </div>
+        </div>
+    </div>
+    <input type="number" id="FilterType" value="" hidden/>
+</div>-->
+
+@*@if (Model.MenuModel.Count() > 0)
+{
+    for (int i = 0; i < Model.MenuModel.Count(); i++)
+    {
+        <div class="menu-box ">
+            <div class="menu row">
+                <div class="menu-desc col-lg-10 col-md-10 col-8">
+                    <h3>
+                        <i class="bi bi-triangle-fill neg-non-icon" @(Model.MenuModel.ElementAtOrDefault(i).MenuType == Constant.NonVeg ? "" : "hidden")></i>
+                        <i class="bi bi-triangle-fill neg-non-icon" style="color: #4caf50 !important;" @(Model.MenuModel.ElementAtOrDefault(i).MenuType == Constant.Veg ? "" : "hidden")></i>
+                        @Model.MenuModel.ElementAtOrDefault(i).MDesc
+                    </h3>
+                    @if (Model.MenuModel.ElementAtOrDefault(i).Amount == Model.MenuModel.ElementAtOrDefault(i).DisAmount)
+                    {
+                        <h3>&#8377; @Math.Round(Model.MenuModel.ElementAtOrDefault(i).Amount) </h3>
+                    }
+                    else
+                    {
+                        <h3>&#8377; @Math.Round(Model.MenuModel.ElementAtOrDefault(i).DisAmount) <span style="color: #ff3d2f; text-decoration: line-through; "> &#8377; @Math.Round(Model.MenuModel.ElementAtOrDefault(i).Amount) </span> </h3>
+                    }
+                    <p class="item-desc">@Model.MenuModel.ElementAtOrDefault(i).MComment</p>
+                </div>
+                <div class="menu-img col-lg-2 col-md-2 col-4">
+                    <img src="@Model.MenuModel.ElementAtOrDefault(i).Image" class="MenuImage" alt="@Model.MenuModel.ElementAtOrDefault(i).MDesc"/>
+                    <div id="myModal" class="modal fade" role="dialog">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-body">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="menu-btn">
+                        <button id="@Model.MenuModel.ElementAtOrDefault(i).MCode" onclick="cart('@Model.MenuModel.ElementAtOrDefault(i).MCode')" class="Add">Add <i class="bi bi-plus item-plus"></i></button>
+                        <button style="display:none;" id="added" type="button" onclick="Removecart('@Model.MenuModel.ElementAtOrDefault(i).MCode')" class="@Model.MenuModel.ElementAtOrDefault(i).MCode">Added <i class="bi bi-check"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+else
+{
+    <h6 class="p-3" style="text-align: center;">No Item available</h6>
+}*@
+<!--<div class="menuData">
+
+</div>
+<script>
+    $(document).ready(function () {
+        getMenuData();
+        setTimeout(() => {
+            $(".MenuImage").click(function () {
+                var i = $(this).attr("src");
+                var d = $(this).attr("alt");
+                $(".modal-body").html("<img src='" + i + "' class='modal-img'>");
+                $(".modal-body").append("<div class='modal-desc mt-2 text-center'>" + d + "</div>");
+                $("#myModal").modal();
+            });
+        }, 3000);
+    });
+    function getMenuData() {
+        var searchvalue = $("#search-bar").val();
+        var veg = $('input[name="Veg"]').prop("checked");
+        var RestType = "@Constant.Food";
+        if ($("#tab2").prop("checked") == true) {
+            RestType = "@Constant.Bar";
+        }
+        else if ($("#tab3").prop("checked") == true) {
+            RestType = "@Constant.Beverage";
+        }
+        var MCCode = $("#FilterType").val();
+        var nonveg = $('input[name="NonVeg"]').prop("checked");
+
+        $.ajax({
+            type: "POST",
+            url: "/Home/Menu",
+            dataType: 'json',
+            data: {
+                SearchValue: searchvalue,
+                MCCode: MCCode,
+                restType: RestType,
+                Vegstatus: veg,
+                Vegstatus: veg,
+                NonVegstatus: nonveg,
+            },
+            success: function (response) {
+                var returnedData = JSON.parse(response);
+                $("#FilterType").val(returnedData.CategoryType);
+                jQuery.each(returnedData.MenuModel, function (index, item) {
+                    var variable = '' +
+'        <div class="menu-box ">' +
+'            <div class="menu row">' +
+'                <div class="menu-desc col-lg-10 col-md-10 col-8">' +
+                        '                    <h3>' +
+                        '                        <i class="bi bi-triangle-fill neg-non-icon" ' + (item.MenuType == "@Constant.NonVeg" ? "" : "hidden") + '></i>' +
+                        '                        <i class="bi bi-triangle-fill neg-non-icon" style="color: #4caf50 !important;" ' + (item.MenuType == "@Constant.Veg" ? "" : "hidden") + '></i>' +
+                        '                        ' + item.MDesc +'' +
+                        '                    </h3>' +
+                        '                        <h3 class="' + (item.Amount == item.DisAmount ? "" : "d-none") + '">&#8377; ' + Math.round(item.Amount) + ' </h3>' +
+                        '                        <h3 class="' + (item.Amount == item.DisAmount ? "d-none" : "") + '">&#8377; ' + Math.round(item.DisAmount) +' <span style="color: #ff3d2f; text-decoration: line-through; "> &#8377; ' + Math.round(item.Amount) +' </span> </h3>' +
+                        '                    <p class="item-desc">' + item.MComment +'</p>' +
+'                </div>' +
+'                <div class="menu-img col-lg-2 col-md-2 col-4">' +
+                        '                    <img src="' + item.Image + '" class="MenuImage" alt="' + item.MDesc +'"/>' +
+'                    <div id="myModal" class="modal fade" role="dialog">' +
+'                        <div class="modal-dialog">' +
+'                            <div class="modal-content">' +
+'                                <div class="modal-body">' +
+'                                </div>' +
+'                            </div>' +
+'                        </div>' +
+'                    </div>' +
+                        '                    <div class="menu-btn">' +
+                        '                        <button id="' + item.MCode + '" onclick="cart(\'' + item.MCode + '\')" class="Add">Add <i class="bi bi-plus item-plus"></i></button>' +
+                        '                        <button id="added" type="button" onclick="Removecart(\'' + item.MCode + '\')" class="' + item.MCode + '">Added <i class="bi bi-check"></i></button>' +
+'                    </div>' +
+'                </div>' +
+'            </div>' +
+'        </div>' +
+'';
+                    $(".menuData").append(variable);
+                });
+                var variable2 = '' +
+                    '        <h6 style="font-weight: 600; letter-spacing: 1px; font-size: 18px;" id="Heading-Menu">' + returnedData.MenuHeading   +'</h6>' +
+                    '    <hr />' +
+                    '';
+                $(".Menu-Heading").append(variable2);
+
+var variable3 = '' +
+'                    <li><button onclick="RemoveFilter()">All</button> <span class="cat-count align-self-sm-center mr-2"></span></li>' +
+'                    <li><button onclick="CatFilter(\'@Constant.Speciality\')">Restaurant Speciality</button> <span class="cat-count align-self-sm-center mr-2"></span></li>' +
+'' +
+                    '';
+                $(".MenuCategorieslist").append(variable3);
+
+                jQuery.each(returnedData.menuCatagories, function (index, item) {
+                    var variable4 = '' +
+                        '                        <li class="d-flex"><button onclick="CatFilter(\'' + item.MCCode + '\')" class="' + ("@ViewBag.CatId" != null ? parseInt("@ViewBag.CatId") == item.MCCode ? "active" : "" : "") + '">'+
+                        ' ' + item.MCDesc + ' </button > <span class="cat-count align-self-sm-center mr-2">' + item.Count +'</span></li > ' +
+'';
+                    $(".MenuCategorieslist").append(variable4);
+                });
+            }
+        });
+    }-->
+    @*function removeToggle(id) {
+        if (id == '@Constant.Speciality') { $("#heading-menu").text("@Constant.SpecialityText"); } else {
+            $("#heading-menu").text('@model.categorytypename'); }
+        var vegtype = '@model.veg';
+        var nonvegtype = '@model.nonveg';
+        if (vegtype == "false" || nonvegtype == "false") {
+            $("#foodtype").hide();
+        }
+        else {
+            $("#foodtype").show();
+        }
+    };*@
+    <!--$('.button').click(function () {
+        var buttonId = $(this).attr('id');
+        $('#modal-container').removeAttr('class').addClass(buttonId);
+        $('body').addClass('modal-active');
+    })
+    $('.modal-close').click(function () {
+        $("#modal-container").addClass('out');
+        $('body').removeClass('modal-active');
+    });
+    function focusActionup() {
+        $('html, body').animate({
+            scrollTop: $("div.Menu-Heading").offset().top - 100
+        }, 200);
+    }
+    function CatFilter(id) {
+         $(".loadermodel").show();
+        $(".Menu-Heading").html("");
+        $(".menuData").html("");
+        $(".MenuCategorieslist").html("");
+        $("#FilterType").val(id);
+        getMenuData();
+        focusActionup();
+        $(".loadermodel").hide();
+    }
+    function RemoveFilter() {
+        $(".loadermodel").show();
+        $("#FilterType").val("0");
+        $(".Menu-Heading").html("");
+        $(".menuData").html("");
+        $(".MenuCategorieslist").html("");
+        getMenuData();
+        focusActionup();
+        $(".loadermodel").hide();
+    }
+    $(document).ready(function () {
+        $.ajax({
+            url: '@Url.Action("UserCartCode", "Cart")',
+            dataType: "json",
+            success: function (result) {
+                for (var i = 0; i < result.length; i++) {
+                    $("." + result[i]).show();
+                    $("#" + result[i]).hide();
+               }
+            },
+        })
+    });
+    function cart(id) {
+        if (id != null) {
+            $.ajax({
+                type:"POST",
+                url: '@Url.Action("AddInCart", "Cart")',
+                data: {
+                    MCode: id
+                },
+                success: function (result) {
+                    if (result.Result == true) {
+                        $("#cart-quantity").text(result.Count);
+                        $("#cartTAmount").text(" " + Math.round(result.TotalAmount) + ".00");
+                        $("#" + id).hide();
+                        $("." + id).show();
+                    }
+                },
+                 error: function () {
+                    alert("Something Went Wrong");
+                }
+            })
+        }
+    }
+    function Removecart(id) {
+        if (id != null) {
+            $.ajax({
+                type:"POST",
+                url: '@Url.Action("RemoveInCart", "Cart")',
+                data: {
+                    CartItemId: id,
+                    menu: true
+                },
+                success: function (result) {
+                    if (result.Result == true) {
+                        $("#cart-quantity").text(result.Count);
+                        $("#cartTAmount").text(" " + Math.round(result.TotalAmount) + ".00");
+                        $("#" + id).show();
+                        $("." + id).hide();
+                    }
+                },
+                 error: function () {
+                    alert("Something Went Wrong");
+                }
+            })
+        }
+    }
+</script>-->

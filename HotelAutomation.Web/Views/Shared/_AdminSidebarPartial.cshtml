@@ -1,0 +1,129 @@
+﻿@using Services
+@{
+    Layout = null;
+    var RCode = Context.Session["RCode"] != null ? Context.Session["RCode"].ToString() : "";
+    var restName =RestaurantService.Instance.GetRestaurantByID(RCode);
+    var Captain = Context.Session["Captain"] != null ? Context.Session["Captain"].ToString() : "";
+    var Admin = Context.Session["Admin"] != null ? Context.Session["Admin"].ToString() : "";
+}
+<style>
+    .sidebar {
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+    @@media (min-width: 768px) {
+        .sidebar.toggled {
+            overflow-y: scroll;
+            width: 9.5rem !important;
+        }
+            .sidebar.toggled .sidebar-brand .sidebar-brand-icon {
+                display: block !important;
+            }
+    }
+    .sidebar-brand .sidebar-brand-icon {
+        display: none;
+    }
+    @@media (max-width: 768px) {
+        .sidebar-brand .sidebar-brand-icon {
+            display: inline;
+        }
+    }
+</style>
+<ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="@Url.Action("Index","Admin")">
+        <div class="sidebar-brand-icon">
+            <img src="@restName.Img" alt="logo" style=" width: -webkit-fill-available;" />
+        </div>
+        <div class="sidebar-brand-text mx-3">@restName.Name<sup></sup></div>
+    </a>
+    <hr class="sidebar-divider my-0">
+    @if (Admin.Length > 0 && Captain == "")
+    {
+        <li class="nav-item active">
+            <a class="nav-link" href="@Url.Action("Index", "Admin")">
+                <i class="bi bi-clipboard-pulse" style="font-size:20px;"></i>
+                <span>Dashboard</span>
+            </a>
+        </li>
+    }
+    <hr class="sidebar-divider">
+    <!-- Nav Item - Charts -->
+    <li class="nav-item">
+        <a class="nav-link" href="@Url.Action("CurrentStatus","Admin")">
+            <i class="bi bi-clock-history"></i>
+            <span>Order Placed</span>
+            <span class="bg-danger text-white d-none" style=" padding: 1px 6px;" id="placeOrdersCountCookie"></span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@Url.Action("InventoryTable","Admin")">
+            <i class="bi bi-clock-history"></i>
+            <span>Inventory</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@Url.Action("Orders","Admin")">
+            <i class="bi bi-cart4"></i>
+            <span>Orders</span>
+            <span class="bg-danger text-white d-none" style=" padding: 1px 6px;" id="ordersCountCookie"></span>
+        </a>
+    </li>
+    @if (Admin.Length > 0 && Captain == "")
+    {
+        <li class="nav-item">
+            <a class="nav-link" href="@Url.Action("AdminMenu", "Admin")">
+                <i class="bi bi-tags-fill"></i>
+                <span>Menu</span>
+            </a>
+        </li>
+    }
+    <li class="nav-item">
+        <a class="nav-link" href="@Url.Action("MenuRating","Admin")">
+            <i class="bi bi-star-half"></i>
+            <span>Menu Rating</span>
+        </a>
+    </li>
+    @if (Admin.Length > 0 && Captain == "")
+    {
+        <li class="nav-item">
+            <a class="nav-link" href="@Url.Action("RestDetails", "Admin")">
+                <i class="bi bi-building"></i>
+                <span>Restaurants</span>
+            </a>
+        </li>
+    }
+    <li class="nav-item">
+        <a class="nav-link" href="@Url.Action("TableUser","Admin")">
+            <i class="bi bi-table"></i>
+            <span>Restaurants Table</span>
+        </a>
+    </li>
+    @if (Admin.Length > 0 && Captain == "")
+    {
+        <li class="nav-item">
+            <a class="nav-link" href="@Url.Action("Promotional","Admin")">
+                <i class="bi bi-envelope"></i>
+                <span>Promotional</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="@Url.Action("CaptainTable", "Admin")">
+                <i class="bi bi-file-earmark-person-fill"></i>
+                <span>Captain</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="@Url.Action("ListBillDiscount", "Admin")">
+                <i class="bi bi-file-earmark-person-fill"></i>
+                <span>Bill Discount</span>
+            </a>
+        </li>
+    }
+    <hr class="sidebar-divider d-none d-md-block">
+    <!-- Sidebar Toggler (Sidebar) -->
+    <div class="text-center d-none d-md-inline">
+        <button class="rounded-circle border-0" id="sidebarToggle"><i class="bi bi-grid-fill" style="color:white;"></i></button>
+    </div>
+    <!-- Sidebar Message -->
+</ul>
+

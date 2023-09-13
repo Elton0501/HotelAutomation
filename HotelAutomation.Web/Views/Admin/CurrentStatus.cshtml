@@ -1,0 +1,510 @@
+﻿@using ViewModels;
+@using Services;
+@{
+    ViewBag.Title = "CurrentStatus";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<style>
+    .card__pricing {
+        position: absolute;
+        background: linear-gradient(157deg, #113456 -12%, #045eb9 109%);
+        width: 30px;
+        height: 43px;
+        right: auto;
+        top: 0rem;
+        text-align: center;
+        font-size: 10px;
+        color: white;
+        border: none;
+        padding: 10px 0;
+    }
+    .card__pricing-symbol {
+        font-size: var(--smaller-font-size);
+    }
+    .card__pricing-month {
+        display: block;
+        font-size: var(--tiny-font-size);
+    }
+
+    .card__pricing-month {
+        color: var(--white-color);
+    }
+
+    .card__pricing::after,
+    .card__pricing::before {
+        content: '';
+        position: absolute;
+    }
+
+    .card__pricing::after {
+        width: 100%;
+        height: 14px;
+        background-color: #f8f9fc;
+        left: 0;
+        bottom: 0;
+        clip-path: polygon(0 100%, 50% 0, 100% 100%);
+    }
+
+    .card__pricing::before {
+        width: 14px;
+        height: 16px;
+        background-color: #ff5722;
+        top: 0;
+        left: -14px;
+        clip-path: polygon(0 100%, 100% 0, 100% 100%);
+    }
+
+    .card-header {
+        padding: 0.35rem 1.25rem;
+        border-radius: 0 !important;
+    }
+
+    .btn {
+        font-size: 13px;
+        margin: 0;
+        padding: 3px 8px;
+    }
+
+    .btn-link.focus, .btn-link:focus {
+        text-decoration: none !important;
+    }
+
+    .btn-link:hover {
+        text-decoration: none !important;
+    }
+
+    .btn.focus, .btn:focus {
+        outline: none;
+        box-shadow: none !important;
+    }
+
+    .collapse .card-body {
+        border: 1px solid lightgrey;
+        margin-top: 6px;
+        border-radius: 4px;
+    }
+
+    .card-header {
+        border-bottom: none !important;
+    }
+
+    .card {
+        border-radius: 0 !important;
+    }
+    @@media (max-width:600px){
+        .card-body {
+            padding: 0.5rem;
+        }
+    }
+</style>
+<div class="row adminpage-head">
+    <div class="col-12">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary text-uppercase">Current Status</h6>
+            </div>
+            <div class="card-body">
+                <div class="showDisplay d-flex pl-3" style="gap: 20px; font-size: 14px;">
+                    <div class="text-left align-self-center">
+                        <label style="font-size:15px;">Filter By</label>
+                    </div>
+                    <div class="TableShow">
+                        <div class="rectBox p-2 bg-gray-100"></div>
+                        <span>Table</span>
+                    </div>
+                    <div class="TableShow">
+                        <div class="rectBox p-2 bg-gray-400"></div>
+                        <span>Take Away</span>
+                    </div>
+                    <div class="TableShow">
+                        <div class="rectBox p-2 bg-warning"></div>
+                        <span>Delivery</span>
+                    </div>
+                </div>
+                <div class="search p-2 text-right border-bottom-danger mb-3 p-3">
+                    <form>
+                        <div class="row w-100">
+                            <div class="col-lg-3 col-md-5 col-12 text-left align-self-center">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="FilterType" id="inlineRadio1" value="0" checked>
+                                    <label class="form-check-label" for="inlineRadio1">All</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="FilterType" id="inlineRadio1" value="1">
+                                    <label class="form-check-label" for="inlineRadio1">Table</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="FilterType" id="inlineRadio2" value="2">
+                                    <label class="form-check-label" for="inlineRadio2">User</label>
+                                </div>
+                            </div>
+                            <div class="col-lg-9 col-md-7 col-12 d-flex w-100">
+                                <input type="search" class="form-control mr-2" placeholder="search.. eg table no,for home delivery 999, take away 998" id="search" value="@ViewBag.SearchValue" />
+                                <button type="button" onclick="loadPlaceOrderData()" class="btn btn-primary p-2 px-3" style="height: fit-content;"><i class="bi bi-search"></i></button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="DataLoad">
+                    <div class="px-app m-5">
+                        <div class="" style="text-align: -webkit-center;">
+                            <div class="px-griditem">
+                                <div id="qt-loading-qtload008" class="qt-loading">
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="placeOrderItems">
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<input id="PunchedBy" hidden />
+
+<script>
+    function SaveKotForPrint(id) {
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("SaveKotForPrint", "Admin")',
+            data: {
+                PoId: id,
+            }
+        })
+        .done(function (response) {
+            if (response == true) {
+                Swal.fire({
+                    title: 'Done',
+                    text: 'Successfully send for Print!',
+                }).then((result) => {
+                });
+            }
+            else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Something went wrong!',
+                })
+            }
+        })
+        .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Something went wrong!',
+            })
+        });
+    }
+    $(Document).ready(function () {
+        loadPlaceOrderData();
+        setTimeout(() => {
+            var existing = $.cookie('newPlaceOrders' + @ViewBag.RCode);
+            if (existing != undefined && existing != "" && existing != null && existing != "null") {
+                $.cookie('newPlaceOrders' + @ViewBag.RCode, null, { path: '/' });
+            }
+        }, 1800);
+    });
+
+    function loadPlaceOrderData() {
+        var searchvalue = $("#search").val();
+        var filterType = $("input[name='FilterType']:checked").val();
+        $.ajax({
+            type: "POST",
+            url: "/Admin/CurrentStatusData",
+            data: {
+                search: searchvalue,
+                FilterType: filterType,
+            },
+            success: function (response) {
+                $(".placeOrderItems").html(response);
+                $(".DataLoad").addClass("d-none");
+                var existing = $.cookie('newPlaceOrders' + @ViewBag.RCode);
+                if (existing != undefined && existing != "" && existing != null && existing != "null") {
+                    newPlaceOrdersList = existing.split('-');
+                    setTimeout(() => {
+                        $.each(newPlaceOrdersList, function (index, value) {
+                            $('#card__pricing' + value).removeClass('d-none');
+                        });
+                    }, 1200);
+                }
+            }
+        });
+    }
+    function saveorder(Tid, Uid) {
+        Swal.fire({
+            title: 'Please fill Captain Code',
+            input: 'text',
+            inputAttributes: {
+                autocapitalize: 'off'
+            },
+            showCancelButton: true,
+            confirmButtonText: 'Look up',
+            showLoaderOnConfirm: true,
+            preConfirm: (login) => {
+                $.ajax({
+                    type: "Post",
+                    url: "/Admin/CaptainCodeCheck",
+                    data: {
+                        Code: login,
+                    },
+                    success: function (data) {
+                        if (data == "true") {
+                            $("#PunchedBy").val(login);
+                            saveOrderByCaptain(Tid, Uid);
+                        }
+                        else {
+                            alert("Sorry Its not right code!");
+                        }
+                    }
+                });
+                //return fetch(`http://localhost:44323/Admin/CaptainCodeCheck?Code=` + login)
+                //    .then(response => {
+                //        if (response == "false") {
+                //            throw new Error(response.statusText)
+                //        }
+                //        return response.json()
+                //    })
+                //    .catch(error => {
+                //        Swal.showValidationMessage(
+                //            `Request failed: ${error}`
+                //        )
+                //    })
+            },
+            allowOutsideClick: () => !Swal.isLoading()
+        }).then((result) => {
+            if (result.isConfirmed) {
+
+            }
+        })
+    }
+    function saveOrderByCaptain(Tid, Uid) {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You want to confirm this order!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, Change it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Swal.fire({
+                title: 'Status',
+                text: 'Changed',
+                icon: 'success',
+                showConfirmButton: false,
+            })
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("SaveOrderByAdmin", "Admin")',
+                data: {
+                    UCode: Uid,
+                    TCode: Tid,
+                    PunchedBy: $("#PunchedBy").val(),
+                }
+            })
+                .done(function (response) {
+                    if (response == true) {
+                        Swal.fire({
+                            title: 'Done',
+                            text: 'Successfully Added!',
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.reload();
+                            }
+                        });
+                    }
+                    else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Something went wrong!',
+                        })
+                    }
+                })
+                .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Something went wrong!',
+                    })
+                });
+        }
+    });
+    }
+    function RemoveOrder(Tid, Uid, Id) {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You want to Remove this Order!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, Change it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Swal.fire({
+                title: 'Status',
+                text: 'Changed',
+                icon: 'success',
+                showConfirmButton: false,
+            })
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("RemoveOrderByAdmin", "Admin")',
+                data: {
+                    UCode: Uid,
+                    TCode: Tid,
+                    Id: Id,
+                }
+            })
+                .done(function (response) {
+                    if (response == true) {
+                        Swal.fire({
+                            title: 'Done',
+                            text: 'Successfully Removed!',
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                $("#POrder" + Id).hide();
+                                var countVal = $("#PlaceOrdersCount").html();
+                                var newVal = parseInt(countVal) - 1;
+                                $("#PlaceOrdersCount").html(newVal);
+                                $("#placeOrdersCountCookie").removeClass("d-none");
+                                $("#placeOrdersCountCookie").addClass("d-none");
+                            }
+                        });
+                    }
+                    else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Something went wrong!',
+                        })
+                    }
+                })
+                .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Something went wrong!',
+                    })
+                });
+        }
+    });
+    }
+    function RemovePlaceOrderItem(Id) {
+            Swal.fire({
+        title: 'Are you sure?',
+        text: "You want to Remove this OrderItem!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, Change it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Swal.fire({
+                title: 'Status',
+                text: 'Changed',
+                icon: 'success',
+                showConfirmButton: false,
+            })
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("RemovePlaceOrderItem", "Admin")',
+                data: {
+                    PoIId: Id,
+                }
+            })
+                .done(function (response) {
+                    if (response == true) {
+                        Swal.fire({
+                            title: 'Done',
+                            text: 'Successfully Removed!',
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                $("#PlaceOrderItem" + Id).hide();
+                            }
+                        });
+                    }
+                    else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Something went wrong!',
+                        })
+                    }
+                })
+                .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Something went wrong!',
+                    })
+                });
+        }
+    });
+    }
+    function SaveAddress(id) {
+        var address = $("#User-Address" + id).val();
+    Swal.fire({
+        title: 'Are you sure',
+        text: "You want to deliver to this address?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, Change it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Swal.fire({
+                title: 'Status',
+                text: 'Changed',
+                icon: 'success',
+                showConfirmButton: false,
+            })
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("SaveOrEditUserAddress", "Admin")',
+                data: {
+                    POId: id,
+                    Address: address,
+                }
+            })
+                .done(function (response) {
+                    if (response == "true") {
+                        Swal.fire({
+                            title: 'Done',
+                            text: 'Successfully Added!',
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.reload();
+                            }
+                        });
+                    }
+                    else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Something went wrong!',
+                        })
+                    }
+                })
+                .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Something went wrong!',
+                    })
+                });
+        }
+    });
+    }
+</script>

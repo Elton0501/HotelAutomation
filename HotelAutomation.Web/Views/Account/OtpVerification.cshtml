@@ -1,0 +1,163 @@
+﻿@model ViewModels.OTPModel
+@{
+    ViewBag.Title = "OtpVerification";
+}
+<style>
+    .inputs input {
+        width: 40px;
+        height: 40px
+    }
+
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        margin: 0
+    }
+
+
+    .form-control:focus {
+        box-shadow: none;
+        border: 2px solid red
+    }
+
+    .validate {
+        border-radius: 20px;
+        height: 40px;
+        width: 140px
+    }
+
+
+    .border-color {
+        border-color: red;
+    }
+</style>
+<div class="container height-100 d-flex justify-content-center align-items-center">
+    <div class="position-relative" style="box-shadow: 1px 1px 3px 2px #dddddd; padding: 5px;">
+        <div class="p-2 text-center">
+            <h3>Enter OTP</h3>
+
+            <div> <span>A code has been sent to</span> <small> @(Model.UserIdentity)</small> </div>
+            <div id="otp" class="inputs d-flex flex-row justify-content-center mt-2">
+                <input class="m-2 text-center form-control rounded" type="number" id="first" maxlength="1" />
+                <input class="m-2 text-center form-control rounded" type="number" id="second" maxlength="1" />
+                <input class="m-2 text-center form-control rounded" type="number" id="third" maxlength="1" />
+                <input class="m-2 text-center form-control rounded" type="number" id="fourth" maxlength="1" />
+                <input class="m-2 text-center form-control rounded" type="number" id="fifth" maxlength="1" />
+                <input class="m-2 text-center form-control rounded" type="number" id="sixth" maxlength="1" />
+            </div>
+            <div class="mt-4">
+                <button class="btn px-4 validate" type="button">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(".rounded").keyup(function () {
+        if (this.value.length == 1) {
+            $(this).next('.rounded').focus();
+        }
+    });
+    $(".validate").click(function () {
+        var value1 = Checkfirst();
+        var value2 = Checksecond();
+        var value3 = Checkthird();
+        var value4 = Checkfourth();
+        var value5 = Checkfifth();
+        var value6 = Checksixth();
+        if (value1 != "" && value2 != "" && value3 != "" && value4 != "" && value5 != "" && value6 != "" &&
+            value1 != undefined && value2 != undefined && value3 != undefined && value4 != undefined && value5 != undefined && value6 != undefined)
+        {
+            var otp = value1 + value2 + value3 + value4 + value5 + value6;
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("OtpVerification", "Account")',
+                data: {
+                    Otp: otp,
+                    UserIdentity: '@Model.UserIdentity',
+                    OtpDetails: '@Model.Details',
+                    mNumber: '@Model.MblNumber',
+                    RCode: '@Model.RCode',
+                    TCode: '@Model.TCode'
+                },
+                success: function (response) {
+                    if (response.status == true) {
+                        var url = "/Menu"
+                        window.location.href = url;
+                    }
+                    else if (response.Request == true) {
+                        alert("You entered wrong otp");
+                    }
+                    else {
+                        alert("Something Went Wrong");
+                    }
+                },
+                error: function () {
+                    alert("Something Went Wrong");
+                }
+            })
+        }
+    });
+    function Checkfirst() {
+        var first = $("#first").val();
+        if (first.length != 1) {
+            $("#first").addClass("border-color");
+        }
+        else {
+            return first;
+        }
+    }
+    function Checksecond() {
+        var second = $("#second").val();
+        if (second.length != 1) {
+            $("#second").addClass("border-color");
+        }
+        else {
+            return second;
+        }
+    }
+    function Checkthird() {
+        var third = $("#third").val();
+        if (third.length != 1) {
+            $("#third").addClass("border-color");
+        }
+        else {
+            return third;
+        }
+    }
+    function Checkfourth() {
+        var fourth = $("#fourth").val();
+        if (fourth.length != 1) {
+            $("#fourth").addClass("border-color");
+        }
+        else {
+            return fourth;
+        }
+    }
+    function Checkfifth() {
+        var fifth = $("#fifth").val();
+        if (fifth.length != 1) {
+            $("#fifth").addClass("border-color");
+        }
+        else {
+            return fifth;
+        }
+    }
+    function Checksixth() {
+        var sixth = $("#sixth").val();
+        if (sixth.length != 1) {
+            $("#sixth").addClass("border-color");
+        }
+        else {
+            return sixth;
+        }
+    }
+    document.addEventListener("DOMContentLoaded", function (event) {
+        function OTPInput() {
+            const inputs = document.querySelectorAll('#otp > *[id]');
+            for (let i = 0; i < inputs.length; i++) { inputs[i].addEventListener('keydown', function (event) { if (event.key === "Backspace") { inputs[i].value = ''; if (i !== 0) inputs[i - 1].focus(); } else { if (i === inputs.length - 1 && inputs[i].value !== '') { return true; } else if (event.keyCode > 47 && event.keyCode < 58) { inputs[i].value = event.key; if (i !== inputs.length - 1) inputs[i + 1].focus(); event.preventDefault(); } else if (event.keyCode > 64 && event.keyCode < 91) { inputs[i].value = String.fromCharCode(event.keyCode); if (i !== inputs.length - 1) inputs[i + 1].focus(); event.preventDefault(); } } }); }
+        } OTPInput();
+    });
+</script>

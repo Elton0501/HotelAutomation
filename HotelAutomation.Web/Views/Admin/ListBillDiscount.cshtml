@@ -1,0 +1,179 @@
+﻿@model IEnumerable<Models.BillDiscount>
+
+@{
+    ViewBag.Title = "Coupon/Custom Discount";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    int count = 0;
+    var message = Convert.ToString(TempData["Message"]);
+}
+<div>
+    @if (message != null && message != "")
+    {
+        if (message == "True")
+        {
+            <div class="bg-success m-3 mx-5 p-2 text-gray-100">
+                <span class="pl-2"> * Successfully Add!</span>
+            </div>
+        }
+        else
+        {
+            <div class="bg-danger m-3 mx-5 p-2 text-gray-100">
+                <span class="pl-2"> * Something went wrong!</span>
+            </div>
+        }
+    }
+</div>
+<div class="adminpage-head">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+            <div>
+                <h6 class="m-0 font-weight-bold text-primary text-uppercase">Discounts - <span style="color: var(--success);">@Model.Count()</span></h6>
+            </div>
+            <div>
+                <a class="btn btn-outline-primary" style="font-size:12px;" href="/Admin/AddBillDiscount">Add Discount</a>
+            </div>
+
+        </div>
+        <div class="card-body table-responsive">
+            <div class="card-body table-responsive">
+                <table class="table table-bordered" id="discounttable" cellspacing="0">
+                    <thead class="thead-dark">
+                        <tr>
+                            @*<th>
+            @Html.DisplayNameFor(model => model.RCode)
+        </th>*@
+                            <th>
+                                #
+                            </th>
+                            <th>Action</th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Table)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.HomeDelivery)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.TakeAway)
+                            </th>
+                            <th>
+                                @Html.DisplayName("FoodOrBev")
+                            </th>
+                            <th>
+                                @Html.DisplayName("Bar")
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.CouponName)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.DiscountPercentage)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.DiscountAmount)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.MinimumAmount)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.DiscountOnItem)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.CouponOnDiscount)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.CreatedOn)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.ExpiredDateTime)
+                            </th>
+                            @*<th>
+            @Html.DisplayNameFor(model => model.CreatedBy)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.IsActive)
+        </th>*@
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            count = count + 1;
+                        <tr>
+                            @*<td>
+            @Html.DisplayFor(modelItem => item.RCode)
+        </td>*@
+                            <td>
+                                @count
+                            </td>
+                            <td>
+                                @Html.ActionLink("Delete", "RemoveBillDiscount", new { id = item.Id }, new { onclick = "return confirm('Are sure wants to delete?');" })
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Table)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.HomeDelivery)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.TakeAway)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.forFoodOrBevrage)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.forBar)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.CouponName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.DiscountPercentage)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.DiscountAmount)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.MinimumAmount)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.DiscountOnItem)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.CouponOnDiscount)
+                            </td>
+                            <td>
+                                <label>@item.CreatedOn.ToString("MMM-dd-yyyy")</label>
+                            </td>
+                            @if (item.ExpiredDateTime != null)
+                            {
+                                <td>
+                                    <label>@Convert.ToDateTime(item.ExpiredDateTime).ToString("MMM-dd-yyyy") @Convert.ToDateTime(item.ExpiredDateTime).ToShortTimeString()</label>
+                                </td>
+                            }
+                            else
+                            {
+                                <td> - </td>
+                            }
+                            @*<td>
+            @Html.DisplayFor(modelItem => item.CreatedBy)
+        </td>*@
+                            @*<td>
+            @Html.DisplayFor(modelItem => item.IsActive)
+        </td>*@
+                        </tr>
+                        }
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        $('#discounttable').DataTable();
+    });
+</script>

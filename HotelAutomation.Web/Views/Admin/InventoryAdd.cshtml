@@ -1,0 +1,91 @@
+﻿@model Models.Inventory
+@using ViewModels;
+@{
+    ViewBag.Title = "InventoryAdd";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="row adminpage-head">
+    <div class="col-12">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary text-uppercase">Add Item In Inventory</h6>
+            </div>
+            <div class="card-body">
+                @using (Html.BeginForm())
+                {
+                    @Html.AntiForgeryToken()
+                <div class="form-horizontal row">
+                    @*@Html.ValidationSummary(true, "", new { @class = "text-danger" })*@
+                    <div class="form-group col-lg-6 col-md-6 col-12">
+                        @Html.LabelFor(model => model.Name, "Item Name", htmlAttributes: new { @class = "control-label" })
+                        <div>
+                            @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group col-lg-6 col-md-6 col-12">
+                        <label class="control-label ml-2">Total Stock</label>
+                        <div>
+                            @Html.EditorFor(model => model.TotalInStock, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.TotalInStock, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group col-lg-6 col-md-6 col-12">
+                        @Html.LabelFor(model => model.InStock, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div>
+                            @Html.EditorFor(model => model.InStock, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.InStock, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group col-lg-6 col-md-6 col-12">
+                        <label class="control-label ml-2">Low Stock Range</label>
+                        <div>
+                            @Html.EditorFor(model => model.LowInStock, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.LowInStock, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group col-lg-6 col-md-6 col-12">
+                        @Html.LabelFor(model => model.Unit, htmlAttributes: new { @class = "control-label ml-2" })
+                        <div class="col-md-10">
+                            @Html.LabelFor(model => model.Unit, Unit.Kilogram, htmlAttributes: new { @class = "control-label" })
+                            @Html.RadioButton("Unit", Unit.Kilogram, new { htmlAttributes = new { @class = "form-control" } })
+
+                            @Html.LabelFor(model => model.Unit, Unit.gram, htmlAttributes: new { @class = "control-label ml-2" })
+                            @Html.RadioButton("Unit", Unit.gram, new { htmlAttributes = new { @class = "form-control" } })
+
+                            @Html.LabelFor(model => model.Unit, Unit.liter, htmlAttributes: new { @class = "control-label ml-2" })
+                            @Html.RadioButton("Unit", Unit.liter, new { htmlAttributes = new { @class = "form-control" } })
+
+                            @Html.LabelFor(model => model.Unit, Unit.mililiter, htmlAttributes: new { @class = "control-label ml-2" })
+                            @Html.RadioButton("Unit", Unit.mililiter, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Unit, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group col-lg-6 col-md-6 col-12">
+                        @Html.LabelFor(model => model.Status, htmlAttributes: new { @class = "control-label ml-2" })
+                        <div class="col-md-10">
+                            <div class="checkbox">
+                                @Html.EditorFor(model => model.Status)
+                                @Html.ValidationMessageFor(model => model.Status, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group col-lg-6 col-md-6 col-12">
+                        <div class="col-md-offset-2 col-md-10">
+                            <input type="submit" value="Create" class="btn btn-outline-primary" />
+                        </div>
+                    </div>
+                </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<div class="text-right mr-5">
+    @Html.ActionLink("Back to List", "InventoryTable")
+</div>

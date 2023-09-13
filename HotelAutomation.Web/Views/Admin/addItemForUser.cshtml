@@ -1,0 +1,248 @@
+﻿@model ViewModels.AddItemByAdmin
+@{
+    ViewBag.Title = "addItemForUser";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    bool radiobtn = Model.isNew;
+}
+<div class="row adminpage-head">
+    <div class="col-12">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary text-uppercase">Add Items</h6>
+            </div>
+            <div class="card-body">
+                <form id="addItem" class="w-100">
+                    <div class="row">
+                        <div class="form-group col-12 row">
+                            <div class="col-4">
+                                <label for="exampleFormControlInput1">Name/Mobile</label>
+                                <input type="text" class="form-control" id="CreatedBy" value="@Model.UCode" name="CreatedBy" @(Model.UCode != null && Model.UCode.Length > 0 ? "readonly":"") required>
+                            </div>
+                            <div class="col-4">
+                                <label for="exampleFormControlInput1">Table</label>
+                                <input type="text" readonly class="form-control" id="exampleFormControlInput1" value="@Model.TCode" name="TableCode" required>
+                            </div>
+                            <div class="col-4">
+                                <label for="exampleFormControlInput1">Restaurant Code</label>
+                                <input type="text" readonly class="form-control" id="exampleFormControlInput1" value="@Model.RCode" name="RestCode" required>
+                            </div>
+                            <input value="@radiobtn.ToString()" name="isNew" hidden>
+                        </div>
+                        <div class="form-group col-6">
+                            <label for="exampleFormControlSelect1">select Category</label>
+                            <select class="form-control" id="MenuCategory">
+                                <option value="">Please Select a Category</option>
+                                @foreach (var item in Model.MenuCategories)
+                                {
+                                    <option value="@item.MCCode">@item.MCDesc</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group col-6">
+                            <label for="exampleFormControlSelect1">select Menu</label>
+                            <select class="form-control" id="MenuDropdown" name="MenuDropdown"></select>
+                        </div>
+                        @*<div class="form-group col-4">
+                            <label for="exampleFormControlInput1">Discount <small style="color:red;">in percentage(%)</small></label>
+                            <input type="number" class="form-control" id="CreatedBy" value="0" name="Discount" required>
+                        </div>*@
+                        <div id="badges" class="d-flex flex-wrap col-12">
+
+                        </div>
+                        <input name="MCode" id="MenuItems" value="" hidden/>
+                        <div class="form-group col-12">
+                            <label for="exampleFormControlTextarea1">Comment By User</label>
+                            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="Comments"></textarea>
+                        </div>
+                    </div>
+                    <input type="hidden" name="PunchedBy" id="PunchedBy" />
+                    <button type="button" class="btn btn-primary" id="formSubmit">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var Item = [];
+    var discval = "";
+    $("#MenuCategory").change(function () {
+        var value = document.getElementById("MenuCategory");
+        var getvalue = value.options[value.selectedIndex].value;
+        $.ajax({
+            type: "GET",
+            url: "/Admin/getMenuData",
+            data: {
+                MCCode: getvalue,
+                TCode: '@Model.TCode'
+            },
+            success: function (data) {
+                var s = '<option value="-1">Please Select a Menu</option>';
+                for (var i = 0; i < data.length; i++) {
+                    s += '<option value="' + data[i].MCode + '" data-id="' + data[i].Discount + '">' + data[i].MDesc + '</option>';
+                }
+                $("#MenuDropdown").html(s);
+            }
+        });
+    });
+    $("#MenuDropdown").change(function () {
+        var getName = $("#MenuDropdown :selected").html();
+        var getvalue = $("#MenuDropdown :selected").val();
+        if (getvalue != "-1") {
+            var getdiscount = $("#MenuDropdown :selected").attr("data-id");
+            var b = '<span class="badgesBtn btn btn-primary m-2" style="width: 300px !important;" id="' + getvalue + '" >';
+            b += getName + '<br/><button type="button" onclick="minusQtyItem(' + getvalue + ')" class="btn btn-warning mx-2 p-0 px-2">-</button>'
+                + '<input readonly type="number" min="1" id="counting" class="w-25 border-0 px-1 ' + getvalue + '" value="1"/>'
+                + '<button type="button" class="btn btn-warning mx-2 p-0 px-2" onclick="plusQtyItem(' + getvalue + ')">+</button>'
+                + '<span class="badge badge-light" onclick="removeItem(' + getvalue + ')">X</span>'
+                + '<br/><span>Discount in % </span>'
+                + ' <input type="number" min="0" max="100" class="w-25 border-0 px-1 my-2 mx-2 discvalue" id="' + getvalue + 'discvalue" data-id="' + getvalue + '" value="' + getdiscount + '" required />'
+                + '<button type="button" class="btn btn-warning mx-2 p-0 px-2" id="' + getvalue + 'discvaluebtn" onclick="discvalueItem(' + getvalue + ')">Apply</button>';
+            b += '</span>';
+            $("#badges").append(b);
+            var value = getvalue + "/" + 1 + "-" + "0";
+            Item.push(value);
+            $("#MenuItems").val(Item);
+        }
+    });
+    function discvalueItem(id) {
+        if ($('.discvalue').val() < 0 || $('.discvalue').val() > 100) {
+            alert("you have entered a value more then 100");
+            $('.discvalue').val("");
+        }
+        else {
+            var dvalue = $("#" + id + "discvalue").val();
+            var count = $("." + id).val()
+            Item = Item.filter(function (elem) {
+                var elemnent = String(elem);
+                var newelem = elemnent.substring(0, elemnent.indexOf('-'));
+                var value = id + "/" + count;
+                return newelem != value;
+            });
+            var value = id + "/" + count + "-" + dvalue;
+            Item.push(value);
+            $("#MenuItems").val(Item);
+            $("#" + id + "discvaluebtn").hide();
+        }
+    }
+    function plusQtyItem(id) {
+        var dvalue = $("#" + id + "discvalue").val();
+        var count = $("." + id).val();
+        var data = parseInt(count) + 1;
+        $("." + id).val(data);
+        Item = Item.filter(function (elem) {
+            var elemnent = String(elem);
+            var newelem = elemnent.substring(0, elemnent.indexOf('-'));
+            var value = id + "/" + parseInt(data - 1);
+            return newelem != value;
+        });
+        var value = id + "/" + data + "-" + dvalue ;
+        Item.push(value);
+        $("#MenuItems").val(Item);
+    }
+    function minusQtyItem(id) {
+        var dvalue = $("#" + id + "discvalue").val();
+        var count = $("." + id).val();
+        if (count > 1) {
+            var data = parseInt(count) - 1;
+            $("." + id).val(data);
+            Item = Item.filter(function (elem) {
+                var elemnent = String(elem);
+                var newelem = elemnent.substring(0, elemnent.indexOf('-'));
+                var value = id + "/" + parseInt(data + 1);
+                return newelem != value;
+            });
+            var value = id + "/" + data + "-" + dvalue;
+            Item.push(value);
+            $("#MenuItems").val(Item);
+        }
+    }
+    function removeItem(id) {
+        var count = $("." + id).val();
+        Item = Item.filter(function (elem) {
+            var elemnent = String(elem);
+            var newelem = elemnent.substring(0, elemnent.indexOf('-'));
+            var value = id + "/" + count;
+            return newelem != value;
+        });
+        $("#MenuItems").val(Item);
+        $("#" + id).remove();
+    }
+    $("#formSubmit").click(function () {
+        Swal.fire({
+            title: 'Please fill Captain Code',
+            input: 'text',
+            inputAttributes: {
+                autocapitalize: 'off'
+            },
+            showCancelButton: true,
+            confirmButtonText: 'Look up',
+            showLoaderOnConfirm: true,
+            preConfirm: (login) => {
+                $.ajax({
+                    type: "Post",
+                    url: "/Admin/CaptainCodeCheck",
+                    data: {
+                        Code: login,
+                    },
+                    success: function (data) {
+                        if (data == "true") {
+                            $("#PunchedBy").val(login);
+                            orderformSubmit();
+                        }
+                        else {
+                            alert("Sorry Its not right code!");
+                        }
+                    }
+                });
+                //return fetch(`http://localhost:44323/Admin/CaptainCodeCheck?Code=` + login)
+                //    .then(response => {
+                //        if (response == "false") {
+                //            throw new Error(response.statusText)
+                //        }
+                //        return response.json()
+                //    })
+                //    .catch(error => {
+                //        Swal.showValidationMessage(
+                //            `Request failed: ${error}`
+                //        )
+                //    })
+            },
+            allowOutsideClick: () => !Swal.isLoading()
+        }).then((result) => {
+            if (result.isConfirmed) {
+                
+            }
+        })
+    });
+    function orderformSubmit() {
+        var CreatedBy = $("#CreatedBy").val();
+        var menuCategory = $("#MenuCategory").val();
+        var menu = $("#MenuDropdown").val();
+        if (CreatedBy != null && CreatedBy != "" && menuCategory != null
+            && menuCategory != "" && menu != null && menu != "") {
+            $.ajax({
+                type: "Post",
+                url: "/Admin/savePlaceOrderData",
+                data: $("#addItem").serialize(),
+                success: function (data) {
+                    if (data == true) {
+                        var isPlacedOrder = '@Model.isPlacedOrder';
+                        if (isPlacedOrder == "True") {
+                            window.location.href = "/Admin/CurrentStatus";
+                        }
+                        else {
+                            window.location.href = "/Admin/TableUser";
+                        }
+                    }
+                    else {
+                        alert("Something went wrong!");
+                    }
+                }
+            });
+        }
+        else {
+            alert("Please fill all the fields!");
+        }
+    }
+</script>

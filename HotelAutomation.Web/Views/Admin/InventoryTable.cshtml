@@ -1,0 +1,161 @@
+﻿@model IEnumerable<Models.Inventory>
+@{
+    ViewBag.Title = "InventoryTable";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    int Count = 0;
+}
+
+<div class="row adminpage-head">
+    <div class="col-12">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <div>
+                    <h6 class="m-0 font-weight-bold text-primary">Inventory</h6>
+                </div>
+                <div>
+                    <a class="btn btn-outline-primary" style="font-size:12px;" href="/Admin/InventoryAdd">Add Item</a>
+                </div>
+            </div>
+            <div class="card-body table-responsive">
+                <table class="table table-bordered " id="inventoryTable" cellspacing="0">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>#</th>
+                            <th>Id</th>
+                            <th>Name</th>
+                            <th>Total Stock</th>
+                            <th>In Stock</th>
+                            <th>Stock Used</th>
+                            <th>Low Stock</th>
+                            <th>Unit</th>
+                            <th>Fill Date</th>
+                            <th>Status</th>
+                            <th>Edit</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            Count = Count + 1;
+                        <tr>
+                            <td>@Count</td>
+                            <td>In- @item.Id</td>
+                            <td>@item.Name</td>
+                            <td>@item.TotalInStock</td>
+                            <td>@item.InStock</td>
+                            <td>@(item.TotalInStock - item.InStock)</td>
+                            <td>@item.LowInStock</td>
+                            <td>@item.Unit</td>
+                            <td>@item.DateTime</td>
+                            <td>
+                                <div class="form-check form-check-inline">
+                                    @{
+                                        var trueCheckedStatus = item.Status == true ? "Checked" : string.Empty;
+                                    }
+                                    <input type="hidden" name="Status" value='@item.Status' id="chkstatus" title="Status" />
+                                    <input class="form-check-input" data-id="@item.Id" id="chkstatus" type="checkbox" @trueCheckedStatus>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="button-act"><a href="/Admin/InventoryEdit?Id=@item.Id" class="editbtn btn btn-outline-primary" type="button" title="Edit"><i class="bi bi-pencil-square"></i></a></div>
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#inventoryTable').DataTable();
+    });
+        $('input[type="checkbox"]').on('change', function () {
+        if ($(this).prop("checked") == true) {
+            Swal.fire({
+            title: 'Are you sure?',
+            text: "You want to change the status!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Change it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title:'Status',
+                    text:'Changed',
+                    icon:'success',
+                    showConfirmButton: false,
+                })
+                var id = $(this).attr("data-id");
+                var Status = true;
+
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("InventoryItemStatus", "Admin")',
+                    data: {
+                        status: Status,
+                        Id: id
+                    }
+                })
+                .done(function (response) {
+                    window.location.reload();
+                })
+                .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                    $('.loadermodel').hide();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Something went wrong!',
+                    })
+                });
+            }
+        })
+        }
+        else if ($(this).prop("checked") == false) {
+         Swal.fire({
+            title: 'Are you sure?',
+            text: "You want to change the status",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Change it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title:'Status',
+                    text:'Changed',
+                    icon:'success',
+                    showConfirmButton: false,
+                })
+                var id = $(this).attr("data-id");
+                var Status = false;
+
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("InventoryItemStatus", "Admin")',
+                    data: {
+                        status: Status,
+                        Id: id
+                    }
+                })
+                    .done(function (response) {
+                        window.location.reload();
+                })
+                .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                    $('.loadermodel').hide();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Something went wrong!',
+                    })
+                });
+            }
+        })
+        }
+    });
+</script>

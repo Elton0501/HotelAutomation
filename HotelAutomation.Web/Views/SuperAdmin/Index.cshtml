@@ -1,0 +1,185 @@
+﻿@model ViewModels.SuperAdminViewModel
+@{
+    ViewBag.Title = "Dashboard";
+    Layout = "~/Views/SuperAdmin/_SuperAdminLayout.cshtml";
+}
+
+<title>Dashboard</title>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Restaurants Count
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.RCount</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-building text-primary fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Orders Count
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.OCount</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-box-seam text-success fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-danger shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                Order Items Count
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.OICount</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-cup text-danger fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-dark shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-dark text-uppercase mb-1">
+                                Menu Count
+                            </div>
+                            <div class="row no-gutters align-items-center">
+                                <div class="col-auto">
+                                    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">@Model.MenuCount</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-postcard text-dark fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Menu Category Count
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.MenuCategoryCount</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-card-checklist fa-2x text-warning"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-secondary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">
+                                Menu Type Count
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.MenuTypeCount</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-bookmark-heart fa-2x text-secondary"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                User Count
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.UsersCount</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-person-check text-success fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Cart Count
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.CartCount</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-cart text-success fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-danger shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                Packages Count
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.PackagesCount</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-box2-heart-fill fa-2x text-info"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-dark shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-dark text-uppercase mb-1">
+                                Table Count
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TableCount</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-table fa-2x text-dark"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

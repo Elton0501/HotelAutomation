@@ -1,0 +1,361 @@
+﻿@using Services;
+@{
+    Layout = null;
+    var user = Context.Session["Admin"];
+    var RCode = Context.Session["RCode"];
+}
+<script src="~/Scripts/cookie.js"></script>
+<script src="/Scripts/jquery.signalR-2.2.1.min.js"></script>
+<script src="/signalr/hubs"></script>
+<style>
+    .dropdown-toggle::after {
+        display: none;
+    }
+    .notifyanchortrue {
+        cursor: pointer;
+    }
+    .notifyanchorfalse {
+        cursor: auto;
+    }
+    .btn.focus, .btn:focus {
+        outline: 0;
+        box-shadow: none;
+    }
+
+    .dropdown-toggle:hover {
+        color: red;
+    }
+
+    .top-text-block {
+        display: block;
+        padding: 3px 20px;
+        clear: both;
+        font-weight: 400;
+        line-height: 1.42857143;
+        color: #333;
+        white-space: inherit !important;
+        position: relative;
+    }
+
+        .top-text-block:hover:before {
+            content: '';
+            width: 4px;
+            background: #f05a1a;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            position: absolute;
+        }
+
+        .top-text-block.unread {
+            background: #ffc;
+        }
+
+        .top-text-block .top-text-light {
+            color: #999;
+            font-size: 0.8em;
+        }
+
+    .top-head-dropdown .dropdown-menu {
+        width: 350px;
+        height: 300px;
+        overflow: auto;
+    }
+
+    .top-head-dropdown li:last-child .top-text-block {
+        border-bottom: 0;
+    }
+
+    .topbar-align-center {
+        text-align: center;
+    }
+
+    .loader-topbar {
+        margin: 5px auto;
+        border: 3px solid #ddd;
+        border-radius: 50%;
+        border-top: 3px solid #666;
+        width: 22px;
+        height: 22px;
+        -webkit-animation: spin-topbar 1s linear infinite;
+        animation: spin-topbar 1s linear infinite;
+    }
+
+    @@-webkit-keyframes spin-topbar {
+        0% {
+            -webkit-transform: rotate(0deg);
+        }
+
+        100% {
+            -webkit-transform: rotate(360deg);
+        }
+    }
+
+    @@keyframes spin-topbar {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+</style>
+<nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow border-bottom-warning">
+
+    <!-- Sidebar Toggle (Topbar) -->
+    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+        <i class="bi bi-grid-fill"></i>
+    </button>
+
+    <!-- Topbar Navbar -->
+    <ul class="navbar-nav ml-auto">
+        <li class="nav-item dropdown no-arrow align-self-center mr-2">
+            <button type="button" class="btn btn-group btn-primary" style="font-size: 14px; cursor: none;">
+               Today Orders <span class="badge" style=" font-size: 12px;" id="TotalOrdersCount"></span>
+            </button>
+        </li>
+        <li class="nav-item dropdown no-arrow align-self-center">
+            <button type="button" class="btn btn-group btn-success" style="font-size: 14px; cursor: none;">
+                Ongoing <span class="badge" style=" font-size: 12px;" id="PlaceOrdersCount"></span>
+            </button>
+        </li>
+        <li style="align-self: center; padding: 0px 0px 0px 12px;">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <!-- Single button -->
+                    <div class="btn-group pull-right top-head-dropdown">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="bi bi-bell"></i>
+                        </button>
+                        <span class="caret" style=" margin: -5px 0px 4px -12px; font-size: 13px;" id="notifyCount"></span>
+                        <ul class="dropdown-menu dropdown-menu-right" id="notifyDropdown" style="height: auto !important;">
+                       
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </li>
+        <li class="topbar-divider d-none d-sm-block"></li>
+
+        <!-- Nav Item - User Information -->
+        <li class="nav-item dropdown no-arrow">
+            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="mr-2 d-lg-inline text-gray-600 small">@(user != null?user.ToString():"")</span>
+            </a>
+            <!-- Dropdown - User Information -->
+        </li>
+        <li class="nav-item dropdown no-arrow align-self-center" @(user == null ? "hidden" : "" )>
+            <a class="btn btn-primary loginbtn" href="/AdminAccount/SuperAdminLogout">
+                Logout
+            </a>
+        </li>
+    </ul>
+
+</nav>
+
+<script>
+    $(document).ready(function () {
+        getCompleteOrdersData();
+        CheckOrderCookie();
+        CheckPlaceOrderCookie();
+        getNotificationData();
+    });
+
+    function getNotificationData() {
+       $.ajax({
+           type: 'POST',
+           url: '@Url.Action("GetNotificationData", "Notificationaction")',
+       })
+       .done(function (response) {
+           var returnedData = JSON.parse(response);
+           if (returnedData.length > 0) {
+               $("#notifyCount").html(returnedData.length);
+               jQuery.each(returnedData, function (index, item) {
+                   var variable = '' +
+                       ' <li id="noti-id' + item.Id +'">' +
+                       '     <a href="#" class="top-text-block ' + (item.AnchorLink != "" && item.AnchorLink != null ? "notifyanchortrue" : "notifyanchorfalse") + '">' +
+                       '         <div class="top-text-heading">' + item.Message + '</div>' +
+                       '         <div class="top-text-light">' + item.TimeTrek + '</div>' +
+                       '     </a>' +
+                       ' <div class="text-right ' + (item.AnchorLink != "" && item.AnchorLink != null ? "d-none" : "") + '"><a class="m-3 notifyanchortrue" onclick="removeNotification(' + item.Id +')">Mark as read</a></div>' +
+                       '<hr style="margin: 5px 5px;" class="' + (returnedData.length == index + 1 ? "d-none" : "") +'">' +
+                       ' </li>' +
+                       '';
+                   $("#notifyDropdown").append(variable);
+               });
+           }
+           else {
+               var variable = '' +
+                   '    <li class="text-center p-4"><div><span>No notification available.</span></div></li>' +
+                   '';
+               $("#notifyDropdown").append(variable);
+           }
+       })
+       .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+           Swal.fire({
+               icon: 'error',
+               title: 'Oops...',
+               text: 'Something went wrong!',
+           })
+       });
+    }
+
+    $(function () {
+        // Proxy created on the fly
+        var job = $.connection.myHub;
+        // Declare a function on the job hub so the server can invoke it
+        job.client.broadcaastTotalOrderData = function (name, count) {
+            if (name == @RCode.ToString()) {
+                $("#TotalOrdersCount").html(count.TodayOrdersCount);
+                $("#PlaceOrdersCount").html(count.TodayPlaceOrders);
+
+                $("#MonthlyEarnings").html(count.MonthlyOrdersEarn);
+                $("#MonthlyOrders").html(count.MonthlyOrders);
+                $("#EarningsAnnual").html(count.YearlyOrdersEarn);
+                $("#YearlyOrders").html(count.YearlyOrders);
+                addOrderIdInCookie(count.CurrentOrderId, name);
+                loadOrdersPartial();
+                daySaleData();
+            }
+        };
+        job.client.broadcaastPlaceOrderData = function (name, count) {
+            if (name == @RCode.ToString()) {
+                $("#PlaceOrdersCount").html(count.TodayPlaceOrders);
+                addPlaceOrderIdInCookie(count.CurrentPlaceOrderId, name);
+            }
+        };
+        job.client.BrodcaastNotificationData = function (notification) {
+            if (notification == @RCode.ToString()) {
+                $("#notifyDropdown").html("");
+                getNotificationData();
+            }
+        };
+        // Start the connection
+        $.connection.hub.start()
+            .done(function () {
+                //Server Call
+            })
+            .fail(function () {
+                console.log("Could not Connect!");
+            });
+
+    });
+
+    var newOrdersList = [];
+    function addOrderIdInCookie(Id, name) {
+        var existing = $.cookie('newOrders' + name);
+        if (existing != undefined && existing != "" && existing != null && existing != "null") {
+            newOrdersList = existing.split('-');
+        }
+        else {
+            newOrdersList = [];
+        }
+        newOrdersList.push(Id);
+        $.cookie('newOrders' + name, newOrdersList.join('-'), { path: '/' });
+        $("#ordersCountCookie").removeClass("d-none");
+        $("#ordersCountCookie").html(newOrdersList.length);
+    }
+    function CheckOrderCookie() {
+        var rCode = '@RCode.ToString()';
+        var existing = $.cookie('newOrders' + rCode);
+        if (existing != undefined && existing != "" && existing != null && existing != "null") {
+            newOrdersList = existing.split('-');
+            $("#ordersCountCookie").removeClass("d-none");
+            $("#ordersCountCookie").html(newOrdersList.length);
+            $.each(newOrdersList, function (index, value) {
+                $('#nofc' + value).css({ 'background-color': 'rgb(243 243 243)' });
+            });
+        }
+    }
+
+    var newPlaceOrdersList = [];
+    function addPlaceOrderIdInCookie(Id, name) {
+        var existing = $.cookie('newPlaceOrders' + name);
+        if (existing != undefined && existing != "" && existing != null && existing != "null") {
+            newPlaceOrdersList = existing.split('-');
+        }
+        else {
+            newPlaceOrdersList = [];
+        }
+        newPlaceOrdersList.push(Id);
+        $.cookie('newPlaceOrders' + name, newPlaceOrdersList.join('-'), { path: '/' });
+        $("#placeOrdersCountCookie").removeClass("d-none");
+        $("#placeOrdersCountCookie").html(newPlaceOrdersList.length);
+        loadPlaceOrderData();
+        setTimeout(() => {
+            $.each(newPlaceOrdersList, function (index, value) {
+                $('#card__pricing' + value).removeClass('d-none');
+            });
+        }, 1000);
+    }
+    function CheckPlaceOrderCookie() {
+        var rCode = '@RCode.ToString()';
+        var existing = $.cookie('newPlaceOrders' + rCode);
+        if (existing != undefined && existing != "" && existing != null && existing != "null") {
+            newPlaceOrdersList = existing.split('-');
+            $("#placeOrdersCountCookie").removeClass("d-none");
+            $("#placeOrdersCountCookie").html(newPlaceOrdersList.length);
+        }
+    }
+
+    function getCompleteOrdersData() {
+        $.ajax({
+            url: '/Admin/GetCompleteOrders',
+            type: 'POST',
+            contentType: "application/json; charset=utf-8",
+            datatype: 'json',
+            success: function (data) {
+                $("#TotalOrdersCount").html(data);
+                getPlaceOrdersData();
+            }
+        });
+    }
+    function getPlaceOrdersData() {
+        $.ajax({
+            url: '/Admin/GetPlaceOrdersData',
+            type: 'POST',
+            contentType: "application/json; charset=utf-8",
+            datatype: 'json',
+            success: function (data) {
+                $("#PlaceOrdersCount").html(data);
+            }
+        });
+    }
+
+    function removeNotification(id) {
+       $.ajax({
+           type: 'POST',
+           url: '@Url.Action("DeleteNotificationData", "Notificationaction")',
+           data: {
+               Id: id,
+           }
+       })
+       .done(function (response) {
+           if (response == "true") {
+               $("#noti-id" + id).hide();
+               var count = $("#notifyCount").html();
+               var notiCount = parseInt(count) - 1;
+               $("#notifyCount").html(notiCount);
+               if (notiCount == 0) {
+                   var variable = '' +
+                       '    <li class="text-center p-4"><div><span>No notification available.</span></div></li>' +
+                       '';
+                   $("#notifyDropdown").append(variable);
+                   $("#notifyCount").hide();
+               }
+               $("#notifyDropdown").addClass("show");
+               $(".top-head-dropdown").addClass("show");
+           }
+       })
+       .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+           Swal.fire({
+               icon: 'error',
+               title: 'Oops...',
+               text: 'Something went wrong!',
+           })
+       });
+    }
+</script>

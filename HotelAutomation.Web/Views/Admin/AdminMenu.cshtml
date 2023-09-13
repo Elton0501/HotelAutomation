@@ -1,0 +1,259 @@
+﻿@model IEnumerable<ViewModels.AdminMenuViewModel>
+@{
+    ViewBag.Title = "AdminMenu";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    int Count = 0;
+    int RCode = ViewBag.Rcode;
+}
+<style>
+    @@media (min-width:600px){
+        .MenuImage{
+            width:40%;
+        }
+    }
+    @@media (max-width:600px){
+        .MenuImage {
+            width: 80%;
+        }
+    }
+</style>
+<div class="row adminpage-head">
+    <div class="col-12">
+        <div class="flex text-right mb-2">
+            <a class="btn btn-primary" href="@Url.Action("AdminMenuCategories", "Admin", new { id = RCode })" style="font-size:13px;">Category</a>
+            <a class="btn btn-outline-primary" href="@Url.Action("_AdminMenuAdd", "Admin", new { rid = RCode })" style="font-size:13px;">Add Menu</a>
+        </div>
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Menu</h6>
+            </div>
+            <div class="card-body table-responsive">
+                <table class="table table-bordered " id="menuTable" cellspacing="0">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>#</th>
+                            <th>Id</th>
+                            <th>Name</th>
+                            <th>Price</th>
+                            <th>Category</th>
+                            <th>Type</th>
+                            <th>Create</th>
+                            <th>Discount <br /> <small>Dine-in / Take Away / Home Delivery</small></th>
+                            <th>Status</th>
+                            <th>Edit</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            Count = Count + 1;
+                        <tr>
+                            <td>@Count</td>
+                            <td>@item.MCode</td>
+                            <td>@item.MDesc</td>
+                            <td>@item.Amount</td>
+                            <td>@item.MCDesc</td>
+                            <td>@item.MenuType</td>
+                            <td>@Convert.ToDateTime(item.CreatedOn).ToString("d-MMM yy")</td>
+                            <td>
+                                <div class="@("inputDis" + item.MCode) discmenu" style="display:flex;">
+                                    <div class="mr-1">
+                                        <small>Dine In</small>
+                                        <input type="number" id="@("discmenu" + item.MCode)" class="form-control" style="width: 75px !important; font-size: 14px;" value="@item.Discount" />
+                                    </div>  
+                                    <div class="mr-1">
+                                        <small>Take Away</small>
+                                        <input type="number" id="@("tdiscmenu" + item.MCode)" class="form-control" style=" width: 75px !important; font-size: 14px;" value="@item.TADiscount" />
+                                    </div>
+                                    <div class="mr-1">
+                                        <small>Home Delivery</small>
+                                        <input type="number" id="@("hdiscmenu" + item.MCode)" class="form-control" style=" width: 75px !important; font-size: 14px;" value="@item.HDDiscount" />
+                                    </div>
+                                    <div>
+                                        <small>Apply</small>
+                                        <div class="d-flex">
+                                            <button onclick="Discmenu('@item.MCode')" class="editbtn btn btn-outline-primary ml-2" style=" padding: 4px 8px;"><i class="bi bi-chevron-double-right"></i></button>
+                                            <a class="app-x ml-2" data-id="@item.MCode"> <i class="bi bi-x-circle fa-2x"  style="color: red; cursor:pointer"></i> </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="@("discBox"+ item.MCode) inputDis align-items-center justify-content-around" style="display:flex;">
+                                    <span>@(item.Discount != "" && item.Discount != null ? item.Discount : "0") / @(item.TADiscount != "" && item.TADiscount != null ? item.TADiscount : "0") / @(item.HDDiscount != "" && item.HDDiscount != null ? item.HDDiscount : "0")</span>
+                                    <button onclick="openInputDis('@item.MCode')" class="editbtn btn btn-outline-primary ml-2 p-0 px-1"><i class="bi bi-tags"></i></button>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-check form-check-inline">
+                                    @{
+                                        var trueCheckedStatus = item.IsActive == true ? "Checked" : string.Empty;
+                                    }
+                                    <input type="hidden" name="IsActive" value='@item.IsActive' id="chkstatus" title="Status" />
+                                    <input class="form-check-input" data-id="@item.MCode" id="chkstatus" type="checkbox" @trueCheckedStatus>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="button-act"><a href="@Url.Action("_AdminMenuEdit", "Admin", new { id = item.MCode})" class="editbtn btn btn-outline-primary" type="button" title="Edit"><i class="bi bi-pencil-square"></i></a></div>
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $(".discmenu").hide();
+        $('#menuTable').DataTable();
+    });
+    $('input[type="checkbox"]').on('change', function () {
+        if ($(this).prop("checked") == true) {
+            Swal.fire({
+            title: 'Are you sure?',
+            text: "You want to change the status!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Change it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title:'Status',
+                    text:'Changed',
+                    icon:'success',
+                    showConfirmButton: false,
+                })
+                var MenuId = $(this).attr("data-id");
+                var Status = true;
+
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("AdminMenuStatus", "Admin")',
+                    data: {
+                        status: Status,
+                        menuId: MenuId
+                    }
+                })
+                .done(function (response) {
+
+                })
+                .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                    $('.loadermodel').hide();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Something went wrong!',
+                    })
+                });
+            }
+        })
+        }
+        else if ($(this).prop("checked") == false) {
+         Swal.fire({
+            title: 'Are you sure?',
+            text: "You want to change the status",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Change it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title:'Status',
+                    text:'Changed',
+                    icon:'success',
+                    showConfirmButton: false,
+                })
+                var MenuId = $(this).attr("data-id");
+                var Status = false;
+
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("AdminMenuStatus", "Admin")',
+                    data: {
+                        status: Status,
+                        menuId: MenuId
+                    }
+                })
+                .done(function (response) {
+
+                })
+                .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                    $('.loadermodel').hide();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Something went wrong!',
+                    })
+                });
+            }
+        })
+        }
+    });
+    function Discmenu(id) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You want to discount this item!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Change it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: 'Status',
+                    text: 'Changed',
+                    icon: 'success',
+                    showConfirmButton: false,
+                })
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("MenuDiscount", "Admin")',
+                    data: {
+                        Id: id,
+                        Discount: $("#discmenu" + id).val(),
+                        TADiscount: $("#tdiscmenu" + id).val(),
+                        HDDiscount: $("#hdiscmenu" + id).val()
+                    }
+                })
+                    .done(function (response) {
+                        if (response == "true") {
+                            window.location.reload();
+                        }
+                        else {
+                            alert("Something went wrong!");
+                        }
+                    })
+                    .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                        $('.loadermodel').hide();
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Something went wrong!',
+                        })
+                    });
+            }
+        });
+    }
+    function openInputDis(Id) {
+        $(".discmenu").hide();
+        $(".inputDis").show();
+        $(".inputDis" + Id).show();
+        $(".discBox" + Id).hide();
+    }
+    function openDiscBox(Id) {
+        $(".inputDis" + Id).hide();
+        $(".discBox" + Id).show();
+    }
+    $(".app-x").click(function () {
+        var id = $(this).attr("data-id");
+        $(".inputDis" + id).hide();
+        $(".discBox" + id).show();
+    });
+</script>
+

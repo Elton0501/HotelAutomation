@@ -1,0 +1,247 @@
+﻿@using ViewModels;
+@model ViewModels.EBillModel
+@{
+    ViewBag.Title = "EBill";
+    Layout = null;
+    var food = Model.Orders.OrderItem.Where(x => x.menuType == Constant.Veg || x.menuType == Constant.NonVeg).ToList();
+    var Beverages = Model.Orders.OrderItem.Where(x => x.menuType == Constant.Beverage).ToList();
+    var Bar = Model.Orders.OrderItem.Where(x => x.menuType == Constant.Bar).ToList();
+    //var Discount = int.TryParse(Model.Orders.Discount, out int n);
+    var CouponDiscount = int.TryParse(Model.Orders.CouponDiscount, out int a);
+}
+
+<link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+<!-- Custom styles for this template-->
+
+<script src="~/Scripts/jquery-3.4.1.min.js" type="text/javascript"></script>
+<script src="~/Scripts/bootstrap.min.js"></script>
+<h2 class="px-3 pt-3">EBill</h2>
+
+<style>
+    .header {
+        display: none;
+    }
+
+    .bill {
+        box-shadow: 0 0 3px #aaa;
+        padding: 10px 10px;
+        box-sizing: border-box;
+        margin: 1rem;
+    }
+
+    .flex {
+        display: flex;
+    }
+
+    .justify-between {
+        justify-content: space-between;
+    }
+
+    .table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+        .table .header {
+            border-top: 2px dashed #000;
+            border-bottom: 2px dashed #000;
+        }
+
+    .table {
+        text-align: left;
+    }
+
+        .table .total td:first-of-type {
+            border-top: none;
+            border-bottom: none;
+        }
+
+        .table .total td {
+            border-top: 2px dashed #000;
+            border-bottom: 2px dashed #000;
+        }
+
+        .table .net-amount td:first-of-type {
+            border-top: none;
+        }
+
+        .table .net-amount td {
+            border-top: 2px dashed #000;
+        }
+
+        .table .net-amount {
+            border-bottom: 2px dashed #000;
+        }
+
+    @@media print {
+        .hidden-print,
+        .hidden-print * {
+            display: none !important;
+        }
+    }
+</style>
+<div class="bill">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <div class="bill-item">
+        <div class="brand" style="    font-size: 20px;
+    font-weight: 600;
+    text-transform: uppercase;">
+            @Model.Restaurant.Name
+        </div>
+        <div class="address">
+            @Model.Restaurant.Branch <br> Phone No- @Model.Restaurant.Mobile
+        </div>
+        <div class="flex justify-between">
+            <div>BILL NO: @Model.Orders.OrderId</div>
+            <div>TABLE NO: @Model.Orders.Table</div>
+        </div>
+        <div class="flex justify-between">
+            <div>BILL DATE: @Model.Orders.CreatedOn.ToString("dd/MM/yyyy")</div>
+        </div>
+    </div>
+    <table class="table mt-3">
+        <tr>
+            <th>
+                Item
+            </th>
+            <th>
+                Qty
+            </th>
+            <th class="text-right pr-5">
+                Amount
+            </th>
+        </tr>
+
+        @if (food.Count > 0)
+        {
+            <tr><td colspan="3" style="font-weight: 600;">@Constant.Food</td></tr>
+            foreach (var item in food)
+            {
+                var menu = Services.MenuDetailsService.Instance.GetRestMenuName(item.MCode);
+                <tr>
+                    <td>@menu <span class="text-success">@(Convert.ToInt32(item.Discount) > 0 ? " " + item.Discount + " " + "% off" : "")</span></td>
+                    <td>@item.Quantity</td>
+                    <td class="text-right pr-5">@(item.Price * item.Quantity) </td>
+                </tr>
+            }
+            <tr class="total">
+                <td>Sub Total</td>
+                <td></td>
+                <td class="text-right pr-5">@Model.Orders.FoodTotalAmount</td>
+            </tr>
+        }
+
+        @if (Beverages.Count > 0)
+        {
+            <tr><td colspan="3" style="font-weight: 600;">@Constant.Beverage</td></tr>
+            foreach (var item in Beverages)
+            {
+                var menu = Services.MenuDetailsService.Instance.GetRestMenuName(item.MCode);
+                <tr>
+                    <td>@menu <span class="text-success">@(Convert.ToInt32(item.Discount) > 0 ? " " + item.Discount + " " + "% off" : "")</span></td>
+                    <td>@item.Quantity</td>
+                    <td class="text-right pr-5">@item.Price </td>
+                </tr>
+            }
+            <tr class="total">
+                <td>Sub Total</td>
+                <td></td>
+                <td class="text-right pr-5">@Model.Orders.BevrageTotalAmount</td>
+            </tr>
+        }
+
+        @if (Bar.Count > 0)
+        {
+            <tr><td colspan="3" style="font-weight: 600;">@Constant.Bar</td></tr>
+            foreach (var item in Bar)
+            {
+                var menu = Services.MenuDetailsService.Instance.GetRestMenuName(item.MCode);
+                <tr>
+                    <td>@menu <span class="text-success">@(Convert.ToInt32(item.Discount) > 0 ? " " + item.Discount + " " + "% off" : "")</span></td>
+                    <td>@item.Quantity</td>
+                    <td class="text-right pr-5">@item.Price </td>
+                </tr>
+            }
+            <tr class="total">
+                <td>Sub Total</td>
+                <td></td>
+                <td class="text-right pr-5">@Model.Orders.BarTotalAmount</td>
+            </tr>
+        }
+
+        <tr class="total net-amount" style="border-top: 2px dashed #000;">
+            <td>Total</td>
+            <td>@Model.Orders.OrderItem.Select(x => x.Quantity).Sum()</td>
+            <td class="text-right pr-5">@Model.Total</td>
+        </tr>
+        @if (Convert.ToDecimal(Model.Orders.DiscountAmount) > 0)
+        {
+            <tr class="net-amount">
+                <td> Discount Amount @if (Discount != false) {<span class="text-success">@("" + Model.Orders.Discount +  " " + "%")</span> } </td>
+                <td></td>
+                <td class="text-right pr-5">- @(Math.Round(Model.Orders.DiscountAmount.Value) + ".00")</td>
+            </tr>
+        }
+        @if (Convert.ToDecimal(Model.Orders.CouponAmount) > 0)
+        {
+            <tr class="net-amount">
+                <td>Coupon Discount @if (CouponDiscount != false) {<span class="text-success">@("" + Model.Orders.CouponDiscount +  " " + "%")</span> } </td>
+                <td></td>
+                <td class="text-right pr-5">- @Model.Orders.CouponAmount</td>
+            </tr>
+        }
+        @if (Model.Orders.TaxAmount > 0)
+        {
+            <tr>
+                <td colspan="2">CGST @( "(" + Model.Orders.TotalAmount + " " + "@" + Model.Restaurant.Tax/2 + "% " + ")") <span class="text-success"> @(Model.Restaurant.TaxApply == true ? "(inclusive)" : "") </span></td>
+                <td class="text-right pr-5"> <span> @(Model.Restaurant.TaxApply == false ? "+" : "") </span>  @(Model.Orders.TaxAmount / 2)</td>
+            </tr>
+            <tr>
+                <td colspan="2">SGST @( "(" + Model.Orders.TotalAmount + " " + "@" + Model.Restaurant.Tax/2 + "% " + ")")  <span class="text-success"> @(Model.Restaurant.TaxApply == true ? "(inclusive)" : "") </span></td>
+                <td class="text-right pr-5"> <span> @(Model.Restaurant.TaxApply == false ? "+" : "") </span>  @(Model.Orders.TaxAmount / 2)</td>
+            </tr>
+        }
+        @if (Model.Orders.VatAmount > 0)
+        {
+            <tr>
+                <td colspan="2">VAT @("(" + Model.Orders.BarTotalAmount + " " + "@" + Model.Restaurant.Vat + "% " + ")")  <span class="text-success"> @(Model.Restaurant.TaxApply == true ? "(inclusive)" : "") </span></td>
+                <td class="text-right pr-5"> <span> @(Model.Restaurant.TaxApply == false ? "+" : "") </span>  @(Model.Orders.VatAmount)</td>
+            </tr>
+        }
+        @if (Model.Orders.ServiceAmount > 0)
+        {
+            <tr>
+                <td colspan="2">Service Tax ( @("@" + Model.Restaurant.ServiceTax + "% ") )</td>
+                <td class="text-right pr-5">+ @(Model.Orders.ServiceAmount)</td>
+            </tr>
+        }
+        @if (Math.Round(Model.Orders.TotalAmount) != Model.Orders.TotalAmount)
+        {
+            <tr class="net-amount">
+                <td colspan="2">Round Off</td>
+                @if (Math.Round(Model.Orders.TotalAmount) > Model.Orders.TotalAmount)
+                {
+                    <td class="text-right pr-5">+ @((Math.Round(Model.Orders.TotalAmount) - Model.Orders.TotalAmount).ToString("f"))</td>
+                }
+                else
+                {
+                    <td class="text-right pr-5">@((Math.Round(Model.Orders.TotalAmount) - Model.Orders.TotalAmount).ToString("f"))</td>
+                }
+            </tr>
+        }
+        <tr class="net-amount" style="border-top: 2px dashed #000;">
+            <td>Net Amnt</td>
+            <td></td>
+            <td class="text-right pr-5">@(Math.Round(Convert.ToDecimal(Model.Orders.TotalAmount)) + ".00")</td>
+        </tr>
+    </table>
+
+    Thank You ! Please visit again
+</div>
+<script>
+    $(".search-icon").hide();
+</script>
+
+

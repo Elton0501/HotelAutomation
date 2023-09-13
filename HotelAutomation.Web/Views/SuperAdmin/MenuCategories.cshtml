@@ -1,0 +1,167 @@
+﻿@model List<Models.MenuCategory>
+@{
+    ViewBag.Title = "MenuCategories";
+    Layout = "~/Views/SuperAdmin/_SuperAdminLayout.cshtml";
+    int Count = 0;
+    string rname = ViewBag.RestName;
+    var rid = ViewBag.id;
+}
+
+<style>
+    .ProductTable {
+        text-align: end;
+    }
+
+    .button-act {
+        text-align: center;
+    }
+
+    .editbtn {
+        padding: 0.5rem 1rem 0.5rem 1rem;
+    }
+
+    .deletebtn {
+        padding: 0.5rem 1rem 0.5rem 1rem;
+    }
+</style>
+<div id="table-container">
+    <div class="row adminpage-head">
+        <div class="heading col-lg-6">
+            <h1>Menu Categories <span style="color: #FFEB3B;">@rname</span></h1>
+        </div>
+        <div class="ProductTable col-lg-6">
+            <a href="@Url.Action("_MCatAdd","SuperAdmin",new { id = rid })" class="btn btn-primary" type="button"> <i class="bi bi-plus" aria-hidden="true" style="padding-right: 0.1rem; "></i> <span>Add Category</span></a>
+            @if (Model.Count() > 0)
+            {
+                <a href="@Url.Action("Menu","SuperAdmin",new { id = rid })" id="menu" class="btn btn-secondary"><i class="bi bi-menu-button-wide"></i> <span>View Menu</span></a>
+            }
+        </div>
+        <div class="container-fluid">
+            <div class="card shadow mb-4">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="catTable" cellspacing="0">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th title="Restaurant Code">RCode</th>
+                                    <th>Create Date</th>
+                                    <th>VEG</th>
+                                    <th>NON-VEG</th>
+                                    <th>BAR</th>
+                                    <th>BEVERAGES</th>
+                                    <th>Active Status</th>
+                                    <th>Edit</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var category in Model.OrderByDescending(x => x.MCCode))
+                                {
+                                    Count = Count + 1;
+                                <tr>
+                                    <td>@Count</td>
+                                    <th>@category.MCDesc</th>
+                                    <th>@category.RCode</th>
+                                    <th>@category.CreatedOn.ToString("MMM-d-yy")</th>
+                                    <th>@category.Veg</th>
+                                    <th>@category.NonVeg</th>
+                                    <th>@category.Bar</th>
+                                    <th>@category.Beverages</th>
+                                    <th>
+                                        <div class="form-check form-check-inline">
+                                            @{
+                                                var trueCheckedStatus = category.IsActive == true ? "Checked" : string.Empty;
+                                            }
+                                            <input type="hidden" name="IsActive" value='@category.IsActive' id="chkstatus" title="Status" />
+                                            <input class="form-check-input" data-id="@category.MCCode" id="chkstatus" type="checkbox" @trueCheckedStatus>
+                                        </div>
+                                    </th>
+                                    <td>
+                                        <div class="button-act"><a href="@Url.Action("_MCatEdit", "SuperAdmin", new { id = category.MCCode})" class="editbtn btn btn-outline-primary" type="button" title="Edit"><i class="bi bi-pencil-square"></i></a></div>
+                                    </td>
+                                </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('#catTable').DataTable();
+    });
+    $('input[type="checkbox"]').on('change', function () {
+        if ($(this).prop("checked") == true) {
+            var MCId = $(this).attr("data-id");
+            var Status = true;
+            $.ajax({
+                type:'POST',
+            url: '@Url.Action("McatStatus", "SuperAdmin")',
+            data: {
+                status: Status,
+                mcId: MCId
+            }
+        })
+        .done(function (response) {
+            if (response == true) {
+                Swal.fire({
+                    title: 'Done',
+                    text: 'Successfully Change the status!',
+                })
+            }
+            else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Something went wrong!',
+                })
+            }
+        })
+        .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Something went wrong!',
+            })
+        });
+        }
+        else if ($(this).prop("checked") == false) {
+            var MCId = $(this).attr("data-id");
+        var Status = false;
+            $.ajax({
+                type: 'POST',
+            url: '@Url.Action("McatStatus", "SuperAdmin")',
+            data: {
+                status: Status,
+                mcId: MCId
+            }
+        })
+        .done(function (response) {
+            if (response == true) {
+                Swal.fire({
+                    title: 'Done',
+                    text: 'Successfully Change the status!',
+                })
+            }
+            else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Something went wrong!',
+                })
+            }
+        })
+        .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Something went wrong!',
+            })
+        });
+        }
+    });
+</script>

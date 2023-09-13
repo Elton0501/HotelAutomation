@@ -1,0 +1,173 @@
+﻿@model Models.ClientPackage
+@{
+    ViewBag.Title = "ClientPackageDetails";
+    Layout = "~/Views/SuperAdmin/_SuperAdminLayout.cshtml";
+    string name = ViewBag.name;
+    string branch = ViewBag.branch;
+    string sub = ViewBag.sub;
+}
+
+<style>
+    .ProductTable {
+        text-align: end;
+    }
+
+    .button-act {
+        text-align: center;
+    }
+
+    .editbtn {
+        padding: 0.5rem 1rem 0.5rem 1rem;
+    }
+
+    .deletebtn {
+        padding: 0.5rem 1rem 0.5rem 1rem;
+    }
+</style>
+
+<div id="table-container">
+    @if (Model != null)
+    {
+        <div class="row adminpage-head">
+            <div class="heading col-lg-6">
+                <h1>Client Package for @name</h1>
+            </div>
+
+            <div class="container-fluid">
+                <div class="card shadow mb-4">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="packageTable" cellspacing="0">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th>Sr No</th>
+                                        <th>Restaurant Name</th>
+                                        <th>Branch</th>
+                                        <th>Start Date</th>
+                                        <th>End Date</th>
+                                        <th>Subscribtion</th>
+                                        <th>Advanced Sub</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>@name</td>
+                                        <td>@branch</td>
+                                        <td>@Model.PSD</td>
+                                        <td>@Model.PED</td>
+                                        <td>@sub</td>
+                                        <td>
+                                            <div class="form-check form-check-inline">
+                                                @{
+                                                    var trueCheckedStatus = Model.IsAPackage == true ? "Checked" : string.Empty;
+                                                }
+                                                <input type="hidden" name="IsActive" value='@Model.IsAPackage' id="chkstatus" title="Status" />
+                                                <input class="form-check-input" data-id="@Model.Id" id="chkstatus" type="checkbox" @trueCheckedStatus>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <h6 class="text-center">No Package for the restaurant available.</h6>
+    }
+</div>
+
+<script>
+    $('input[type="checkbox"]').on('change', function () {
+        if ($(this).prop("checked") == true) {
+            Swal.fire({
+            title: 'Are you sure?',
+            text: "You want to change the status!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Change it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title:'Status',
+                    text:'Changed',
+                    icon:'success',
+                    showConfirmButton: false,
+                })
+                var AdvId = $(this).attr("data-id");
+                var Status = true;
+
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("AdvStatus", "SuperAdmin")',
+                    data: {
+                        status: Status,
+                        advId: AdvId
+                    }
+                })
+                .done(function (response) {
+
+                })
+                .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                    $('.loadermodel').hide();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Something went wrong!',
+                    })
+                });
+            }
+        })
+        }
+        else if ($(this).prop("checked") == false) {
+         Swal.fire({
+            title: 'Are you sure?',
+            text: "You want to change the status",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Change it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title:'Status',
+                    text:'Changed',
+                    icon:'success',
+                    showConfirmButton: false,
+                })
+                var AdvId = $(this).attr("data-id");
+                var Status = false;
+
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("AdvStatus", "SuperAdmin")',
+                    data: {
+                        status: Status,
+                        advId: AdvId
+                    }
+                })
+                .done(function (response) {
+
+                })
+                .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                    $('.loadermodel').hide();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Something went wrong!',
+                    })
+                });
+            }
+        })
+        }
+    });
+</script>
+

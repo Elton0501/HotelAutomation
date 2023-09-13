@@ -1,0 +1,208 @@
+﻿﻿@{
+    var RCode = Context.Session["RCode"];
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Content/all.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css" rel="stylesheet"/>
+    <!-- Custom styles for this template-->
+    <link href="~/Content/sb-admin-2.min.css" rel="stylesheet" />
+    <link href="~/Content/sweetalert2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.3/font/bootstrap-icons.min.css" />
+
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="~/Scripts/Chart/Chart.js"></script>
+    <style>
+        .loginbtn {
+            font-size: 13px;
+            margin: 0;
+            padding: 4px 10px;
+        }
+        .table .thead-dark th {
+            text-transform: uppercase !important;
+        }
+        .dataTables_wrapper .dataTables_paginate .paginate_button {
+            box-sizing: border-box;
+            display: inline-block;
+            padding: 0.25em 0.61em;
+            margin-left: 2px;
+            text-align: center;
+            text-decoration: none !important;
+            cursor: pointer;
+            color: #333 !important;
+            border: none;
+            border-radius: 2px;
+            margin-top: 5px;
+            font-size: 15px;
+        }
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current, .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+            color: #fbfbfb !important;
+            border: none;
+            background: var(--blue);
+            outline: none !important;
+        }
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+            color: var(--blue) !important;
+            border: none;
+            background: #e3ebf7;
+        }
+        .dataTables_info {
+            margin-top: 5px;
+            font-size: 14px;
+        }
+        .buttons-copy, .buttons-excel, .buttons-csv, .buttons-print {
+            color: #fff;
+            background-color: #4e73df;
+            border-color: #4e73df;
+            font-size: 13px;
+            margin: 0;
+            padding: 6px 15px 4px 10px;
+            border: none;
+            outline: none !important;
+        }
+        .buttons-excel {
+            background: var(--cyan) !important;
+        }
+        .buttons-csv {
+            background: var(--danger) !important;
+        }
+        .buttons-print {
+            background: var(--dark) !important;
+        }
+        .cont {
+            margin: 5px;
+        }
+        .adminpage-head {
+            padding: 0rem 2rem;
+        }
+        thead, tr {
+            text-align: center;
+        }
+        table {
+            font-size: 11px;
+        }
+        .col-md-10 {
+            max-width: 100% !important;
+        }
+        .sidebar-brand-icon img {
+            width: 79% !important;
+        }
+        @@media(max-width:700px) {
+            .adminpage-head {
+                padding: 0rem 0.5rem;
+            }
+            .btn {
+                font-size: 10px !important;
+            }
+            #userDropdown span{
+                display: none;
+            }
+            #notifyDropdown {
+                margin-right: -84px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+        @Html.Partial("_AdminSidebarPartial")
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content">
+                @Html.Partial("_AdminNavbarPartial")
+                <div class="cont">
+                    @RenderBody()
+                </div>
+            </div>
+            <footer class="sticky-footer bg-white">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <span>BFoodie.in</span>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+    <a class="scroll-to-top rounded" href="#wrapper">
+        <i class="bi-arrow-up-circle" style="font-size: 21px;"></i>
+    </a>
+    @*<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-primary" href="login.html">Logout</a>
+                </div>
+
+            </div>
+        </div>
+    </div>*@
+    @*<a href="PrintPOS:@("R-" + RCode)" id="PrintBtn" hidden>Print</a>*@
+
+    <script src="~/Scripts/Chart/Chart.js"></script>
+    <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+    <script src="~/Scripts/jquery.easing.min.js"></script>
+    <script src="~/Scripts/sb-admin-2.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.6.4/js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.6.4/js/buttons.html5.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.6.4/js/buttons.print.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script src="~/Scripts/sweetalert2.all.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#itemTable').DataTable();
+        });
+/*        auto print in every 30 sec by this function*/
+        //function autoRefreshPage() {
+        //    $.ajax({
+        //        type: "Post",
+        //        url: '/Admin/PrintPlaceOrder',
+        //        success: function (result) {
+        //            if (result == "True") {
+        //                const link = document.getElementById('PrintBtn');
+        //                NotificationMessage();
+        //                window.open(link.href);
+        //            }
+        //        },
+        //        error: function (result) {
+        //            alert("fail");
+        //        },
+        //    });
+        //}
+        //setInterval('autoRefreshPage()', 8000);
+
+        //function NotificationMessage() {
+        //    Notification.requestPermission().then(perm => {
+        //        if (perm === "granted") {
+        //            const notification = new Notification("Order Notification", {
+        //                body: "New order placed in restaurent",
+        //                tag :"Orders message"
+        //            })
+        //            notification.addEventListener("click", e => {
+        //                var url = "/Admin/CurrentStatus";
+        //                window.location.href = url;
+        //            })
+        //        }
+        //    })
+        //}
+
+    </script>
+</body>
+</html>

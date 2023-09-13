@@ -1,0 +1,351 @@
+﻿@model ViewModels.RestTable
+@using ViewModels;
+@using Services;
+@{
+    ViewBag.Title = "TableUser";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var Available = Model.Tables.Count() > 0 && Model.Tables != null ? Model.Tables.Where(x => x.CreatedBy == null || x.CreatedBy == string.Empty).Count() : Model.Tables.Count();
+}
+<style>
+    .card-header {
+        padding: 0.35rem 1.25rem;
+        border-radius: 0 !important;
+    }
+
+    .btn {
+        font-size: 13px;
+        margin: 0;
+        padding: 4px 10px;
+    }
+
+    .btn-link.focus, .btn-link:focus {
+        text-decoration: none !important;
+    }
+
+    .btn-link:hover {
+        text-decoration: none !important;
+    }
+
+    .btn.focus, .btn:focus {
+        outline: none;
+        box-shadow: none !important;
+    }
+
+    .card-header {
+        border-bottom: none !important;
+    }
+
+    .card {
+        border-radius: 0 !important;
+    }
+</style>
+<div class="adminpage-head">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+            <h6 class="m-0 font-weight-bold text-primary text-uppercase">User Table</h6>
+        </div>
+        <div class="accordion mt-2 p-2" id="accordionExample">
+            <div class="d-flex mb-3 justify-content-between">
+                <div class="px-2 py-2 text-uppercase" style="background: #f8f9fc; font-size: 14px; letter-spacing: 1px; align-self: center; font-weight: 700;">Available: @Model.TableAvail</div>
+                <div class="px-2 py-2 bg-warning text-gray-900 text-uppercase" style="font-size: 14px; letter-spacing: 1px; align-self: center; font-weight: 700;">Reserved : @Model.TableRese</div>
+            </div>
+            @if (Model.Tables.Count() > 0)
+            {
+                foreach (var item in Model.Tables)
+                {
+                    var TableData = Model.UserTables.Where(x => x.TCode == item.TCode).ToList();
+                    <div class="card mb-2 border-0">
+                        <div class="card-header @(item.CreatedBy == "" ? "" : "bg-warning")">
+                            <h2 class="mb-0 d-flex flex-wrap justify-content-between">
+                                <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="@("#collapse" + item.TCode)" aria-expanded="true" aria-controls="@("collapse" + item.TCode)">
+                                    <div class="d-flex flex-wrap justify-content-between">
+                                        <span><small style="color: black; font-weight: 600; font-size: 12px;">@(item.TCode == Constant.TakeAway ? "Take Away" : item.TCode == Constant.HomeDelivery ? "Home Delivery" : "Table :" + item.TCode)</small></span>
+                                        <span>Available : <small style="color: black; font-weight: 600;">@(item.CreatedBy != "" ? "Reserved" : "Available" )</small></span>
+                                        <span>Reserved At : <small style="color: black; font-weight: 600;">@Convert.ToDateTime(item.CreatedOn).ToString("hh:mm tt")</small></span>
+                                    </div>
+                                </button>
+                            </h2>
+                        </div>
+                        <div id="@("collapse" + item.TCode)" class="collapse" aria-labelledby="@("heading" + item.TCode)" data-parent="#accordionExample">
+                            <div class="card-body table-responsive">
+                                @if (TableData.Count() > 0)
+                                {
+                                    <table class="table table-bordered">
+                                        <thead class="thead-dark">
+                                            <tr>
+                                                <th scope="col">#</th>
+                                                <th scope="col">User</th>
+                                                <th scope="col">Login at</th>
+                                                <th scope="col">Payment</th>
+                                                <th scope="col">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @for (int i = 0; i < TableData.Count; i++)
+                                            {
+                                                var Payment = PlaceOrderService.Instance.BillAmountPO(TableData[i].CreatedBy, TableData[i].RCode, TableData[i].TCode,"");
+                                                int count = i + 1;
+                                                <tr>
+                                                    <th>@count</th>
+                                                    <th>@TableData[i].CreatedBy</th>
+                                                    <th>@TableData[i].CreatedOn.ToString("hh:mm tt")</th>
+                                                    <th>
+                                                        ₹ @Payment.ToString("f")
+                                                        @*<br />
+                                                        @foreach (PaymentType val in Enum.GetValues(typeof(PaymentType)))
+                                                        {
+                                                            <div class="form-check form-check-inline mt-1">
+                                                                <input class="form-check-input" type="radio" name="PaymentType" id="inlineRadio1" value="@((int)val)">
+                                                                <label class="form-check-label" for="inlineRadio1">@val</label>
+                                                            </div>
+                                                        }*@
+                                                    </th>
+                                                    <th>
+                                                        <button class="btn my-1 btn-outline-danger" onclick="RemoveUSer('@TableData[i].Id')">Remove User</button>
+                                                        <a class="btn my-1 btn-outline-primary"
+                                                           href="@Url.Action("addItemForUser", "Admin", new { Rcode = TableData[i].RCode, TCode = TableData[i].TCode, UCode = TableData[i].CreatedBy })">Add Item</a>
+                                                        @*<button class="btn btn-outline-info" onclick="saveorder('@TableData[i].TCode', '@TableData[i].CreatedBy')"
+                @(TableData[i].TCode == Constant.HomeDelivery ? "hidden" : TableData[i].TCode == Constant.TakeAway ? "hidden" : Payment < 1 ? "hidden" : "")>
+            Save / Bill
+        </button>*@
+                                                    <button type="button" onclick="TableOrder('@item.TCode', '@TableData[i].CreatedBy',true)" class="btn btn-primary" data-toggle="modal" data-target="#staticBackdrop">
+                                                        User Bill
+                                                    </button>
+                                                    </th>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                }
+                                else
+                                {
+                                    <div class="text-center w-100">
+                                        <span>Table is available.</span>
+                                    </div>
+                                }
+                            <div class="text-right w-100 d-flex justify-content-between">
+                                @if (TableData.Count > 0 && item.TCode != Constant.HomeDelivery && item.TCode != Constant.TakeAway)
+                                {
+                                    <div>
+                                        <button type="button" onclick="TableOrder('@item.TCode','',false)" class="btn btn-primary" data-toggle="modal" data-target="#staticBackdrop">
+                                            Table Bill
+                                        </button>
+                                    </div>
+                                }
+                                <div>
+                                    <a class="btn btn-danger" href="@Url.Action("addItemForUser", "Admin", new {Rcode=item.RCode,TCode=item.TCode})">Add User</a>
+                                </div>
+                            </div>
+
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <h6 class="p-3 text-center">No data available.</h6>
+            }
+        </div>
+
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+
+        <div class="modal-content">
+
+            <div class="total-bill-modal" style="overflow-y: auto;">
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<script>
+    function RemoveUSer(id){
+            Swal.fire({
+        title: 'Are you sure?',
+        text: "You want to Remove this user from table!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, Change it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Swal.fire({
+                title: 'Status',
+                text: 'Changed',
+                icon: 'success',
+                showConfirmButton: false,
+            })
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("RemoveFromTable", "Admin")',
+                data: {
+                    Id: id,
+                }
+            })
+                .done(function (response) {
+                    if (response == true) {
+                        Swal.fire({
+                            title: 'Done',
+                            text: 'Successfully Removed!',
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.reload();
+                            }
+                        });
+                    }
+                    else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Something went wrong!',
+                        })
+                    }
+                })
+                .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Something went wrong!',
+                    })
+                });
+        }
+    });
+    }
+    function saveorder(Tid, Uid) {
+        var PaymentType = $("input[name=PaymentType]:checked").val();
+        if (PaymentType == null) {
+            alert("Please select the payment type!");
+        }
+        else {
+        Swal.fire({
+        title: 'Are you sure?',
+        text: "You want to save this or related this order!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, Change it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Swal.fire({
+                title: 'Status',
+                text: 'Changed',
+                icon: 'success',
+                showConfirmButton: false,
+            })
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("SaveOrderByAdmin", "Admin")',
+                data: {
+                    UCode: Uid,
+                    TCode: Tid,
+                    paymentType: PaymentType
+                }
+            })
+                .done(function (response) {
+                    if (response == true) {
+                        Swal.fire({
+                            title: 'Done',
+                            text: 'Successfully Added!',
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.reload();
+                            }
+                        });
+                    }
+                    else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Something went wrong!',
+                        })
+                    }
+                })
+                .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Something went wrong!',
+                    })
+                });
+        }
+    });
+        }
+    }
+    function TableOrder(tcode, UCode, isSingleUser) {
+        $.ajax({
+                url: '@Url.Action("TableOrdersPartial", "Admin")',
+                data: {
+                    TCode: tcode,
+                    UCode: UCode,
+                    isSingleuser: isSingleUser,
+                }
+        })
+            .done(function (response) {
+                $(".total-bill-modal").html(response);
+            })
+    }
+    @*function AddItem(rcode,tcode,ucode) {
+            Swal.fire({
+        title: 'Are you sure?',
+        text: "You want to Add Item for this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, Change it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Swal.fire({
+                title: 'Status',
+                text: 'Changed',
+                icon: 'success',
+                showConfirmButton: false,
+            })
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("addItemForUser", "Admin")',
+                data: {
+                    Rcode: rcode,
+                    TCode: tcode,
+                    UCode: ucode,
+                }
+            })
+                .done(function (response) {
+                    if (response == true) {
+                        Swal.fire({
+                            title: 'Done',
+                            text: 'Successfully Removed!',
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.reload();
+                            }
+                        });
+                    }
+                    else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Something went wrong!',
+                        })
+                    }
+                })
+                .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Something went wrong!',
+                    })
+                });
+        }
+    });
+    }*@
+</script>

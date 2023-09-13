@@ -1,0 +1,117 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+
+
+    <link href="~/Content/all.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+          rel="stylesheet">
+    <link href="~/Content/jquery.dataTables.min.css" rel="stylesheet" />
+    <!-- Custom styles for this template-->
+    <link href="~/Content/sb-admin-2.min.css" rel="stylesheet" />
+    <link href="~/Content/sweetalert2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.3/font/bootstrap-icons.min.css"/>
+    <script src="~/Scripts/jquery-3.4.1.min.js" type="text/javascript"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+
+    <style>
+        h1 {
+            font-size: 25px;
+        }
+        thead, tr{
+            text-align:center;
+        }
+        .btn{
+            font-size: 14px;
+        }
+        .dropdown-menu {
+            background: #e3e3e3;
+        }
+        .dropdown-menu {
+            left: -10px;
+            min-width: 8rem;
+        }
+        .card-body{
+            overflow-x: auto;
+        }
+        .card{
+            margin-top:1rem;
+        }
+        .adminpage-head {
+            padding: 0rem 2rem;
+        }
+        .table{
+            font-size: 11px;
+        }
+        .col-md-10 {
+            max-width: 100% !important;
+        }
+        .form-horizontal {
+            border: 1px solid lightgrey;
+            padding: 1rem;
+            margin: 1rem;
+            border-radius: 10px;
+        }
+        h4 {
+            color: black;
+            font-weight: bolder;
+        }
+    </style> 
+</head>
+<body>
+    <style>
+
+        .table-responsive {
+            overflow-x: visible !important;
+        }
+    </style>
+    <div id="wrapper">
+        @Html.Partial("_SuperAdminSidebarPartial")
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content">
+                @Html.Partial("_SuperAdminNavbarPartial")
+                <div class="cont">
+                    @RenderBody()
+                </div>
+            </div>
+            <footer class="sticky-footer bg-white">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <span>bfoodie.in</span>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+    <a class="scroll-to-top rounded" href="#wrapper">
+        <i class="fas fa-angle-up"></i>
+    </a>
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-primary" href="login.html">Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/Scripts/Chart/Chart.js"></script>
+    <script src="~/Scripts/jquery.dataTables.min.js"></script>
+    <script src="~/Scripts/jquery.easing.min.js"></script>
+    <script src="~/Scripts/sb-admin-2.min.js"></script>
+    <script src="~/Scripts/sweetalert2.all.min.js"></script>
+</body>
+</html>

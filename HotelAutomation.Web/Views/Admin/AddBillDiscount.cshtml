@@ -1,0 +1,428 @@
+﻿@model Models.BillDiscount
+
+@{
+    ViewBag.Title = "AddBillDiscount";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var message = Convert.ToString(TempData["Message"]);
+}
+
+<style>
+    .card-header {
+        padding: 0.35rem 1.25rem;
+        border-radius: 0 !important;
+    }
+
+    .btn {
+        font-size: 14px;
+        margin: 0;
+        padding: 4px 10px;
+    }
+
+    .btn-link.focus, .btn-link:focus {
+        text-decoration: none !important;
+    }
+
+    .btn-link:hover {
+        text-decoration: none !important;
+    }
+
+    .btn.focus, .btn:focus {
+        outline: none;
+        box-shadow: none !important;
+    }
+
+    .collapse .card-body {
+        border: 1px solid lightgrey;
+        margin-top: 6px;
+        border-radius: 4px;
+    }
+
+    .card-header {
+        border-bottom: none !important;
+    }
+
+    .card {
+        border-radius: 0 !important;
+    }
+
+    .discount-on {
+        border: 1px solid #d1d3e2;
+        margin: 0.75rem 0.3rem 1.5rem;
+        border-radius: 10px;
+        padding: 1.5rem 1.5rem 0;
+    }
+
+    small {
+        padding: 0.75rem 0;
+    }
+
+    h6 {
+        margin-top: 0.5rem;
+        margin-bottom: 0;
+    }
+
+    .disc-per {
+        border: 1px solid #d1d3e2;
+        border-radius: 10px;
+        padding: 0.75rem;
+    }
+
+    .disc-info-container {
+        padding: 0.75rem 1.5rem 1.5rem;
+    }
+
+    .coupon-checkboxex {
+        padding: 0 0.75rem;
+    }
+    /*------------slider-css------------------*/
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 53px;
+        height: 26px;
+    }
+
+        /* Hide default HTML checkbox */
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+    /* The slider */
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        -webkit-transition: .4s;
+        transition: .4s;
+    }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 19px;
+            width: 19px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+    input:checked + .slider {
+        background-color: #2196F3;
+    }
+
+    input:focus + .slider {
+        box-shadow: 0 0 1px #2196F3;
+    }
+
+    input:checked + .slider:before {
+        -webkit-transform: translateX(26px);
+        -ms-transform: translateX(26px);
+        transform: translateX(26px);
+    }
+
+    /* Rounded sliders */
+    .slider.round {
+        border-radius: 34px;
+    }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+    .filter-label label {
+        font-size: 15px;
+    }
+
+    /*------------slider-css-ends------------------*/
+
+    @@media(max-width: 500px) {
+        .min-amt-container {
+            padding: 0 !important;
+            margin-top: 1rem;
+        }
+    }
+</style>
+
+<div class="row adminpage-head">
+    <div class="col-12">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <div>
+                    <h6 class="m-0 font-weight-bold text-primary text-uppercase">Add Coupon/Discount</h6>
+                </div>
+                <div>
+                    <label>Normal Discount</label>
+                    <label class="switch">
+                        <input type="checkbox" name="coupon-toggle">
+                        <span class="slider round" id=""></span>
+                    </label>
+                    <label>Coupon Discount</label>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="messageBox">
+                    @if (message != null && message != "")
+                    {
+                        <div class="bg-danger mb-4 mt-1 p-2 text-gray-100">
+                            <span class="pl-3">@message.ToString()</span>
+                        </div>
+                    }
+                </div>
+                @using (Html.BeginForm())
+                {
+                    @Html.AntiForgeryToken()
+
+            <div class="form-horizontal">
+                <input type="hidden" name="RCode" value="@Model.RCode" />
+                <input type="hidden" name="CreatedOn" value="@Model.CreatedOn" />
+                <input type="hidden" name="CreatedBy" value="Admin" />
+                <input type="hidden" name="isActive" value="true" />
+
+                <div>
+                    <div class="form-group coupon-container-hide-show">
+                        @Html.LabelFor(model => model.CouponName, htmlAttributes: new { @class = "control-label" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.CouponName, new { htmlAttributes = new { @class = "form-control", @id = "coupon-tb" } })
+                            @Html.ValidationMessageFor(model => model.CouponName, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="row coupon-checkboxex">
+                        <div class="col-md-4 coupon-container-hide-show">
+                            <div class="disc-per">
+                                <div class="form-group d-flex m-0">
+                                    <label class="control-label">Apply Coupon on Discounts? </label>
+                                    <div class="col-2">
+                                        @Html.EditorFor(model => model.CouponOnDiscount)
+                                        @Html.ValidationMessageFor(model => model.CouponOnDiscount, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <small>Tick if you want this Coupon to be applied even if other discounts are applied</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4 coupon-container-hide-show">
+                            <div class="disc-per">
+                                <div class="form-group d-flex m-0">
+                                    <label class="control-label">Apply Multiple times? </label>
+                                    <div class="col-2">
+                                        @Html.EditorFor(model => model.isSingleUse)
+                                        @Html.ValidationMessageFor(model => model.isSingleUse, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <small>Note: Tick this if you want a user to use this coupon multiple times!</small>
+                            </div>
+                        </div>
+                        <div class="col-md-12" id="DiscountOnItem">
+                            <div class="disc-per">
+                                <div class="form-group d-flex m-0">
+                                    <label class="control-label">Apply on Discounted items? </label>
+                                    <div class="col-md-3">
+                                        @Html.EditorFor(model => model.DiscountOnItem)
+                                        @Html.ValidationMessageFor(model => model.DiscountOnItem, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <small>Tick if you want this to be applied even if discounted items are ordered</small>
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+                </div>
+                <h6>Discount on</h6>
+                <div class="discount-on row">
+                    <div class="form-group col-lg-4 col-md-4 d-flex m-auto">
+                        <label class="control-label">Dine In</label>
+                        <div class="col-2">
+                            @Html.EditorFor(model => model.Table)
+                            @Html.ValidationMessageFor(model => model.Table, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group col-lg-4 col-md-4 d-flex m-auto">
+                        @Html.LabelFor(model => model.TakeAway)
+                        <div class="col-2">
+                            @Html.EditorFor(model => model.TakeAway)
+                            @Html.ValidationMessageFor(model => model.TakeAway, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group col-lg-4 col-md-4 d-flex m-auto">
+                        @Html.LabelFor(model => model.HomeDelivery, htmlAttributes: new { @class = "control-label" })
+                        <div class="col-2">
+                            @Html.EditorFor(model => model.HomeDelivery)
+                            @Html.ValidationMessageFor(model => model.HomeDelivery, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <small>Note: Tick all the boxes for which you want to apply the discounts</small>
+                </div>
+
+                <div class="disc-info-container row">
+                    <div class="discount-on col-md-7">
+                        <div class="row">
+                            <div class="form-group col-lg-6 col-md-6 d-flex m-auto">
+                                <label class="control-label">Food Or Bevrage</label>
+                                <div class="col-2">
+                                    <input class="check-box" id="forFoodOrBevrage" name="forFoodOrBevrage" type="checkbox" value="true" checked>
+                                    @Html.ValidationMessageFor(model => model.forFoodOrBevrage, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            @if (Model.isBarAvail == true)
+                            {
+                                <div class="form-group col-lg-6 col-md-6 d-flex m-auto">
+                                    <label class="control-label">Bar</label>
+                                    <div class="col-2">
+                                        @Html.EditorFor(model => model.forBar)
+                                        @Html.ValidationMessageFor(model => model.forBar, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            }
+                            <small>Note: Tick all the boxes for which you want to apply the discounts</small>
+                        </div>
+                    </div>
+                    <div class="discount-on col-lg-5 d-flex col-md-5">
+                        <div class="form-group m-auto">
+                            <label class="control-label">Expire</label>
+                            <div class="col-4">
+                                <input type="datetime-local" name="ExpiredDateTime" />
+                                @Html.ValidationMessageFor(model => model.ExpiredDateTime, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <h6>Discount Numbers</h6>
+
+                <div class="disc-info-container">
+                    <div class="row disc-amt-container">
+                        <div class="col-md-8 disc-per">
+                            <div class="row">
+                                <div class="form-group col-6">
+                                    @Html.LabelFor(model => model.DiscountPercentage, htmlAttributes: new { @class = "control-label p-label" })
+                                    <div class="col-md-10">
+                                        <input type="number" name="DiscountPercentage" id="DiscountPercentage" min="0" max="100" value="0" class="form-control" />
+                                        @Html.ValidationMessageFor(model => model.DiscountPercentage, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-6">
+                                    @Html.LabelFor(model => model.DiscountAmount, htmlAttributes: new { @class = "control-label" })
+                                    <div class="col-md-10">
+                                        <input type="number" name="DiscountAmount" id="DiscountAmount" value="0" class="form-control" />
+                                        @Html.ValidationMessageFor(model => model.DiscountAmount, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+
+                            </div>
+                            <small>
+                                Note: You can either specify Discount percentage or amount.Percentage will calculate the % and deduct the amount while Discount amount will deduct the amount directly from the total bill
+                            </small>
+                        </div>
+
+                        <div class="col-md-4 pr-0 min-amt-container">
+                            <div class="disc-per">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.MinimumAmount, htmlAttributes: new { @class = "control-label" })
+                                    <div class="col-md-10">
+                                        <input type="number" min="0" name="MinimumAmount" id="MinimumAmount" value="@(Model.MinimumAmount)" class="form-control" />
+                                        @Html.ValidationMessageFor(model => model.MinimumAmount, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <small>
+                                    Note: Specify the minimum amount. Only after exceding this amount will the discount be applied.
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <input name="isDiscount" id="isDiscount" value="@Model.isDiscount" type="hidden" />
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <input type="submit" value="Create" class="btn btn-outline-primary" />
+                    </div>
+                </div>
+            </div>
+                }
+
+                <div class="text-right mr-5">
+                    @Html.ActionLink("Back to List", "ListBillDiscount")
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        var type = '@Model.isDiscount';
+        if (type == 'True') {
+            $(".coupon-container-hide-show").hide();
+            $("#isDiscount").val(true);
+            $('input[name="coupon-toggle"]').prop("checked", false);
+            $("#DiscountOnItem").addClass("col-md-12");
+            $("#DiscountOnItem").removeClass("col-md-4");
+        }
+        else {
+            $(".coupon-container-hide-show").show();
+            $("#isDiscount").val(false);
+            $('input[name="coupon-toggle"]').prop("checked", true);
+            $("#DiscountOnItem").addClass("col-md-4");
+            $("#DiscountOnItem").removeClass("col-md-12");
+        }
+        $("#isDiscount").val(true);
+    });
+
+    $('input[name="coupon-toggle"]').on('change', function () {
+        if ($(this).prop("checked") == false) {
+            $(".coupon-container-hide-show").hide();
+            $("#isDiscount").val(true);
+            $("#DiscountOnItem").addClass("col-md-12");
+            $("#DiscountOnItem").removeClass("col-md-4");
+            $("#messageBox").hide();
+            $('input[name="isSingleUse"]').prop("checked", false);
+            $('input[name="CouponOnDiscount"]').prop("checked", false);
+        }
+        else if ($(this).prop("checked") == true) {
+            $(".coupon-container-hide-show").show();
+            $("#isDiscount").val(false);
+            $("#DiscountOnItem").addClass("col-md-4");
+            $("#DiscountOnItem").removeClass("col-md-12");
+            $("#messageBox").hide();
+        }
+    });
+
+    $('#MinimumAmount').change(function () {
+        var a = $("#MinimumAmount").val();
+        if (a == null || a == "") {
+            $("#MinimumAmount").val("0");
+        }
+    });
+
+    $('#DiscountAmount').change(function () {
+        var a = $("#DiscountAmount").val();
+        if (a == null || a == "") {
+            $("#DiscountAmount").val("0");
+        }
+        var b = parseInt($("#DiscountAmount").val());
+        if (b > 0) {
+            $("#DiscountPercentage").val("0");
+        }
+    });
+
+    $('#DiscountPercentage').change(function () {
+        var a = $("#DiscountPercentage").val();
+        if (a == null || a == "") {
+            $("#DiscountPercentage").val("0");
+        }
+        var b = parseInt($("#DiscountPercentage").val());
+        if (b > 0) {
+            $("#DiscountAmount").val("0");
+        }
+    });
+</script>

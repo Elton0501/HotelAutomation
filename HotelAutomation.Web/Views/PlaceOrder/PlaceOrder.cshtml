@@ -1,0 +1,468 @@
+﻿@using ViewModels;
+@using Services;
+@{
+    ViewBag.Title = "PlaceOrder";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .popup {
+        width: 100%;
+        height: 100%;
+        display: none;
+        position: fixed;
+        top: 0px;
+        left: 0px;
+        background: rgba(0, 0, 0, 0.75);
+        z-index: 111;
+    }
+    .popup {
+        text-align: center;
+    }
+        .popup:before {
+            content: '';
+            display: inline-block;
+            height: 100%;
+            margin-right: -4px;
+            vertical-align: middle;
+        }
+
+    .popup-inner {
+        display: inline-block;
+        text-align: left;
+        vertical-align: middle;
+        position: relative;
+        max-width: 700px;
+        width: 90%;
+        padding: 40px;
+        box-shadow: 0px 2px 6px rgba(0, 0, 0, 1);
+        border-radius: 3px;
+        background: #fff;
+        text-align: center;
+    }
+    .popup-close {
+        width: 34px;
+        height: 34px;
+        padding-top: 4px;
+        display: inline-block;
+        position: absolute;
+        top: 25px;
+        right: 25px;
+        -webkit-transform: translate(50%, -50%);
+        transform: translate(50%, -50%);
+        border-radius: 100%;
+        background: transparent;
+        border: solid 4px #ffffff;
+    }
+
+        .popup-close:after,
+        .popup-close:before {
+            content: "";
+            position: absolute;
+            top: 11px;
+            left: 5px;
+            height: 4px;
+            width: 16px;
+            border-radius: 30px;
+            background: #ffffff;
+            -webkit-transform: rotate(45deg);
+            transform: rotate(45deg);
+        }
+
+        .popup-close:after {
+            -webkit-transform: rotate(-45deg);
+            transform: rotate(-45deg);
+        }
+
+        .popup-close:hover {
+            -webkit-transform: translate(50%, -50%) rotate(180deg);
+            transform: translate(50%, -50%) rotate(180deg);
+            background: #f00;
+            text-decoration: none;
+            border-color: #f00;
+        }
+
+            .popup-close:hover:after,
+            .popup-close:hover:before {
+                background: #fff;
+            }
+    .coupon-card h3 {
+        font-size: 28px;
+        font-weight: 400;
+        line-height: 40px;
+    }
+
+    .coupon-card p {
+        font-size: 15px;
+    }
+
+    .coupon-row {
+        display: flex;
+        align-items: center;
+        margin: 25px auto;
+        width: fit-content;
+        position: relative;
+    }
+    .coupon-card {
+        background: linear-gradient(135deg, #7158fe, #9d4de6);
+        color: #fff;
+        text-align: center;
+        padding: 40px 80px;
+        border-radius: 15px;
+        box-shadow: 0 10px 10px 0 rgba(0,0,0,0.15);
+        position: relative;
+    }
+    #cpnCode {
+        border: 1px dashed #fff;
+        padding: 8px 20px;
+        border-right: 0;
+        background: transparent;
+        color: white;
+        outline: none !important;
+    }
+
+    #cpnBtn {
+        border: 1px solid #fff;
+        background: #fff;
+        padding: 10px 20px;
+        color: #7158fe;
+        cursor: pointer;
+    }
+
+    .circle1, .circle2 {
+        background: #404040;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    .circle1 {
+        left: -25px;
+    }
+
+    .circle2 {
+        right: -25px;
+    }
+    @@media(max-width:500px) {
+        .coupon-card {
+            padding: 25px 20px;
+        }
+        #cpnCode {
+            padding: 8px 0px;
+        }
+        .coupon-card h3 {
+            font-size: 25px;
+        }
+    }
+    @@media (max-width: 300px) {
+        .coupon-card {
+            padding: 25px 0px;
+        }
+        .popup-inner {
+            width:97%;
+        }
+    }
+</style>
+<div class="order-box">
+    @*@if (Model.OrderPlaced.Count > 0)
+    {*@
+    <div class="ordered">
+        <h2><i class="bi bi-cart-fill fa-bitbucket"></i> Ordered Items</h2>
+        <div class="PlaceOrderSection">
+
+        </div>
+        <div class="order-item-total order-final row">
+
+        </div>
+            <div class="order-actions">
+                <a class="poa btn" href="/Menu"><i class="bi bi-arrow-left"></i> Menu</a>
+                <button class="btn actionBtn" onclick="checkOutAction()">Checkout <i class="bi bi-arrow-right"></i></button>
+            </div>
+            <div class="text-center Coupon-Box">
+                <a class="text-info" pd-popup-open="popupNew" href="#">Have a coupon code ?</a>
+
+                <div class="popup" pd-popup="popupNew">
+                    <div class="popup-inner coupon-card">
+                        <div class="mt-3">
+                            <h3 class="text-white">Apply your coupon code here!</h3>
+                            <h6 class="" id="message-coupon"></h6>
+                            <div class="coupon-row">
+                                <input id="cpnCode" type="text" />
+                                <span id="cpnBtn">Apply</span>
+                            </div>
+                            <div class="circle1"></div>
+                            <div class="circle2"></div>
+                        </div>
+                        <a class="popup-close" pd-popup-close="popupNew" href="#"> </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<input type="hidden" id="CouponName" />
+<script>
+    $(document).ready(function () {
+        $(".Coupon-Box").hide();
+        var couponName = "";
+        setPlaceOrderData(couponName);
+        setTimeout(() => {
+            /* 1. Visualizing things on Hover - See next part for action on click */
+            $('#stars li').on('mouseover', function () {
+                var onStar = parseInt($(this).data('value'), 10); // The star currently mouse on
+                // Now highlight all the stars that's not after the current hovered star
+                $(this).parent().children('li.star').each(function (e) {
+                    if (e < onStar) {
+                        $(this).addClass('hover');
+                    }
+                    else {
+                        $(this).removeClass('hover');
+                    }
+                });
+            }).on('mouseout', function () {
+                $(this).parent().children('li.star').each(function (e) {
+                    $(this).removeClass('hover');
+                });
+            });
+            /* 2. Action to perform on click */
+            $('#stars li').on('click', function () {
+                var value = $(this).attr("data-id");
+                var onStar = parseInt($(this).data('value'), 10); // The star currently selected
+                var stars = $(this).parent().children('li.star');
+                for (i = 0; i < stars.length; i++) {
+                    $(stars[i]).removeClass('selected');
+                }
+                for (i = 0; i < onStar; i++) {
+                    $(stars[i]).addClass('selected');
+                }
+                // JUST RESPONSE (Not needed)
+                var ratingValue = onStar;
+                $.ajax({
+                    type: "POST",
+                    url: "/Home/Rating",
+                    data: {
+                        mCode: value,
+                        starRating: ratingValue
+                    },
+                    success: function (response) {
+                        if (response < 3) {
+                            $("." + value).hide();
+                            $("#" + value).children(".ratingMessage").text("We will improve ourselves. You rated this " + response + " stars.");
+                            $("#" + value).children(".rating-heading").hide();
+                        }
+                        else {
+                            $("." + value).hide();
+                            $("#" + value).children(".ratingMessage").text("Thanks! You rated this " + ratingValue + " stars.");
+                            $("#" + value).children(".rating-heading").hide();
+                        }
+                    }
+                })
+            });
+        }
+            , 2000);
+    });
+    function setPlaceOrderData(couponName) {
+        $.ajax({
+            type: "POST",
+            url: "/PlaceOrder/getPlaceOrderData",
+            dataType: 'json',
+            data: {
+                CouponName: couponName,
+                removeCoupon: false,
+            },
+            success: function (response) {
+                var returnedData = JSON.parse(response);
+                if (returnedData.CouponAvailable == true) {
+                    $(".Coupon-Box").show();
+                }
+                else {
+                    $(".Coupon-Box").hide();
+                }
+                if (returnedData.OrderPlaced == "" || returnedData.OrderPlaced == null) {
+                    var variable = '<h5 class="text-center mt-2">No Item available!</h5>';
+                    $(".PlaceOrderSection").append(variable);
+                }
+                if (returnedData.CouponDiscountAmount > 0) {
+                    $("#cpnCode").val(returnedData.CouponName);
+                }
+                jQuery.each(returnedData.OrderPlaced, function (index, item) {
+                var variable = '' +
+'' +
+'            <div class="order-item row">' +
+'            <div class="order-item-img col-lg-1 col-md-2 col-3">' +
+'                    <img src="' + (item.menu.img != "" && item.menu.img != null ? item.menu.img : "") + '" class="pr-2 ' + (item.menu.img != "" && item.menu.img != null ? "" : "d-none") + '">' +
+'                </div>' +
+'                <div class="order-item-desc col-lg-9 col-md-7 col-6" style="line-height: 15px;">' +
+'                    <h3 class="neg-non-icon">' +
+    '                        <i class="bi bi-triangle-fill neg-non-icon ' + (item.menuType === "@Constant.NonVeg" ? "" : "d-none") + '" ></i>' +
+    '                        <i class="bi bi-triangle-fill neg-non-icon ' + (item.menuType === "@Constant.Veg" ? "" : "d-none") + '" style="color: #4caf50 !important;"></i>' +
+'                    </h3>' +
+        '                    <h3 class="m-0">' + item.menu.MDesc +'</h3>' +
+        '                    <div class="MenuRate" id="' + item.menu.MCode +'">' +
+'                        <h6 class="rating-heading">Rate this dish</h6>' +
+'                        <span class="ratingMessage mt-1"></span>' +
+        '                        <div class="rate ' + item.menu.MCode +'">' +
+'                            <div class=\'rating-stars text-center\'>' +
+'                                <ul id="stars">' +
+'                                    <li class="star" title=\'Poor\' data-value=\'1\' data-id="' + item.menu.MCode + '">' +
+'                                        <i class=\'fa fa-star fa-fw\'></i>' +
+'                                    </li>' +
+'                                    <li class=\'star\' title=\'Fair\' data-value=\'2\' data-id="' + item.menu.MCode + '">' +
+'                                        <i class=\'fa fa-star fa-fw\'></i>' +
+'                                    </li>' +
+'                                    <li class=\'star\' title=\'Good\' data-value=\'3\' data-id="' + item.menu.MCode + '">' +
+'                                        <i class=\'fa fa-star fa-fw\'></i>' +
+'                                    </li>' +
+'                                    <li class=\'star\' title=\'Excellent\' data-value=\'4\' data-id="' + item.menu.MCode + '">' +
+'                                        <i class=\'fa fa-star fa-fw\'></i>' +
+'                                    </li>' +
+'                                    <li class=\'star\' title=\'WOW!!!\' data-value=\'5\' data-id="' + item.menu.MCode + '">' +
+'                                        <i class=\'fa fa-star fa-fw\'></i>' +
+'                                    </li>' +
+'                                </ul>' +
+'                            </div>' +
+'                        </div>' +
+'                    </div>' +
+'                </div>' +
+    '                <div class="order-item-amt col-lg-2 col-md-3 col-3">'
+    +
+    '                       <h3 class="' + (parseInt(item.Discount) > 0 ? "" : "d-none") + ' ">&#8377;' + ((item.price - (item.price * parseInt(item.Discount)) / 100) * item.Quantity) + '<small style="color: #ff3d2f; text-decoration: line-through; "><br>  &#8377; ' + (item.price * item.Quantity) + ' </small>  </h3>'
+    +
+    '                       <h3 class="' + (parseInt(item.Discount) < 1 ? "" : "d-none") + ' ">&#8377;' + (item.price * item.Quantity) + '</h3>'
+    +
+    '                    <h5>Quantity: <label>' + item.Quantity + '</label></h5>'
+    +
+    '                </div>' +
+    '            </div>' +
+
+'';
+                    $(".PlaceOrderSection").append(variable);
+                });
+                var variable2 = '' +
+                    '' +
+                    '            <div class="order-item-total-head col-lg-10 col-md-10 col-8">' +
+                    '                <h5>Total</h5>' +
+                    '                <h5 class="' + (returnedData.DiscountAmnt > 0 ? "" : "d-none") + '">Discount</h5>' +
+                    '                <h5 class="' + (returnedData.CouponDiscountAmount > 0 ? "" : "d-none") + '">Coupon Discount<a onClick="removeCoupon();" style="text-decoration: underline;cursor: pointer;" class="text-danger ml-2' + (returnedData.CouponDiscountAmount > 0 ? "" : "d-none") + '">Remove</a></h5>' +
+                    '                <h5>Taxes & Charges <span class="text-success">' + (returnedData.TaxInc == true ? "(inclusive)" : "") + ' </span></h5>' +
+                    '                <h5 class="' + (returnedData.VatAmount > 0 ? "" : "d-none") + '"> VAT <span class="text-success">' + (returnedData.TaxInc == true ? "(inclusive)" : "") + '</span></h5>' +
+                    '                <h5 class="' + (returnedData.ServiceAmount > 0 ? "" : "d-none") + '"> Service Charges</h5>' +
+                    '                <h5 class="' + (Math.round(returnedData.SubTotalPrice) != returnedData.SubTotalPrice ? "" : "d-none") + '">Round Off</h5>' +
+                    '                <h3>Grand Total</h3>' +
+                    '           </div>' +
+                    '            <div class="order-item-total-amt col-lg-2 col-md-2 col-4">' +
+                    '                <h5>&#8377; ' + returnedData.TotalBill.toFixed(2) + '</h5>' +
+                    '                <h5 class="' + (returnedData.DiscountAmnt > 0 ? "" : "d-none") + '"> - &#8377; ' + returnedData.DiscountAmnt.toFixed(2) + '</h5>' +
+                    '                <h5 class="' + (returnedData.CouponDiscountAmount > 0 ? "" : "d-none") + '"> - &#8377; ' + (returnedData.CouponDiscountAmount > 0 ? returnedData.CouponDiscountAmount.toFixed(2) : 0) + '</h5>' +
+                    '                <h5> ' + (returnedData.TaxInc == false ? "+" : "") + ' &#8377; ' + returnedData.TaxAmount.toFixed(2) + '</h5>' +
+                    '                <h5 class="' + (returnedData.VatAmount > 0 ? "" : "d-none") + '"> ' + (returnedData.TaxInc == false ? "+" : "") + ' &#8377; ' + returnedData.VatAmount.toFixed(2) + '</h5>' +
+                    '                <h5 class="' + (returnedData.ServiceAmount > 0 ? "" : "d-none") + '">+ &#8377; ' + returnedData.ServiceAmount.toFixed(2) + '</h5>' +
+                    '                <h5 class="' + (Math.round(returnedData.SubTotalPrice) != returnedData.SubTotalPrice && Math.round(returnedData.SubTotalPrice) > returnedData.SubTotalPrice ? "" : "d-none") + '">+ ' + (Math.round(returnedData.SubTotalPrice) - returnedData.SubTotalPrice).toFixed(2) + '</h5>' +
+                    '                <h5 class="' + (Math.round(returnedData.SubTotalPrice) != returnedData.SubTotalPrice && Math.round(returnedData.SubTotalPrice) < returnedData.SubTotalPrice ? "" : "d-none") + '">' + (Math.round(returnedData.SubTotalPrice) - returnedData.SubTotalPrice).toFixed(2) + '</h5>' +
+                    '                <h3>&#8377; ' + Math.round(returnedData.SubTotalPrice).toFixed(2) + '</h3>' +
+                    '            </div>' +
+                '';
+                $(".order-item-total").append(variable2);
+            }
+        });
+    }
+    $(function () {
+        //----- OPEN
+        $('[pd-popup-open]').on('click', function (e) {
+            var targeted_popup_class = jQuery(this).attr('pd-popup-open');
+            $('[pd-popup="' + targeted_popup_class + '"]').fadeIn(100);
+            $("#cpnCode").focus();
+            e.preventDefault();
+        });
+
+        //----- CLOSE
+        $('[pd-popup-close]').on('click', function (e) {
+            var targeted_popup_class = jQuery(this).attr('pd-popup-close');
+            $('[pd-popup="' + targeted_popup_class + '"]').fadeOut(200);
+
+            e.preventDefault();
+        });
+    });
+    function checkOutAction() {
+        var value = $("#CouponName").val();
+        if (value.length > 1) {
+            $.ajax({
+                type: "POST",
+                url: "/Helper/Encrypt",
+                data: {
+                    clearText: value,
+                },
+                success: function (response) {
+                    value = response;
+                    return window.location.href = "/UserDetails?Coupon=" + value;
+                },
+            });
+        }
+        else {
+            window.location.href = "/UserDetails?Coupon=" + value;
+        }
+    }
+    $("#cpnBtn").click(function () {
+        var value = $("#cpnCode").val();
+        var removeCoupon = false;
+        CouponDiscount(value, removeCoupon);
+    });
+    function CouponDiscount(value, RemoveCoupon) {
+        $.ajax({
+            type: "POST",
+            url: "/PlaceOrder/getPlaceOrderData",
+            dataType: 'json',
+            data: {
+                CouponName: value,
+                removeCoupon: RemoveCoupon
+            },
+            success: function (response) {
+                var returnedData = JSON.parse(response);
+                $(".order-item-total").html("");
+                var variable2 = '' +
+                    '' +
+                    '            <div class="order-item-total-head col-lg-10 col-md-10 col-8">' +
+                    '                <h5>Total</h5>' +
+                    '                <h5 class="' + (returnedData.DiscountAmnt > 0 ? "" : "d-none") + '">Discount</h5>' +
+                    '                <h5 class="' + (returnedData.CouponDiscountAmount > 0 ? "" : "d-none") + '">Coupon Discount <a onClick="removeCoupon();" style="text-decoration: underline;cursor: pointer;" class="text-danger ml-2' + (returnedData.CouponDiscountAmount > 0 ? "" : "d-none") + '">Remove</a></h5>' +
+                    '                <h5>Taxes & Charges <span class="text-success">' + (returnedData.TaxInc == true ? "(inclusive)" : "") + ' </span></h5>' +
+                    '                <h5 class="' + (returnedData.VatAmount > 0 ? "" : "d-none") + '"> VAT <span class="text-success">' + (returnedData.TaxInc == true ? "(inclusive)" : "") + '</span></h5>' +
+                    '                <h5 class="' + (returnedData.ServiceAmount > 0 ? "" : "d-none") + '"> Service Charges</h5>' +
+                    '                <h5 class="' + (Math.round(returnedData.SubTotalPrice) != returnedData.SubTotalPrice ? "" : "d-none") + '">Round Off</h5>' +
+                    '                <h3>Grand Total</h3>' +
+                    '           </div>' +
+                    '            <div class="order-item-total-amt col-lg-2 col-md-2 col-4">' +
+                    '                <h5>&#8377; ' + returnedData.TotalBill.toFixed(2) + '</h5>' +
+                    '                <h5 class="' + (returnedData.DiscountAmnt > 0 ? "" : "d-none") + '"> - &#8377; ' + returnedData.DiscountAmnt.toFixed(2) + '</h5>' +
+                    '                <h5 class="' + (returnedData.CouponDiscountAmount > 0 ? "" : "d-none") + '"> - &#8377; ' + returnedData.CouponDiscountAmount.toFixed(2) + '</h5>' +
+                    '                <h5> ' + (returnedData.TaxInc == false ? "+" : "") + ' &#8377; ' + returnedData.TaxAmount.toFixed(2) + '</h5>' +
+                    '                <h5 class="' + (returnedData.VatAmount > 0 ? "" : "d-none") + '"> ' + (returnedData.TaxInc == false ? "+" : "") + ' &#8377; ' + returnedData.VatAmount.toFixed(2) + '</h5>' +
+                    '                <h5 class="' + (returnedData.ServiceAmount > 0 ? "" : "d-none") + '">+ &#8377; ' + returnedData.ServiceAmount.toFixed(2) + '</h5>' +
+                    '                <h5 class="' + (Math.round(returnedData.SubTotalPrice) != returnedData.SubTotalPrice && Math.round(returnedData.SubTotalPrice) > returnedData.SubTotalPrice ? "" : "d-none") + '">+ ' + (Math.round(returnedData.SubTotalPrice) - returnedData.SubTotalPrice).toFixed(2) + '</h5>' +
+                    '                <h5 class="' + (Math.round(returnedData.SubTotalPrice) != returnedData.SubTotalPrice && Math.round(returnedData.SubTotalPrice) < returnedData.SubTotalPrice ? "" : "d-none") + '">' + (Math.round(returnedData.SubTotalPrice) - returnedData.SubTotalPrice).toFixed(2) + '</h5>' +
+                    '                <h3>&#8377; ' + Math.round(returnedData.SubTotalPrice).toFixed(2) + '</h3>' +
+                    '            </div>' +
+                    '';
+                $(".order-item-total").append(variable2);
+                $("#message-coupon").html(returnedData.couponApplyMessage);
+                if (returnedData.isCouponApply == true) {
+                    $("#message-coupon").removeClass("text-warning");
+                    $("#message-coupon").addClass("text-white");
+                    $("#CouponName").val(value);
+                }
+                else {
+                    $("#message-coupon").html(returnedData.couponApplyMessage);
+                    $("#message-coupon").removeClass("text-white");
+                    $("#message-coupon").addClass("text-warning");
+                }
+            }
+        });
+    }
+    function removeCoupon() {
+        $("#CouponName").val("");
+        var value = "";
+        var removeCoupon = true;
+        CouponDiscount(value, removeCoupon);
+    }
+</script>

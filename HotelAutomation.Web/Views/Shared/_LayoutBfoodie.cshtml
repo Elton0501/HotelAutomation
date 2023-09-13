@@ -1,0 +1,105 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    @Styles.Render("~/Content/css")
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+    <link href="~/Content/owl.carousel.css" rel="stylesheet" />
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryval")
+    <script src="~/Scripts/owl.carousel.js"></script>
+    <style>
+        .logo .initialWord {
+            font-family: sanb;
+            font-size: 25px;
+            color: cornflowerblue;
+        }
+
+        .logo a {
+            letter-spacing: 0.5px;
+            font-family: sani;
+            font-size: 17px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="nav row">
+        <div class="main" style="width: 100%;">
+            <nav>
+                <div class="header flex-nowrap">
+                    <div class="logo align-self-center">
+                        <a><span class="initialWord">B</span>foodie</a>
+                    </div>
+                    <div class="Navbuttons">
+                        <div class="order search-icon">
+                            <i class="bi bi-search" id="searchDisplay"></i>
+                        </div>
+                        <div class="order table-order">
+                            <p class="bg-white shadow p-2">Dehradun<label class="pl-1"><i class="bi bi-geo-alt-fill"></i></label></p>
+                        </div>
+                    </div>
+                    <div class="search">
+                        <input type="text" placeholder="Search for..." id="search-bar">
+                        <i class="bi bi-x-circle" id="searchCancel"></i>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </div>
+
+    <div class="body-content">
+        <div class="container">
+            @RenderBody()
+        </div>
+    </div>
+    <script>
+    $("#searchDisplay").click(function () {
+        $(".header").addClass("searching");
+    });
+    $("#searchCancel").click(function () {
+        $(".header").removeClass("searching");
+    });
+    let keyupTimer;
+        @*$("#search-bar").keyup(function () {
+        clearTimeout(keyupTimer);
+        var RestType = "@Constant.Food";
+        if ($("#tab2").prop("checked") == true) {
+            RestType = "@Constant.Bar";
+        }
+        else if ($("#tab3").prop("checked") == true) {
+            RestType = "@Constant.Beverage";
+        }
+        var value = $("#search-bar").val();
+        var veg = $('input[name="Veg"]').prop("checked");
+        var nonveg = $('input[name="Non-Veg"]').prop("checked");
+        keyupTimer = setTimeout(function () {
+            $.ajax({
+                url: '@Url.Action("Menu","Home")',
+                data: {
+                    SearchValue: value,
+                    Vegstatus: veg,
+                    NonVegstatus: nonveg,
+                    MCCode: $("#FilterType").val(),
+                    restType: RestType
+                },
+                success: function (result) {
+                    if (result != null && result != undefined) {
+                        $(".menu-container").html(result);
+               }
+               else {
+                   window.location.href = "@Url.Action("Index","Home")";
+               }
+            },
+             error: function () {
+                alert("Something Went Wrong");
+            }
+        })
+        }, 1000);
+    });*@
+    </script>
+    @Scripts.Render("~/bundles/bootstrap")
+</body>
+</html>

@@ -1,0 +1,25 @@
+﻿@model List<ViewModels.MenuRating>
+@{
+    ViewBag.Title = "MenuRating";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<div class="adminpage-head">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Menu</h6>
+        </div>
+        <div class="card-body">
+            @for (int i = 0; i < Model.Count(); i++)
+            {
+                <h4 class="small font-weight-bold">
+                    @Model[i].Menu<span class="float-right">@(Model[i].Percentage)%</span>
+                </h4>
+                <div class="progress mb-4">
+                    <div class="progress-bar @(Model[i].Percentage == 20 ? "bg-danger": Model[i].Percentage == 40 ? "bg-warning" 
+                    : Model[i].Percentage == 60 ? "" : Model[i].Percentage == 80 ? "bg-info" : Model[i].Percentage == 100 ? "bg-success" : "bg-danger")" role="progressbar" style="width: @(Model[i].Percentage)%"
+                         aria-valuenow="@Model[i].Percentage" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

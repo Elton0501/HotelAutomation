@@ -1,0 +1,164 @@
+﻿@model List<ViewModels.AdminMenuViewModel>
+@{
+    ViewBag.Title = "Menu";
+    Layout = "~/Views/SuperAdmin/_SuperAdminLayout.cshtml";
+    int Count = 0;
+    var restName = ViewBag.RestName;
+    var reid = ViewBag.rid;
+}
+<div id="table-container">
+    <div class="row adminpage-head">
+        <div class="heading col-lg-6">
+            <h1>Menu - <span style="color: #FFEB3B;">@restName (@reid)</span></h1>
+        </div>
+        <div class="ProductTable col-lg-6 align-self-lg-center text-right">
+            <a id="addbtn" class="btn btn-primary" href="@Url.Action("AddMenu","SuperAdmin",new {rid = reid})"> <i class="bi bi-plus" aria-hidden="true" style="padding-right: 0.1rem; "></i> <span>Add Item</span></a>
+            <a href="@Url.Action("MenuCategories","SuperAdmin",new { id = reid })" id="menu" class="btn btn-secondary"><i class="bi bi-menu-button-wide"></i> <span>View Category</span></a>
+        </div>
+        <input id="rid" value="@reid" hidden />
+
+        <div class="container-fluid">
+            <div class="card shadow mb-4">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="menuTable" cellspacing="0">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Item Name</th>
+                                    <th>Cat</th>
+                                    <th>Type</th>
+                                    <th>Amount</th>
+                                    <th>Desc</th>
+                                    <th>Img</th>
+                                    <th>Created</th>
+                                    <th>Status</th>
+                                    <th>Edit</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var menu in Model.OrderByDescending(x => x.MCode))
+                                {
+                                    Count = Count + 1;
+                                <tr>
+                                    <td>@Count</td>
+                                    <td>@menu.MDesc</td>
+                                    <td>@menu.MCDesc</td>
+                                    <td>@menu.MenuType</td>
+                                    <td>₹ @menu.Amount</td>
+                                    <td>@menu.MComments</td>
+                                    @if (menu.Image != null && menu.Image != string.Empty)
+                                    { <td><img src="@menu.Image" style="width:20%;" /></td>}
+                                    else { <td>No image available</td> }
+                                    <td>@Convert.ToDateTime(menu.CreatedOn).ToString("MMM-d-yy")</td>
+                                    <td>
+                                        <div class="form-check form-check-inline">
+                                            @{
+                                                var trueCheckedStatus = menu.IsActive == true ? "Checked" : string.Empty;
+                                            }
+                                            <input type="hidden" name="IsActive" value='@menu.IsActive' id="chkstatus" title="Status" />
+                                            <input class="form-check-input" data-id="@menu.MCode" id="chkstatus" type="checkbox" @trueCheckedStatus>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="button-act"><a class="editbtn btn btn-outline-primary" href="@Url.Action("_MenuEdit","SuperAdmin",new {id= menu.MCode})" title="Edit"><i class="bi bi-pencil-square"></i></a></div>
+                                    </td>
+                                </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('#menuTable').DataTable();
+    });
+    $('input[type="checkbox"]').on('change', function () {
+        if ($(this).prop("checked") == true) {
+            Swal.fire({
+            title: 'Are you sure?',
+            text: "You want to change the status!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Change it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title:'Status',
+                    text:'Changed',
+                    icon:'success',
+                    showConfirmButton: false,
+                })
+                var MenuId = $(this).attr("data-id");
+                var Status = true;
+
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("MenuStatus", "SuperAdmin")',
+                    data: {
+                        status: Status,
+                        menuId: MenuId
+                    }
+                })
+                .done(function (response) {
+                })
+                .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                    $('.loadermodel').hide();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Something went wrong!',
+                    })
+                });
+            }
+        })
+        }
+        else if ($(this).prop("checked") == false) {
+         Swal.fire({
+            title: 'Are you sure?',
+            text: "You want to change the status",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Change it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title:'Status',
+                    text:'Changed',
+                    icon:'success',
+                    showConfirmButton: false,
+                })
+                var MenuId = $(this).attr("data-id");
+                var Status = false;
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("MenuStatus", "SuperAdmin")',
+                    data: {
+                        status: Status,
+                        menuId: MenuId
+                    }
+                })
+                .done(function (response) {
+
+                })
+                .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                    $('.loadermodel').hide();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Something went wrong!',
+                    })
+                });
+            }
+        })
+        }
+    });
+</script>

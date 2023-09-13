@@ -1,0 +1,245 @@
+﻿@model ViewModels.TableOrderModel
+@using ViewModels;
+@using Services;
+@{
+    Layout = null;
+    int PTCount = 0;
+}
+<style>
+    h6 {
+        font-weight: 800;
+        color: black;
+        font-weight: 800;
+    }
+    .swall-overlay {
+        z-index: 100005;
+    }
+
+    .swal-modal {
+        z-index: 99999;
+    }
+</style>
+@if (Model.PlaceOrders.Count > 0)
+{
+    <div class="modal-header bg-gray-100 border-0">
+        <h5 class="modal-title" id="staticBackdropLabel">Bill For Table : @Model.TCode</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="mb-3">
+            <h6>Bill for:</h6>
+            <form id="userForm">
+                <fieldset>
+                    @for (int i = 0; i < Model.Users.Count; i++)
+                    {
+                        if (Model.Users[i] != null)
+                        {
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="UCode" id="inlineRadio1" value="@(Model.Users[i].Contact != null && Model.Users[i].Contact != "" ? Model.Users[i].Contact : Model.Users[i].Name)" @(i == 0 ? "checked" : "")>
+                                <label class="form-check-label" for="inlineRadio1">@(Model.Users[i].Name != null && Model.Users[i].Name != "" ? Model.Users[i].Name : Model.Users[i].Contact)</label>
+                            </div>
+                        }
+                    }
+                </fieldset>
+            </form>
+        </div>
+        <div class="mb-3">
+            <h6>Payment Type</h6>
+            <form id="paymentTypeForm">
+                @foreach (PaymentType val in Enum.GetValues(typeof(PaymentType)))
+                {
+                    PTCount = PTCount + 1;
+                    <div class="form-check form-check-inline mt-1">
+                        <input class="form-check-input" type="radio" name="PaymentType" id="inlineRadio1" value="@((int)val)" @(PTCount == 1 ? "checked" : "" )>
+                        <label class="form-check-label" for="inlineRadio1">@val</label>
+                    </div>
+                }
+            </form>
+        </div>
+        <div class="mb-3">
+            <h6>Total Bill</h6>
+            <input type="number" id="tbamnt" value="@Model.TotalBill.ToString("f")" hidden />
+            <span>Rs <label id="TBAmount">@Model.TotalBill.ToString("f")</label><br>
+            <small style="color:green;" id="TBAmountsmall"></small></span>
+        </div>
+        <div class="mb-3">
+            <h6>Place Order Items</h6>
+            <ul style="list-style: auto;">
+                @foreach (var POitem in Model.PlaceOrders)
+                {
+
+                    foreach (var item in POitem.PlaceOrderItems)
+                    {
+                        <li><span class="pr-2">@MenuDetailsService.Instance.GetRestMenuName(item.MCode) </span> x <span class="pl-2">@item.Quantity</span>  <small style="color:green;">@(item.Discount.Length > 0 && item.Discount != "0" ?  "Discount by" + " " + item.Discount + " %" : "")</small></li>
+                    }
+
+                }
+            </ul>
+        </div>
+    </div>
+    <div class="modal-footer bg-gray-100 border-0 justify-content-between">
+        <div class="d-flex">
+            <input type="number" name="Discount" id="discount" value="@Convert.ToDecimal(Model.DiscountByAdmin).ToString("f")" class="form-control w-50 mr-2" placeholder="Discount in %" /><button onclick="Discount()" class="btn btn-primary">Apply</button>
+        </div>
+        <div>
+            <button type="button" class="btn btn-danger mr-2" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-success" id="billPrintBtn">Bill Print</button>
+        </div>
+    </div>
+    <input type="hidden" id="RCode" value="@Model.RCode" />
+    <input type="hidden" id="TCode" value="@Model.TCode" />
+}
+<input type="hidden" name="PunchedBy" id="PunchedBy" />
+<input type="hidden" id="isSingleUser" value="@Model.isSingleUser" />
+<input type="hidden" id="SingleUser" value="@(Model.isSingleUser == true ? Model.Users.FirstOrDefault().Contact : "")"/>
+<script>
+    $(Document).ready(function () {
+        var value = $("#tbamnt").val();
+        var dis = '@Model.DiscountByAdmin';
+        if (dis != "" && dis != null && dis != '0') {
+/*            value = value - value * dis / 100;*/
+            $("#TBAmount").html(Math.round(value));
+            if (dis != null && dis != "") {
+                $("#TBAmountsmall").html(Math.round(dis) + "% discount applied");
+            }
+        }
+    });
+    function Discount() {
+        debugger
+        var value = $("#tbamnt").val();
+        var discount = $("#discount").val();
+        if ($('#discount').val() < 0 || $('#discount').val() > 100) {
+            alert("you have entered a value more then 100");
+            $('#discount').val("");
+        }
+        else {
+            $.ajax({
+                type: 'POST',
+                url: "/PlaceOrder/BillAmountPO",
+                data: {
+                    uCode: $("#SingleUser").val(),
+                    rCode: $("#RCode").val(),
+                    tCode: $("#TCode").val(),
+                    discount: $("#discount").val(),
+                }
+            })
+                .done(function (response) {
+                if (response != null) {
+                    $("#TBAmount").html(Math.round(response))
+                }
+            });
+            //value = value - value * discount / 100;
+            //$("#TBAmount").html(Math.round(value));
+            if (discount != null && discount != "") {
+                $("#TBAmountsmall").html(discount + "% discount applied");
+            }
+            else {
+                $("#TBAmountsmall").html("");
+                $("#discount").val(0);
+            }
+        }
+
+    }
+
+    $("#billPrintBtn").click(function () {
+        $('#staticBackdrop').modal('hide');
+        Swal.fire({
+            title: 'Please fill Captain Code',
+            input: 'text',
+            inputAttributes: {
+                autocapitalize: 'off'
+            },
+            showCancelButton: true,
+            confirmButtonText: 'Look up',
+            showLoaderOnConfirm: true,
+            preConfirm: (login) => {
+                $.ajax({
+                    type: "Post",
+                    url: "/Admin/CaptainCodeCheck",
+                    data: {
+                        Code: login,
+                    },
+                    success: function (data) {
+                        if (data == "true") {
+                            $("#PunchedBy").val(login);
+                            billPrint();
+                        }
+                        else {
+                            alert("Sorry Its not right code!");
+                            $('#staticBackdrop').modal('show');
+                            //var tcode = $("#TCode").val();
+                            //var rcode = $("#RCode").val();
+                            //window.location.href = "/Admin/TableOrdersPartial?TCode=" + tcode + "&RCode=" + rcode;
+                        }
+                    }
+                });
+                //return fetch(`http://localhost:44323/Admin/CaptainCodeCheck?Code=` + login)
+                //    .then(response => {
+                //        if (response == "false") {
+                //            throw new Error(response.statusText)
+                //        }
+                //        return response.json()
+                //    })
+                //    .catch(error => {
+                //        Swal.showValidationMessage(
+                //            `Request failed: ${error}`
+                //        )
+                //    })
+            },
+            allowOutsideClick: () => !Swal.isLoading()
+        }).then((result) => {
+            if (result.isConfirmed) {
+            }
+        })
+    });
+    function billPrint() {
+        var uCode = $('input[name=UCode]:checked', '#userForm').val();
+        var pType = $('input[name=PaymentType]:checked', '#paymentTypeForm').val();
+        if (uCode == null || uCode == undefined || uCode == "") {
+            alert("Please select User.");
+        }
+        else if (pType == null || pType == undefined || pType == "") {
+            alert("Please select Payment Type.");
+        }
+        else {
+            var isSingleUser = $("#isSingleUser").val();
+            var urlSaveOrder = '/Checkout/SaveOrder';
+            if (isSingleUser == false) {
+                var urlSaveOrder = '/Admin/SaveOrderbyTableNo';
+            }
+            $.ajax({
+                url: urlSaveOrder,
+                data: {
+                    UCode: uCode,
+                    RCode: $("#RCode").val(),
+                    TCode: $("#TCode").val(),
+                    paymentType: pType,
+                    Discount: $("#discount").val(),
+                    PunchedBy: $("#PunchedBy").val(),
+                    isEbill: false,
+                }
+            })
+            .done(function (response) {
+                if (urlSaveOrder = "/Checkout/SaveOrder") {
+                    if (response.result != "" && response.result == null) {
+                        window.location.reload();
+                    }
+                    else {
+                        alert("Something went wrong");
+                    }
+                }
+                else {
+                    if (response == "true" || response == "True") {
+                        window.location.reload();
+                    }
+                    else {
+                        alert("Something went wrong");
+                    }
+                }
+
+            })
+        }
+    }
+</script>

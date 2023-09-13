@@ -1,0 +1,217 @@
+﻿﻿@using ViewModels
+@model ViewModels.CartViewModel
+@{
+    ViewBag.Title = "Cart";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var DiscountMsg = Convert.ToString(ViewBag.DiscountMessage);
+}
+<div class="order-box">
+    <div class="yoord">
+        <div class="Cartheader d-flex justify-content-between align-items-center pb-2">
+            <h2 class="p-0"><i class="bi bi-cart-fill fa-bitbucket"></i> Your Orders</h2>
+            <a href="/PlaceOrder" @(Model.IsPlaceOrder == true ? "" : "hidden") style="font-size: 13px;text-decoration: underline;">Check your orders</a>
+        </div>
+        @if (Model.CartOrder.Count > 0)
+        {
+            <div id="cartBox">
+                @foreach (var item in Model.CartOrder)
+                {
+                    <div class="order-item row" id="@("RowId-"+ item.Id)">
+                        <div class="order-item-desc col-lg-8 col-md-6 col-5">
+                            <h3 class="neg-non-icon">
+                                <i class="bi bi-triangle-fill neg-non-icon" @(item.menuType != null && item.menuType == Constant.NonVeg ? "" : "hidden")></i>
+                                <i class="bi bi-triangle-fill neg-non-icon" style="color: #4caf50 !important;" @(item.menuType != null && item.menuType == Constant.Veg ? "" : "hidden")></i>
+                            </h3>
+                            <h3>@item.menu.MDesc</h3>
+                        </div>
+                        <div class="col-lg-2 col-md-3 col-4">
+                            <div class="quantity buttons_added">
+                                <input type="button" value="-" class="minus">
+                                <input type="number" id="@item.Id" onchange="cartQuantity('@item.Id')" step="1" min="1" max="" name="quantity" value="@item.Quantity" title="Qty" class="input-text qty text" size="4" pattern="" inputmode="">
+                                <input type="button" value="+" class="plus">
+                            </div>
+                        </div>
+                        <div class="order-item-amt col-lg-2 col-md-3 col-3">
+                            @if (item.price == item.Disprice)
+                            {
+                                <h3>&#8377; <span class="@(item.Id + "itemPrice")"> @Math.Round(item.price)</span></h3>
+                            }
+                            else
+                            {
+                                <h3>&#8377; <span class="@(item.Id + "itemDisPrice")"> @Math.Round(item.Disprice)</span> <small style="color: #ff3d2f; text-decoration: line-through; "><br>  &#8377; <span class="@(item.Id + "itemPrice")"> @Math.Round(item.price)</span> </small> </h3>
+                            }
+                            <button onclick="RemoveCart('@item.Id')">Remove</button>
+                        </div>
+                    </div>
+                }
+                <div class="order-item-total row">
+                    <div class="order-item-total-head col-lg-10 col-md-10 col-6">
+                        <h3>Total</h3>
+                    </div>
+                    <div class="order-item-total-amt col-lg-2 col-md-2 col-6">
+                        <h3 id="NewTotalPrice">&#8377; @Math.Round(Model.SubTotalPrice) <br /></h3>
+                        <span id="TotalWithoutDiscount" class="text-danger @(Model.SubTotalPrice != Model.TotalwithoutDisc ? "" : "d-none")" style="text-decoration-line: line-through;">₹ @Math.Round(Model.TotalwithoutDisc)</span>
+                        <br /><small class="text-success">@DiscountMsg</small>
+                    </div>
+                    <span style=" color: red;">Items once ordered cannot be canceled*</span>
+                    <span style=" color: red;" @(Model.Tax == false ? "" : "hidden")>Tax is not included*</span>
+                </div>
+                <div class="order-actions">
+                    @if (Model.CartOrder.Count > 0)
+                    {
+                        <div class="comment p-1">
+                            <textarea class="p-2" rows="2" cols="30" id="Comment" placeholder="Add You Comment"></textarea>
+                        </div>
+                    }
+                    <a class="poa btn" href="/Menu"><i class="bi bi-arrow-left"></i> Menu</a>
+                    @if (Model.CartOrder.Count > 0)
+                    {
+                        <button class="btn actionBtn" id="placeOrderbtn" onclick="placeOrder()">
+                            <div class="spinner-border" role="status">
+                                <span class="sr-only">Loading...</span>
+                            </div>
+                            Place Order <i class="bi bi-arrow-right"></i>
+                        </button>
+                    }
+                </div>
+            </div>
+        }
+        <div id="emptyCart" class="d-none">
+            <p>No orders placed yet. Lets get the kitchen working...</p>
+            <div class="order-actions">
+                <a class="poa btn" href="/Menu"><i class="bi bi-arrow-left"></i> Menu</a>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        var value = $("#SurficingCode").val();
+        if (value == "997") {
+            $("#placeOrderbtn").hide();
+        }
+        var totalItemCount = @Model.CartOrder.Count;
+        if (totalItemCount == 0) {
+            $("#emptyCart").removeClass("d-none");
+            $("#cartBox").addClass("d-none");
+        }
+    });
+    $("#SurficingCode").val();
+    $(".search-icon").hide();
+    $(".spinner-border").hide();
+    function cartQuantity(id) {
+        var count = document.getElementById(id).value;
+        $.ajax({
+            type:"POST",
+            url: '@Url.Action("CartQuantity","Cart")',
+            data: {
+                CartItemId: id,
+                CartQuantity: count
+            },
+            success: function (result) {
+                $("#NewTotalPrice").html();
+                $("#cart-quantity").html();
+                $("#NewTotalPrice").html("&#8377" + " " + Math.round(result.TotalAmount));
+                $("#cart-quantity").html(result.cartQuant);
+                if (result.TotalAmount != result.totalWithoutDiscount) {
+                    $("#TotalWithoutDiscount").html("&#8377" + " " + Math.round(result.totalWithoutDiscount));
+                }
+                $("." + id + "itemPrice").html(Math.round(result.itemPrice));
+                $("." + id + "itemDisPrice").html(Math.round(result.itemDisPrice));
+            },
+             error: function () {
+                alert("Something Went Wrong");
+            }
+        })
+    }
+    function placeOrder() {
+        $("#placeOrderbtn").prop('disabled', true);
+        $(".spinner-border").show();
+        var comment = $("#Comment").val();
+        $.ajax({
+            type:"POST",
+            url: '@Url.Action("PlaceOrderAction", "PlaceOrder")',
+            data: {
+                Comment: comment
+            },
+            success: function (result) {
+                if (result == "True") {
+                    debugger
+                    $(".loadermodel").hide();
+                    $("#placeOrderbtn").prop('disabled', false);
+                    $(".spinner-border").hide();
+                    var url = "/PlaceOrder";
+                    window.location.href = url;
+                    $(".loadermodel").hide();
+                }
+                else {
+                    alert("Something Went Wrong");
+                    $("#placeOrderbtn").prop('disabled', false);
+                    $(".loadermodel").hide();
+                    $(".spinner-border").hide();
+                }
+            },
+             error: function () {
+                 alert("Something Went Wrong");
+                 $(".loadermodel").hide();
+                 $("#placeOrderbtn").prop('disabled', false);
+                 $(".spinner-border").hide();
+            }
+        })
+    }
+    function RemoveCart(id) {
+        if (id != null) {
+            $.ajax({
+                type:"POST",
+                url: '@Url.Action("RemoveInCart", "Cart")',
+                data: {
+                    CartItemId: id,
+                    menu:false
+                },
+                success: function (response) {
+                   if (response.Result == true)
+                   {
+                       $("#RowId-" + id).hide();
+                       $("#NewTotalPrice").html("&#8377" + " " + Math.round(response.TotalAmount));
+                       if (response.TotalAmount != response.TotalwithoutDisc) {
+                           $("#TotalWithoutDiscount").html("&#8377" + " " + Math.round(response.TotalwithoutDisc));
+                       }
+                       if (response.TotalAmount == 0) {
+                           $("#emptyCart").removeClass("d-none");
+                           $("#cartBox").addClass("d-none");
+                       }
+                       $("#cart-quantity").html(response.Count);
+                   }
+                   else {
+                       alert("Sorry! Something Went Wrong");
+                   }
+                },
+                 error: function () {
+                     alert("Sorry! Something Went Wrong");
+                }
+            })
+        }
+    }
+    function wcqib_refresh_quantity_increments() {
+        jQuery("div.quantity:not(.buttons_added), td.quantity:not(.buttons_added)").each(function (a, b) {
+            var c = jQuery(b);
+            c.addClass("buttons_added"), c.children().first().before('<input type="button" value="-" class="minus" />'), c.children().last().after('<input type="button" value="+" class="plus" />')
+        })
+    }
+    String.prototype.getDecimals || (String.prototype.getDecimals = function () {
+        var a = this,
+            b = ("" + a).match(/(?:\.(\d+))?(?:[eE]([+-]?\d+))?$/);
+        return b ? Math.max(0, (b[1] ? b[1].length : 0) - (b[2] ? +b[2] : 0)) : 0
+    }), jQuery(document).ready(function () {
+        wcqib_refresh_quantity_increments()
+    }), jQuery(document).on("updated_wc_div", function () {
+        wcqib_refresh_quantity_increments()
+    }), jQuery(document).on("click", ".plus, .minus", function () {
+        var a = jQuery(this).closest(".quantity").find(".qty"),
+            b = parseFloat(a.val()),
+            c = parseFloat(a.attr("max")),
+            d = parseFloat(a.attr("min")),
+            e = a.attr("step");
+        b && "" !== b && "NaN" !== b || (b = 0), "" !== c && "NaN" !== c || (c = ""), "" !== d && "NaN" !== d || (d = 0), "any" !== e && "" !== e && void 0 !== e && "NaN" !== parseFloat(e) || (e = 1), jQuery(this).is(".plus") ? c && b >= c ? a.val(c) : a.val((b + parseFloat(e)).toFixed(e.getDecimals())) : d && b <= d ? a.val(d) : b > 0 && a.val((b - parseFloat(e)).toFixed(e.getDecimals())), a.trigger("change")
+    });
+</script>

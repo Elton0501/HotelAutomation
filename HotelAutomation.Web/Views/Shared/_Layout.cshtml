@@ -1,0 +1,170 @@
+﻿@using Services;
+@using ViewModels;
+@{
+    var UserData = UserService.Instance.GetCurrentUserLogin();
+    string user = "";
+    string Tabel = "";
+    var RestroIdentity = "";
+    if (UserData.isLogin == true)
+    {
+        user = UserData.UCode;
+        Tabel = UserData.TCode;
+        RestroIdentity = UserData.RCode;
+    }
+    //var TableReserved = TableService.Instance.IsUserAdmin(user, RestroIdentity, Tabel);
+    var restaurantTheme = UserService.Instance.GetColor(RestroIdentity);
+    var restaurantLogo = restaurantTheme.Logo;
+    /* Restro Theme */
+    var background = restaurantTheme != null && restaurantTheme.Background != "" && restaurantTheme.Background != null ? restaurantTheme.Background : "#ffffff";
+    var navback = restaurantTheme != null && restaurantTheme.Navback != "" && restaurantTheme.Navback != null ? restaurantTheme.Navback : "#ffffff";
+    var foodbar = restaurantTheme != null && restaurantTheme.Foodbar != "" && restaurantTheme.Foodbar != null ? restaurantTheme.Foodbar : "#faebda";
+    var Heading = restaurantTheme != null && restaurantTheme.Heading != "" && restaurantTheme.Heading != null ? restaurantTheme.Heading : "#faebda";
+    var label = restaurantTheme != null && restaurantTheme.Label != "" && restaurantTheme.Label != null ? restaurantTheme.Label : "#faebda";
+    var Text = restaurantTheme != null && restaurantTheme.Text != "" && restaurantTheme.Text != null ? restaurantTheme.Text : "#faebda";
+    var button = restaurantTheme != null && restaurantTheme.ButtonPrimary != "" && restaurantTheme.ButtonPrimary != null ? restaurantTheme.ButtonPrimary : "#000000";
+    var buttonSecondary = restaurantTheme != null && restaurantTheme.ButtonSecondary != "" && restaurantTheme.ButtonSecondary != null ? restaurantTheme.ButtonSecondary : "#faebda";
+    var buttonFont = restaurantTheme != null && restaurantTheme.ButtonPrimaryFont != "" && restaurantTheme.ButtonPrimaryFont != null ? restaurantTheme.ButtonPrimaryFont : "#ffffff";
+    var buttonSecondaryFont = restaurantTheme != null && restaurantTheme.ButtonSecondaryFont != "" && restaurantTheme.ButtonSecondaryFont != null ? restaurantTheme.ButtonSecondaryFont : "#faebda";
+    var Bgblur = restaurantTheme != null && restaurantTheme.Bgblur != "" && restaurantTheme.Bgblur != null ? restaurantTheme.Bgblur : "#faebda";
+    //var Discount = Tabel == Constant.TakeAway && restaurantTheme.TADiscount != null && restaurantTheme.TADiscount != "" ? restaurantTheme.TADiscount :
+    //    Tabel == Constant.HomeDelivery && restaurantTheme.HDDiscount != null && restaurantTheme.HDDiscount != "" ? restaurantTheme.HDDiscount:
+    //    restaurantTheme.Discount != null && restaurantTheme.Discount != "" ? restaurantTheme.Discount : "0";
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - bFoodie</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryval")
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css"> @*cutlery icon*@
+    <style>
+    html, body {
+        margin: 0%;
+        box-sizing: border-box;
+        padding: 0;
+        background-color: white;
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+        font-family: 'sanr';
+    }
+    :root { /*theme color*/
+        --background: @background;
+        --navback: @navback; /*for navigation and cart footer*/
+        --foodbar: @foodbar; /*restaurant theme*/
+        --heading: @Heading; /*h1,h2,h3,h4,h5,h6*/
+        --button: @button; /*primary button*/
+        --text: @Text; /* p tag font color*/
+        --label: @label; /*label font color*/
+        --buttonsecondary: @buttonSecondary; /*secondary button*/
+        --buttonfont: @buttonFont; /*primary button color*/
+        --buttonsecondaryfont: @buttonSecondaryFont; /*secondary button font color*/
+        --bgblur: @Bgblur;
+    }
+    </style>
+</head>
+<body onload="loader()">
+    <div>
+        @Html.Partial("_LoaderPartial")
+    </div>
+    <div class="main" style="position: absolute; top: 0; width: 100%;">
+        <nav>
+            <div class="header flex-nowrap">
+                <div class="logo align-self-center">
+                    <a href="/Menu"><img src="@restaurantLogo" alt="Logo" /></a>
+                </div>
+                <div class="Navbuttons">
+                    <div class="order table-order">
+                        <input type="hidden" value="@Tabel" id="SurficingCode" />
+                        @if (Tabel == Constant.HomeDelivery)
+                        {<p>Home Delivery</p> }
+                        else if (Tabel == Constant.TakeAway)
+                        {<p>Take Away</p>}
+                        else if (Tabel == Constant.Events) { <p style="letter-spacing:1px;"> Surfing </p>}
+                        @*else if (TableReserved.Messsage == "Reserved")
+                            {<p>Reserved</p> }*@
+                        else
+                        {<p>Table No.<label class="pl-1">@Tabel</label></p>}
+                    </div>
+                    <div class="order cartActionHeader">
+                        <button style="background: transparent; outline: none; border: none; position: relative;" id="CartBtn"><i class="bi bi-cart-fill fa-bitbucket"></i><span id="cart-quantity" style="position: absolute; font-size: 12px;"></span></button>
+                    </div>
+                    <div class="order search-icon">
+                        <i class="bi bi-search" id="searchDisplay"></i>
+                    </div>
+                </div>
+                <div class="search">
+                    <input type="text" placeholder="Search for..." id="search-bar">
+                    <i class="bi bi-x-circle" id="searchCancel"></i>
+                </div>
+            </div>
+        </nav>
+        <div class="body-content" style=" overflow-y: scroll; width: 100%;">
+            @*@if (Discount != "0" && Discount != "" && Discount != null)
+            {
+                <div style="background: #f1f1f1; padding: 6px; margin: 0px 0px; text-align: center;">
+                    <p class="p-0 m-0">@Discount % off in the restaurent</p>
+                </div>
+            }*@
+            <div class="container">
+                @RenderBody()
+            </div>
+        </div>
+    </div>
+    <script>
+        function loader() {
+            $(".loadermodel").show();
+        };
+        function removeLoader() {
+            $(".loadermodel").fadeOut(300, function () {
+                // fadeOut complete. Remove the loading div
+                $(".loadermodel").hide();
+            });
+        }
+        $(window).on('load', function () {
+            setTimeout(removeLoader, 1500); //wait for page load PLUS two seconds.
+        });
+     $("#searchDisplay").click(function () {
+         header.addClass("searching");
+         $("#search-bar").focus();
+        });
+     $("#searchCancel").click(function () {
+            header.removeClass("searching");
+     });
+    $(document).ready(function () {
+       $.ajax({
+           url: '@Url.Action("CartItemQuantity", "Cart")',
+           success: function (result) {
+               $("#cart-quantity").text(result);
+           },
+           error: function(){
+                window.location.href = "@Url.Action("Index","Home")";
+           }
+       })
+     });
+     const header = $(".header");
+     const searchButton = $("i.bi-search");
+    const closeSearchButton = $("i.bi-x-circle");
+        $("#CartBtn").click(function () {
+            window.location.href = "/Cart"
+        });
+        $('html').click(function () {
+            $('.dropdown-menu').removeClass("active");
+        });
+        $(".dropdown-icon").click(function (e) {
+            e.stopPropagation();
+            $('.dropdown-menu').toggleClass("active");
+        });
+        $('.dropdown-menu').click(function (e) {
+            e.stopPropagation();
+        });
+
+    </script>
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

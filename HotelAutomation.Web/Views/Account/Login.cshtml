@@ -1,0 +1,127 @@
+﻿@model ViewModels.RestViewModel
+@{
+    ViewBag.Title = "Login";
+    var Msg = TempData["Message"];
+}
+<style>
+    .logo img {
+        width: 100px;
+    }
+    .closebtn {
+        border: 1px solid var(--danger) !important;
+        color: var(--danger) !important;
+    }
+</style>
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                This Table is also used by other would you like to share this table.
+                <small>If you share this table or order something your bill will be seprate given to you</small>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn closebtn" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="LoginSection">
+    <div class="form-box">
+        <div class="logo text-center m-4">
+            <img src="@Model.RLogo" alt="Logo" />
+        </div>
+        <label class="error">@(Msg != null ? Msg.ToString():"")</label>
+        <div class="mr-4 ml-4">
+            <form id="login">
+                <input type="number" name="MobileNumber" class="input-field" placeholder="Mobile Number" id="mobilefield">
+                <label class="error" id="errormsgmobile"></label>
+                <button type="button" id="mobileLogin" class="submit-btn mt-3">
+                    <div class="spinner-border" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                    Submit
+                </button>
+            </form>
+            <img src="~/Content/Images/Login1 (1).jpg" />
+        </div>
+    </div>
+</div>
+
+<script>
+    $(".header").hide();
+    $(".search-icon").hide();
+    $(".cartActionHeader").hide();
+    $(".spinner-border").hide();
+    $("#errormsgmobile").text("");
+    $("#mobileLogin").click(function () {
+        $("#mobileLogin").prop('disabled', true);
+        $(".spinner-border").show();
+        var mobile = $("#mobilefield").val();
+        if (mobile != 0) {
+            if (mobile.length == 10) {
+                $("#errormsgmobile").text("");
+                $.ajax({
+                    type:'POST',
+                    url: '/Account/Login',
+                    data: {
+                        Mobile: mobile,
+                        TCode: '@Model.TCode',
+                        RCode: '@Model.RCode'
+                    },
+                    success: function (response) {
+                        console.log(response);
+                        if (response.Result == true) {
+                            if (response.isOtp == true && response.Status == "Success") {
+                                var url = "/Account/OtpVerification?UserIdentity=" + response.Value +
+                                    "&Details=" + response.Deatils + "&mNumber=" + true + "&RCode=" + '@Model.RCode' + "&TCode=" + '@Model.TCode';
+                                window.location.href = url;
+                                $(".spinner-border").hide();
+                                $("#mobileLogin").prop('disabled', false);
+                            }
+                            else {
+                                var url = "/Menu";
+                                window.location.href = url;
+                                $(".spinner-border").hide();
+                                $("#mobileLogin").prop('disabled', false);
+                            }
+                        }
+                        else {
+                            $("#errormsgmobile").text("Please enter valid mobile number");
+                            $("#mobileLogin").prop('disabled', false);
+                            $(".spinner-border").hide();
+                        }
+                    },
+                    error: function (response) {
+                        $("#errormsgmobile").text("Please enter valid mobile number");
+                        $("#mobileLogin").prop('disabled', false);
+                        $(".spinner-border").hide();
+                    }
+                });
+            } else {
+                $("#errormsgmobile").text("Please enter valid mobile number");
+                $("#mobileLogin").prop('disabled', false);
+                $(".spinner-border").hide();
+            }
+        } else {
+            $("#mobileLogin").prop('disabled', false);
+            $(".spinner-border").hide();
+            $("#errormsgmobile").text("Mobile number is required");
+        }
+
+
+    });
+    $(function () {
+        $('input').keydown(function (e) {
+            if (e.keyCode == 13) {
+                $("#mobileLogin").focus().click();
+                return false;
+            }
+        });
+    });
+    $(document).ready(function () {
+        if ('@Model.isReserved' == "True") {
+            $("#exampleModal").modal('show');
+        }
+    });
+</script>

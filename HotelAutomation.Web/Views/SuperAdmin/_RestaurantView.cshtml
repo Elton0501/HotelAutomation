@@ -1,0 +1,262 @@
+﻿@model Models.Restaurant
+@{ 
+    Layout = "~/Views/SuperAdmin/_SuperAdminLayout.cshtml";
+}
+<style>
+    .value {
+        color: #ff9800;
+        font-size: 15px;
+    }
+</style>
+<div class="form-horizontal">
+    <h6>@Model.OwnerName</h6>
+    <h4>@Model.Name</h4>
+    <hr />
+    <div class="form-horizontal">
+        <h4>Basic Info</h4>
+        <div class="row" style="line-height:2;">
+            <div class="col-4">
+                <div>
+                    @Html.DisplayNameFor(model => model.TableCount) : @Html.DisplayFor(model => model.TableCount)
+                </div>
+            </div>
+            <div class="col-4">
+                <div>
+                    @Html.DisplayNameFor(model => model.IsActive) : @Html.DisplayFor(model => model.IsActive)
+                </div>
+            </div>
+            <div class="col-4">
+                <div>
+                    @Html.DisplayNameFor(model => model.IsOtpVerification) : @Html.DisplayFor(model => model.IsOtpVerification)
+                </div>
+            </div>
+            <div class="col-4">
+                <div>
+                    @Html.DisplayNameFor(model => model.Key) : @Html.DisplayFor(model => model.Key)
+                </div>
+            </div>
+            <div class="col-4">
+                <div>
+                    @Html.DisplayNameFor(model => model.CaptainKey) : @Html.DisplayFor(model => model.CaptainKey)
+                </div>
+            </div>
+            <div class="col-4">
+                <div>
+                    @Html.DisplayNameFor(model => model.Branch) : @Html.DisplayFor(model => model.Branch)
+                </div>
+            </div>
+            <div class="col-4">
+                <div>
+                    @Html.DisplayNameFor(model => model.RPrefix) : @Html.DisplayFor(model => model.RPrefix)
+                </div>
+            </div>
+            <div class="col-4">
+                <div>
+                    @Html.DisplayNameFor(model => model.Address) : @Html.DisplayFor(model => model.Address)
+                </div>
+            </div>
+            <div class="col-4">
+                <div>
+                    @Html.DisplayNameFor(model => model.City) : @Html.DisplayFor(model => model.City)
+                </div>
+            </div>
+            <div class="col-4">
+                <div>
+                    @Html.DisplayNameFor(model => model.Country) : @Html.DisplayFor(model => model.Country)
+                </div>
+            </div>
+            <div class="col-4">
+                <div>
+                    @Html.DisplayNameFor(model => model.Mobile) : @Html.DisplayFor(model => model.Mobile)
+                </div>
+            </div>
+            <div class="col-4">
+                <div>
+                    @Html.DisplayNameFor(model => model.Email) : @Html.DisplayFor(model => model.Email)
+                </div>
+            </div>
+            <div class="col-4">
+                <div>
+                    @Html.DisplayNameFor(model => model.PDetails) : @Html.DisplayFor(model => model.PDetails)
+                </div>
+            </div>
+            <div class="col-4">
+                <div>
+                    <label>GST No</label> : @Html.DisplayFor(model => model.GSTIN)
+                </div>
+            </div>
+            <div class="col-4">
+                <div>
+                    <label>Fassai No</label> : @Html.DisplayFor(model => model.FASSAI)
+                </div>
+            </div>
+            <div class="col-6">
+                <div>
+                    <label>Url</label> : @Html.DisplayFor(model => model.Url)
+                </div>
+            </div>
+            <div class="col-6">
+                <div>
+                    <label>Review Url</label> : @Html.DisplayFor(model => model.ReviewUrl)
+                </div>
+            </div>
+            <div class="col-2">
+                <div>
+                    <label>YouandMe</label> : @Html.DisplayFor(model => model.YouandMe)
+                </div>
+            </div>
+            <div class="col-2">
+                <div>
+                    <label>Birthday Party</label> : @Html.DisplayFor(model => model.BirthdayParty)
+                </div>
+            </div>
+            <div class="col-2">
+                <div>
+                    <label>Farewell Party</label> : @Html.DisplayFor(model => model.FarewellParty)
+                </div>
+            </div>
+            <div class="col-2">
+                <div>
+                    <label>Family Dinner</label> : @Html.DisplayFor(model => model.FamilyDinner)
+                </div>
+            </div>
+            <div class="col-12">
+                <div>
+                    <label>Restaurant Description</label> : @Html.DisplayFor(model => model.RestDesc)
+                </div>
+            </div>
+            <div class="col-6">
+                <div>
+                    <label>Youtube</label> : @Html.DisplayFor(model => model.Youtube)
+                </div>
+            </div>
+            <div class="col-6">
+                <div>
+                    <label>Facebook</label> : @Html.DisplayFor(model => model.Facebook)
+                </div>
+            </div>
+            <div class="col-6">
+                <div>
+                    <label>Instagram</label> : @Html.DisplayFor(model => model.Instagram)
+                </div>
+            </div>
+            <div class="col-6">
+                <div>
+                    <label>Restaurant Url</label> : @Html.DisplayFor(model => model.RestaurantUrl)
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-horizontal">
+        <h4>Theme Colours</h4>
+        <div class="row" style="line-height:2;">
+            <div class="col-3">
+                @Html.DisplayNameFor(model => model.Background) : <span class="value">@Html.DisplayFor(model => model.Background)</span>
+            </div>
+            <div class="col-3">
+                @Html.DisplayNameFor(model => model.Bgblur) : <span class="value"></span> @Html.DisplayFor(model => model.Bgblur)
+            </div>
+            <div class="col-3">
+                @Html.DisplayNameFor(model => model.Navback) : <span class="value">@Html.DisplayFor(model => model.Navback)</span>
+            </div>
+            <div class="col-3">
+                @Html.DisplayNameFor(model => model.Heading) : <span class="value">@Html.DisplayFor(model => model.Heading)</span>
+            </div>
+            <div class="col-3">
+                @Html.DisplayNameFor(model => model.ButtonPrimary) : <span class="value">@Html.DisplayFor(model => model.ButtonPrimary)</span>
+            </div>
+            <div class="col-3">
+                @Html.DisplayNameFor(model => model.ButtonPrimaryFont) : <span class="value">@Html.DisplayFor(model => model.ButtonPrimaryFont)</span>
+            </div>
+            <div class="col-3">
+                @Html.DisplayNameFor(model => model.ButtonSecondary) : <span class="value">@Html.DisplayFor(model => model.ButtonSecondary)</span>
+            </div>
+            <div class="col-3">
+                @Html.DisplayNameFor(model => model.ButtonSecondaryFont) : <span class="value">@Html.DisplayFor(model => model.ButtonSecondaryFont)</span>
+            </div>
+            <div class="col-3">
+                @Html.DisplayNameFor(model => model.Foodbar) : <span class="value">@Html.DisplayFor(model => model.Foodbar)</span>
+            </div>
+            <div class="col-3">
+                @Html.DisplayNameFor(model => model.Text) : <span class="value">@Html.DisplayFor(model => model.Text)</span>
+            </div>
+            <div class="col-3">
+                @Html.DisplayNameFor(model => model.Label) : <span class="value">@Html.DisplayFor(model => model.Label)</span>
+            </div>
+        </div>
+    </div>
+    <div class="form-horizontal">
+        <h4>Printer Info</h4>
+        <div class="row">
+            <div class="col-4">
+                <div>
+                    @Html.DisplayNameFor(model => model.PrinterType) : @Html.DisplayFor(model => model.PrinterType)
+                </div>
+            </div>
+            <div class="col-4">
+                <div>
+                    @Html.DisplayNameFor(model => model.BillPrinter) : @Html.DisplayFor(model => model.BillPrinter)
+                </div>
+            </div>
+            <div class="col-4">
+                <div>
+                    @Html.DisplayNameFor(model => model.KitPrinter) : @Html.DisplayFor(model => model.KitPrinter)
+                </div>
+            </div>
+            <div class="col-4">
+                <div>
+                    @Html.DisplayNameFor(model => model.BevPrinter) : @Html.DisplayFor(model => model.BevPrinter)
+                </div>
+            </div>
+            <div class="col-4">
+                <div>
+                    @Html.DisplayNameFor(model => model.BarPrinter) : @Html.DisplayFor(model => model.BarPrinter)
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-horizontal">
+        <h4>Tax Info</h4>
+        <div class="row">
+            <div class="col-4">
+                <div>
+                    @Html.DisplayNameFor(model => model.TaxApply) : @Html.DisplayFor(model => model.TaxApply)
+                </div>
+            </div>
+            <div class="col-4">
+                <div>
+                    @Html.DisplayNameFor(model => model.Tax) : @Html.DisplayFor(model => model.Tax)
+                </div>
+            </div>
+            <div class="col-4">
+                <div>
+                    @Html.DisplayNameFor(model => model.Vat) : @Html.DisplayFor(model => model.Vat)
+                </div>
+            </div>
+            <div class="col-4">
+                <div>
+                    @Html.DisplayNameFor(model => model.ServiceTax) : @Html.DisplayFor(model => model.ServiceTax)
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-horizontal">
+        <h4>@Model.Name Logo</h4>
+        <div>
+            <div>
+                <img id="PlaceImage" alt="" src="@Model.Img" style="width: 20%; margin-top: 5px;" />
+            </div>
+        </div>
+    </div>
+    <div class="form-horizontal">
+        <h4>@Model.Name Image</h4>
+        <div>
+            <div>
+                <img id="PlaceImage" alt="" src="@Model.RestImg" style="width: 20%; margin-top: 5px;" />
+            </div>
+        </div>
+    </div>
+</div>
+<p class="text-md-right pr-4">
+    @Html.ActionLink("Back to List", "Restaurants")
+</p>

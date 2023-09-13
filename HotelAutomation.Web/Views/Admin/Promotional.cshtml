@@ -1,0 +1,164 @@
+﻿
+@{
+    ViewBag.Title = "Promotional";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var imageurl = "/Content/Images/DefaultImage.jpg";
+}
+<style>
+    .error {
+        color: #5a5c69;
+        font-size: 1rem;
+        position: relative;
+        line-height: 1;
+        width: 100% !important;
+    }
+</style>
+
+
+<div class="row adminpage-head">
+    <div class="col-12">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary text-uppercase">Promotional Mails</h6>
+            </div>
+            <div class="card-body">
+
+                <form id="promo">
+                    <div class="mb-3">
+                        <label for="exampleFormControlInput1" class="form-label">Subject</label>
+                        <input type="text" id="subject" name="subject" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label for="exampleFormControlInput1" class="form-label">Heading</label>
+                        <input type="text" id="head" name="head" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label for="exampleFormControlTextarea1" class="form-label">Example textarea</label>
+                        <textarea class="form-control" id="body" name="body" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleFormControlInput1">Logo</label>
+                        <br />
+                        <input name="img" id="Image" required hidden />
+                        <input id="imageUpload" type="file" name="ImageOne" accept="image/*" class="form-control-file" required>
+                        <br />
+                        <img id="PlaceImage" alt="" src="@imageurl" style="width: 20%; margin-top: 5px;" />
+                    </div>
+
+                    <div class="form-group">
+                        <button class="publish-btn btn btn-default btn-primary" id="reg-btn">Save</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="text-right mr-5">
+    @Html.ActionLink("Back to List", "Dashboard")
+</div>
+
+
+<script>
+     $("#imageUpload").change(function () {
+        var element = this;
+
+        var formData = new FormData();
+        var totlaFiles = element.files.length;
+
+        for (var i = 0; i < totlaFiles; i++) {
+            var file = element.files[i];
+            formData.append("Photo", file)
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("UploadPromoImage", "Image")',
+            data: formData,
+            dataType: 'json',
+            contentType: false,
+            processData: false
+        })
+            .done(function (response) {
+                if (response.Success == true)
+                {
+                    $("#Image").val(response.ImageURL);
+                    $("#PlaceImage").attr("src", response.ImageURL);
+                }
+        })
+        .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Something went wrong!',
+            })
+        });
+     });
+
+    $('#promo').validate({
+        rules: {
+            subject: {
+                required: true,
+            },
+            head: {
+                required: true,
+            },
+            body: {
+                required: true,
+            },
+        },
+        messages: {
+            subject: {
+                required: "Mandatory Field*",
+            },
+            head: {
+                required: "Mandatory Field*",
+            },
+            body: {
+                required: "Mandatory Field*",
+            },
+        }
+    });
+
+    $(".publish-btn").click(function () {
+        if ($("#promo").valid()) {
+            $(".publish-btn").prop('disabled', false);
+             $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("Promotional", "Admin")',
+                    data: {
+                        Sub: $("#subject").val(),
+                        Head: $("#head").val(),
+                        Body: $("#body").val(),
+                        Image: $("#Image").val(),
+                    }
+                })
+                    .done(function (response) {
+                        $(".publish-btn").prop('disabled', false);
+                        if (response.result == "true") {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Subscribed Successfully ',
+                                text: 'Your Subscribtion Id is.',
+                                confirmButton: 'true',
+                                confirmButtonText: 'Ok'
+                            }).then((result) => {
+                                 if (result.isConfirmed) {
+                                     window.location.reload();
+                                 }
+                        })
+                     }
+                })
+                    .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                        $(".publish-btn").prop('disabled', false);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Something went wrong!',
+                        })
+                });
+        }
+    });
+</script>
+

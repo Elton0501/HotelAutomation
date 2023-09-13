@@ -1,0 +1,143 @@
+﻿@model List<ViewModels.RootObject>
+ @{
+    Layout = null;
+}
+<style>
+    .bill {
+        box-shadow: 0 0 3px #aaa;
+        padding: 10px 10px;
+        box-sizing: border-box;
+        margin: 1rem;
+    }
+
+    .flex {
+        display: flex;
+    }
+
+    .justify-between {
+        justify-content: space-between;
+    }
+
+    .table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+        .table .header {
+            border-top: 2px dashed #000;
+            border-bottom: 2px dashed #000;
+        }
+
+    .table {
+        text-align: left;
+    }
+
+        .table .total td:first-of-type {
+            border-top: none;
+            border-bottom: none;
+        }
+
+        .table .total td {
+            border-top: 2px dashed #000;
+            border-bottom: 2px dashed #000;
+        }
+
+        .table .net-amount td:first-of-type {
+            border-top: none;
+        }
+
+        .table .net-amount td {
+            border-top: 2px dashed #000;
+        }
+
+        .table .net-amount {
+            border-bottom: 2px dashed #000;
+        }
+
+    @@media print {
+        .hidden-print,
+        .hidden-print * {
+            display: none !important;
+        }
+    }
+</style>
+<div class="bill">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <div class="bill-item">
+        <div class="brand">
+            @Model.FirstOrDefault().Header.HotelName
+        </div>
+        <div class="address">
+            @Model.FirstOrDefault().Header.Address <br> Phone No- @Model.FirstOrDefault().Header.Phone
+        </div>
+        @*<div class="shop-details">
+            PAN: AAKPS9298A TIN: 09820163701
+        </div>*@
+        <div>Bill </div>
+        <div class="bill-details">
+            <div class="flex justify-between">
+                <div>BILL NO: @Model.FirstOrDefault().Header.BillNo</div>
+                <div>TABLE NO: @Model.FirstOrDefault().Header.Table</div>
+            </div>
+            <div class="flex justify-between">
+                <div>BILL DATE: @Model.FirstOrDefault().Header.DateOfBill</div>
+            </div>
+        </div>
+        @foreach (var items in Model)
+        {
+    <table class="table">
+        <tr>
+            <th>
+                Item
+            </th>
+            <th>
+                Qty
+            </th>
+            <th>
+                Amount
+            </th>
+        </tr>
+        @foreach (var item in items.Items)
+        {
+            <tr>
+                <td>@item.MDesc <span class="text-success">@(Convert.ToInt32(item.Discount) > 0 ? " " + item.Discount + " " + "% off" : "")</span></td>
+                <td>@item.Qty</td>
+                <td>@item.ItemAmt</td>
+            </tr>
+        }
+        <tr class="total">
+            <td>Total</td>
+            <td>@items.Items.Select(x => x.Qty).Sum()</td>
+            <td>@items.Total</td>
+        </tr>
+        @foreach (var item in items.BillSummary)
+        {
+            <tr>
+                <td colspan="2">@item.key <span class="text-success"> @(items.TaxInc == true ? "(inclusive)" : "") </span></td>
+                <td> <span> @(items.TaxInc == false ? "+" : "") </span>  @item.value</td>
+            </tr>
+        }
+        @if (Convert.ToInt32(items.Discount) > 0)
+        {
+            <tr class="net-amount">
+                <td> Discount Amount <span class="text-success">@("" + items.Discount +  " " + "%")</span></td>
+                <td></td>
+                <td>- @items.DiscountAmnt</td>
+            </tr>
+        }
+        <tr class="net-amount">
+            <td>Net Amnt</td>
+            <td></td>
+            <td>@(Math.Round(Convert.ToDecimal(items.GrandTotal)))</td>
+        </tr>
+    </table>
+        }
+
+        Thank You ! Please visit again
+    </div>
+</div>
+<script>
+    $(".search-icon").hide();
+</script>

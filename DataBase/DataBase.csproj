@@ -1,0 +1,583 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\EntityFramework.6.4.4\build\EntityFramework.props" Condition="Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{5B8DE9B2-ACC0-4885-95A5-DC00E9824431}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>DataBase</RootNamespace>
+    <AssemblyName>DataBase</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ApplicationDbContext.cs" />
+    <Compile Include="Migrations\202207100818289_ELtonDB.cs" />
+    <Compile Include="Migrations\202207100818289_ELtonDB.designer.cs">
+      <DependentUpon>202207100818289_ELtonDB.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202207101133008_Requiredfield.cs" />
+    <Compile Include="Migrations\202207101133008_Requiredfield.designer.cs">
+      <DependentUpon>202207101133008_Requiredfield.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202207120819483_Rcode.cs" />
+    <Compile Include="Migrations\202207120819483_Rcode.designer.cs">
+      <DependentUpon>202207120819483_Rcode.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202207120854108_RKEy.cs" />
+    <Compile Include="Migrations\202207120854108_RKEy.designer.cs">
+      <DependentUpon>202207120854108_RKEy.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202207121203003_Order.cs" />
+    <Compile Include="Migrations\202207121203003_Order.designer.cs">
+      <DependentUpon>202207121203003_Order.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202207130620168_OrderTime.cs" />
+    <Compile Include="Migrations\202207130620168_OrderTime.designer.cs">
+      <DependentUpon>202207130620168_OrderTime.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202207181029178_Tax.cs" />
+    <Compile Include="Migrations\202207181029178_Tax.designer.cs">
+      <DependentUpon>202207181029178_Tax.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202207181319457_TaxApply.cs" />
+    <Compile Include="Migrations\202207181319457_TaxApply.designer.cs">
+      <DependentUpon>202207181319457_TaxApply.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202207200547381_TaxAmount.cs" />
+    <Compile Include="Migrations\202207200547381_TaxAmount.designer.cs">
+      <DependentUpon>202207200547381_TaxAmount.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202207201019017_IsOtpVerification.cs" />
+    <Compile Include="Migrations\202207201019017_IsOtpVerification.designer.cs">
+      <DependentUpon>202207201019017_IsOtpVerification.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202207221116305_userui.cs" />
+    <Compile Include="Migrations\202207221116305_userui.designer.cs">
+      <DependentUpon>202207221116305_userui.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202207250549135_UserAddress.cs" />
+    <Compile Include="Migrations\202207250549135_UserAddress.designer.cs">
+      <DependentUpon>202207250549135_UserAddress.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202207300756401_Changes30.cs" />
+    <Compile Include="Migrations\202207300756401_Changes30.designer.cs">
+      <DependentUpon>202207300756401_Changes30.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202208010400428_Changes31.cs" />
+    <Compile Include="Migrations\202208010400428_Changes31.designer.cs">
+      <DependentUpon>202208010400428_Changes31.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202208010508223_Changes31-1.cs" />
+    <Compile Include="Migrations\202208010508223_Changes31-1.designer.cs">
+      <DependentUpon>202208010508223_Changes31-1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202208021104109_Changes2.cs" />
+    <Compile Include="Migrations\202208021104109_Changes2.designer.cs">
+      <DependentUpon>202208021104109_Changes2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202208071234071_CartItems.cs" />
+    <Compile Include="Migrations\202208071234071_CartItems.designer.cs">
+      <DependentUpon>202208071234071_CartItems.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202208071312552_ChangeCart.cs" />
+    <Compile Include="Migrations\202208071312552_ChangeCart.designer.cs">
+      <DependentUpon>202208071312552_ChangeCart.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202208080338321_PlaceOrderChanges.cs" />
+    <Compile Include="Migrations\202208080338321_PlaceOrderChanges.designer.cs">
+      <DependentUpon>202208080338321_PlaceOrderChanges.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202208080520069_PlaceOrderChanges72219.cs" />
+    <Compile Include="Migrations\202208080520069_PlaceOrderChanges72219.designer.cs">
+      <DependentUpon>202208080520069_PlaceOrderChanges72219.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202208080534566_PlaceOrderChanges72234.cs" />
+    <Compile Include="Migrations\202208080534566_PlaceOrderChanges72234.designer.cs">
+      <DependentUpon>202208080534566_PlaceOrderChanges72234.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202208081823320_BillPrintOrder.cs" />
+    <Compile Include="Migrations\202208081823320_BillPrintOrder.designer.cs">
+      <DependentUpon>202208081823320_BillPrintOrder.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202208081842127_BillPrintOrder1142.cs" />
+    <Compile Include="Migrations\202208081842127_BillPrintOrder1142.designer.cs">
+      <DependentUpon>202208081842127_BillPrintOrder1142.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202208101059507_LongOItem.cs" />
+    <Compile Include="Migrations\202208101059507_LongOItem.designer.cs">
+      <DependentUpon>202208101059507_LongOItem.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202208101401419_LongOItem701.cs" />
+    <Compile Include="Migrations\202208101401419_LongOItem701.designer.cs">
+      <DependentUpon>202208101401419_LongOItem701.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202209121948530_ReviewUrl.cs" />
+    <Compile Include="Migrations\202209121948530_ReviewUrl.designer.cs">
+      <DependentUpon>202209121948530_ReviewUrl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202209131039073_TCount.cs" />
+    <Compile Include="Migrations\202209131039073_TCount.designer.cs">
+      <DependentUpon>202209131039073_TCount.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202209131045474_TCount1.cs" />
+    <Compile Include="Migrations\202209131045474_TCount1.designer.cs">
+      <DependentUpon>202209131045474_TCount1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202209160633440_GSTNO.cs" />
+    <Compile Include="Migrations\202209160633440_GSTNO.designer.cs">
+      <DependentUpon>202209160633440_GSTNO.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202209210708380_Bfoodie.cs" />
+    <Compile Include="Migrations\202209210708380_Bfoodie.designer.cs">
+      <DependentUpon>202209210708380_Bfoodie.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202209211345294_RemoveUpdates.cs" />
+    <Compile Include="Migrations\202209211345294_RemoveUpdates.designer.cs">
+      <DependentUpon>202209211345294_RemoveUpdates.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202210141221386_PrinterType.cs" />
+    <Compile Include="Migrations\202210141221386_PrinterType.designer.cs">
+      <DependentUpon>202210141221386_PrinterType.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202211131141514_Events.cs" />
+    <Compile Include="Migrations\202211131141514_Events.designer.cs">
+      <DependentUpon>202211131141514_Events.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202211140440328_eventsSocialmedia.cs" />
+    <Compile Include="Migrations\202211140440328_eventsSocialmedia.designer.cs">
+      <DependentUpon>202211140440328_eventsSocialmedia.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202211150559345_RestaurantUrl.cs" />
+    <Compile Include="Migrations\202211150559345_RestaurantUrl.designer.cs">
+      <DependentUpon>202211150559345_RestaurantUrl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202211211153065_Inventory.cs" />
+    <Compile Include="Migrations\202211211153065_Inventory.designer.cs">
+      <DependentUpon>202211211153065_Inventory.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202211211224017_Inventory1.cs" />
+    <Compile Include="Migrations\202211211224017_Inventory1.designer.cs">
+      <DependentUpon>202211211224017_Inventory1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202211220359136_Inventory2.cs" />
+    <Compile Include="Migrations\202211220359136_Inventory2.designer.cs">
+      <DependentUpon>202211220359136_Inventory2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202211291148361_CaptainKey.cs" />
+    <Compile Include="Migrations\202211291148361_CaptainKey.designer.cs">
+      <DependentUpon>202211291148361_CaptainKey.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202211300530369_ItemPercentage.cs" />
+    <Compile Include="Migrations\202211300530369_ItemPercentage.designer.cs">
+      <DependentUpon>202211300530369_ItemPercentage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202211300541590_ItemPercentage1.cs" />
+    <Compile Include="Migrations\202211300541590_ItemPercentage1.designer.cs">
+      <DependentUpon>202211300541590_ItemPercentage1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202212010551340_DiscountOrder.cs" />
+    <Compile Include="Migrations\202212010551340_DiscountOrder.designer.cs">
+      <DependentUpon>202212010551340_DiscountOrder.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202212010606434_CaptainsDetails.cs" />
+    <Compile Include="Migrations\202212010606434_CaptainsDetails.designer.cs">
+      <DependentUpon>202212010606434_CaptainsDetails.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202212010741179_CaptainsDetails1.cs" />
+    <Compile Include="Migrations\202212010741179_CaptainsDetails1.designer.cs">
+      <DependentUpon>202212010741179_CaptainsDetails1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202212010942194_PuchedBy.cs" />
+    <Compile Include="Migrations\202212010942194_PuchedBy.designer.cs">
+      <DependentUpon>202212010942194_PuchedBy.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202212020903362_menuDiscount.cs" />
+    <Compile Include="Migrations\202212020903362_menuDiscount.designer.cs">
+      <DependentUpon>202212020903362_menuDiscount.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202212030548423_AllDiscounts.cs" />
+    <Compile Include="Migrations\202212030548423_AllDiscounts.designer.cs">
+      <DependentUpon>202212030548423_AllDiscounts.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202212050548408_CartItemDisc.cs" />
+    <Compile Include="Migrations\202212050548408_CartItemDisc.designer.cs">
+      <DependentUpon>202212050548408_CartItemDisc.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202212061121451_ISPLACEORDERID.cs" />
+    <Compile Include="Migrations\202212061121451_ISPLACEORDERID.designer.cs">
+      <DependentUpon>202212061121451_ISPLACEORDERID.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202212101112346_serviceAmount.cs" />
+    <Compile Include="Migrations\202212101112346_serviceAmount.designer.cs">
+      <DependentUpon>202212101112346_serviceAmount.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202212101333201_DiffAmount.cs" />
+    <Compile Include="Migrations\202212101333201_DiffAmount.designer.cs">
+      <DependentUpon>202212101333201_DiffAmount.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202212110517532_DiscAmount.cs" />
+    <Compile Include="Migrations\202212110517532_DiscAmount.designer.cs">
+      <DependentUpon>202212110517532_DiscAmount.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202212111413517_DiscAmountUpto.cs" />
+    <Compile Include="Migrations\202212111413517_DiscAmountUpto.designer.cs">
+      <DependentUpon>202212111413517_DiscAmountUpto.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202212130733508_Ebill.cs" />
+    <Compile Include="Migrations\202212130733508_Ebill.designer.cs">
+      <DependentUpon>202212130733508_Ebill.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202212151003115_Address-Rest.cs" />
+    <Compile Include="Migrations\202212151003115_Address-Rest.designer.cs">
+      <DependentUpon>202212151003115_Address-Rest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202212181455266_BillDiscount.cs" />
+    <Compile Include="Migrations\202212181455266_BillDiscount.designer.cs">
+      <DependentUpon>202212181455266_BillDiscount.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202212190958118_DiscountAppliedcoupon.cs" />
+    <Compile Include="Migrations\202212190958118_DiscountAppliedcoupon.designer.cs">
+      <DependentUpon>202212190958118_DiscountAppliedcoupon.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202212191036373_DiscountAppliedcouponEdit.cs" />
+    <Compile Include="Migrations\202212191036373_DiscountAppliedcouponEdit.designer.cs">
+      <DependentUpon>202212191036373_DiscountAppliedcouponEdit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202212191043281_DiscountAppliedcouponEdit1.cs" />
+    <Compile Include="Migrations\202212191043281_DiscountAppliedcouponEdit1.designer.cs">
+      <DependentUpon>202212191043281_DiscountAppliedcouponEdit1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202212191158372_DiscountAppliedcouponEdit2.cs" />
+    <Compile Include="Migrations\202212191158372_DiscountAppliedcouponEdit2.designer.cs">
+      <DependentUpon>202212191158372_DiscountAppliedcouponEdit2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202212200628176_DiscountItem.cs" />
+    <Compile Include="Migrations\202212200628176_DiscountItem.designer.cs">
+      <DependentUpon>202212200628176_DiscountItem.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202212240712009_forType.cs" />
+    <Compile Include="Migrations\202212240712009_forType.designer.cs">
+      <DependentUpon>202212240712009_forType.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202212241000365_forTypeDateTime.cs" />
+    <Compile Include="Migrations\202212241000365_forTypeDateTime.designer.cs">
+      <DependentUpon>202212241000365_forTypeDateTime.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202212241002112_forTypeDateTime1.cs" />
+    <Compile Include="Migrations\202212241002112_forTypeDateTime1.designer.cs">
+      <DependentUpon>202212241002112_forTypeDateTime1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202212251158072_couponname.cs" />
+    <Compile Include="Migrations\202212251158072_couponname.designer.cs">
+      <DependentUpon>202212251158072_couponname.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202212251310504_couponnameOrders.cs" />
+    <Compile Include="Migrations\202212251310504_couponnameOrders.designer.cs">
+      <DependentUpon>202212251310504_couponnameOrders.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202212280722522_RemoveDiscountfromRest.cs" />
+    <Compile Include="Migrations\202212280722522_RemoveDiscountfromRest.designer.cs">
+      <DependentUpon>202212280722522_RemoveDiscountfromRest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202301020639067_PersonInfo.cs" />
+    <Compile Include="Migrations\202301020639067_PersonInfo.designer.cs">
+      <DependentUpon>202301020639067_PersonInfo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202301031545120_RemovePersonInfo.cs" />
+    <Compile Include="Migrations\202301031545120_RemovePersonInfo.designer.cs">
+      <DependentUpon>202301031545120_RemovePersonInfo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202301051037123_Ownername.cs" />
+    <Compile Include="Migrations\202301051037123_Ownername.designer.cs">
+      <DependentUpon>202301051037123_Ownername.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202301061536547_Notification.cs" />
+    <Compile Include="Migrations\202301061536547_Notification.designer.cs">
+      <DependentUpon>202301061536547_Notification.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202301070522367_RcodeNotify.cs" />
+    <Compile Include="Migrations\202301070522367_RcodeNotify.designer.cs">
+      <DependentUpon>202301070522367_RcodeNotify.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Models\Models.csproj">
+      <Project>{8FCF2FB6-9AB8-4D5E-86DD-21E3016DFC11}</Project>
+      <Name>Models</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\202207100818289_ELtonDB.resx">
+      <DependentUpon>202207100818289_ELtonDB.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202207101133008_Requiredfield.resx">
+      <DependentUpon>202207101133008_Requiredfield.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202207120819483_Rcode.resx">
+      <DependentUpon>202207120819483_Rcode.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202207120854108_RKEy.resx">
+      <DependentUpon>202207120854108_RKEy.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202207121203003_Order.resx">
+      <DependentUpon>202207121203003_Order.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202207130620168_OrderTime.resx">
+      <DependentUpon>202207130620168_OrderTime.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202207181029178_Tax.resx">
+      <DependentUpon>202207181029178_Tax.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202207181319457_TaxApply.resx">
+      <DependentUpon>202207181319457_TaxApply.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202207200547381_TaxAmount.resx">
+      <DependentUpon>202207200547381_TaxAmount.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202207201019017_IsOtpVerification.resx">
+      <DependentUpon>202207201019017_IsOtpVerification.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202207221116305_userui.resx">
+      <DependentUpon>202207221116305_userui.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202207250549135_UserAddress.resx">
+      <DependentUpon>202207250549135_UserAddress.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202207300756401_Changes30.resx">
+      <DependentUpon>202207300756401_Changes30.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202208010400428_Changes31.resx">
+      <DependentUpon>202208010400428_Changes31.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202208010508223_Changes31-1.resx">
+      <DependentUpon>202208010508223_Changes31-1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202208021104109_Changes2.resx">
+      <DependentUpon>202208021104109_Changes2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202208071234071_CartItems.resx">
+      <DependentUpon>202208071234071_CartItems.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202208071312552_ChangeCart.resx">
+      <DependentUpon>202208071312552_ChangeCart.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202208080338321_PlaceOrderChanges.resx">
+      <DependentUpon>202208080338321_PlaceOrderChanges.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202208080520069_PlaceOrderChanges72219.resx">
+      <DependentUpon>202208080520069_PlaceOrderChanges72219.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202208080534566_PlaceOrderChanges72234.resx">
+      <DependentUpon>202208080534566_PlaceOrderChanges72234.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202208081823320_BillPrintOrder.resx">
+      <DependentUpon>202208081823320_BillPrintOrder.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202208081842127_BillPrintOrder1142.resx">
+      <DependentUpon>202208081842127_BillPrintOrder1142.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202208101059507_LongOItem.resx">
+      <DependentUpon>202208101059507_LongOItem.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202208101401419_LongOItem701.resx">
+      <DependentUpon>202208101401419_LongOItem701.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202209121948530_ReviewUrl.resx">
+      <DependentUpon>202209121948530_ReviewUrl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202209131039073_TCount.resx">
+      <DependentUpon>202209131039073_TCount.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202209131045474_TCount1.resx">
+      <DependentUpon>202209131045474_TCount1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202209160633440_GSTNO.resx">
+      <DependentUpon>202209160633440_GSTNO.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202209210708380_Bfoodie.resx">
+      <DependentUpon>202209210708380_Bfoodie.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202209211345294_RemoveUpdates.resx">
+      <DependentUpon>202209211345294_RemoveUpdates.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202210141221386_PrinterType.resx">
+      <DependentUpon>202210141221386_PrinterType.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202211131141514_Events.resx">
+      <DependentUpon>202211131141514_Events.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202211140440328_eventsSocialmedia.resx">
+      <DependentUpon>202211140440328_eventsSocialmedia.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202211150559345_RestaurantUrl.resx">
+      <DependentUpon>202211150559345_RestaurantUrl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202211211153065_Inventory.resx">
+      <DependentUpon>202211211153065_Inventory.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202211211224017_Inventory1.resx">
+      <DependentUpon>202211211224017_Inventory1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202211220359136_Inventory2.resx">
+      <DependentUpon>202211220359136_Inventory2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202211291148361_CaptainKey.resx">
+      <DependentUpon>202211291148361_CaptainKey.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202211300530369_ItemPercentage.resx">
+      <DependentUpon>202211300530369_ItemPercentage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202211300541590_ItemPercentage1.resx">
+      <DependentUpon>202211300541590_ItemPercentage1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202212010551340_DiscountOrder.resx">
+      <DependentUpon>202212010551340_DiscountOrder.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202212010606434_CaptainsDetails.resx">
+      <DependentUpon>202212010606434_CaptainsDetails.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202212010741179_CaptainsDetails1.resx">
+      <DependentUpon>202212010741179_CaptainsDetails1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202212010942194_PuchedBy.resx">
+      <DependentUpon>202212010942194_PuchedBy.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202212020903362_menuDiscount.resx">
+      <DependentUpon>202212020903362_menuDiscount.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202212030548423_AllDiscounts.resx">
+      <DependentUpon>202212030548423_AllDiscounts.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202212050548408_CartItemDisc.resx">
+      <DependentUpon>202212050548408_CartItemDisc.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202212061121451_ISPLACEORDERID.resx">
+      <DependentUpon>202212061121451_ISPLACEORDERID.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202212101112346_serviceAmount.resx">
+      <DependentUpon>202212101112346_serviceAmount.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202212101333201_DiffAmount.resx">
+      <DependentUpon>202212101333201_DiffAmount.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202212110517532_DiscAmount.resx">
+      <DependentUpon>202212110517532_DiscAmount.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202212111413517_DiscAmountUpto.resx">
+      <DependentUpon>202212111413517_DiscAmountUpto.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202212130733508_Ebill.resx">
+      <DependentUpon>202212130733508_Ebill.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202212151003115_Address-Rest.resx">
+      <DependentUpon>202212151003115_Address-Rest.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202212181455266_BillDiscount.resx">
+      <DependentUpon>202212181455266_BillDiscount.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202212190958118_DiscountAppliedcoupon.resx">
+      <DependentUpon>202212190958118_DiscountAppliedcoupon.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202212191036373_DiscountAppliedcouponEdit.resx">
+      <DependentUpon>202212191036373_DiscountAppliedcouponEdit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202212191043281_DiscountAppliedcouponEdit1.resx">
+      <DependentUpon>202212191043281_DiscountAppliedcouponEdit1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202212191158372_DiscountAppliedcouponEdit2.resx">
+      <DependentUpon>202212191158372_DiscountAppliedcouponEdit2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202212200628176_DiscountItem.resx">
+      <DependentUpon>202212200628176_DiscountItem.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202212240712009_forType.resx">
+      <DependentUpon>202212240712009_forType.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202212241000365_forTypeDateTime.resx">
+      <DependentUpon>202212241000365_forTypeDateTime.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202212241002112_forTypeDateTime1.resx">
+      <DependentUpon>202212241002112_forTypeDateTime1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202212251158072_couponname.resx">
+      <DependentUpon>202212251158072_couponname.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202212251310504_couponnameOrders.resx">
+      <DependentUpon>202212251310504_couponnameOrders.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202212280722522_RemoveDiscountfromRest.resx">
+      <DependentUpon>202212280722522_RemoveDiscountfromRest.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202301020639067_PersonInfo.resx">
+      <DependentUpon>202301020639067_PersonInfo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202301031545120_RemovePersonInfo.resx">
+      <DependentUpon>202301031545120_RemovePersonInfo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202301051037123_Ownername.resx">
+      <DependentUpon>202301051037123_Ownername.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202301061536547_Notification.resx">
+      <DependentUpon>202301061536547_Notification.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202301070522367_RcodeNotify.resx">
+      <DependentUpon>202301070522367_RcodeNotify.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.4.4\build\EntityFramework.props'))" />
+    <Error Condition="!Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.4.4\build\EntityFramework.targets'))" />
+  </Target>
+  <Import Project="..\packages\EntityFramework.6.4.4\build\EntityFramework.targets" Condition="Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.targets')" />
+</Project>

@@ -1,0 +1,138 @@
+﻿@model Models.MenuCategory
+@{
+    string error = ViewBag.errmsg;
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    string rname = ViewBag.RestName;
+}
+
+<style>
+    .card-header {
+        padding: 0.35rem 1.25rem;
+        border-radius: 0 !important;
+    }
+
+    .btn {
+        font-size: 14px;
+        margin: 0;
+        padding: 4px 10px;
+    }
+
+    .btn-link.focus, .btn-link:focus {
+        text-decoration: none !important;
+    }
+
+    .btn-link:hover {
+        text-decoration: none !important;
+    }
+
+    .btn.focus, .btn:focus {
+        outline: none;
+        box-shadow: none !important;
+    }
+
+    .collapse .card-body {
+        border: 1px solid lightgrey;
+        margin-top: 6px;
+        border-radius: 4px;
+    }
+
+    .card-header {
+        border-bottom: none !important;
+    }
+
+    .card {
+        border-radius: 0 !important;
+    }
+</style>
+<div class="row adminpage-head">
+    <div class="col-12">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary text-uppercase">MenuCategory</h6>
+            </div>
+            <div class="card-body">
+                @using (Html.BeginForm())
+                {
+                    @Html.AntiForgeryToken()
+
+                    <div class="form-horizontal">
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.MCDesc, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.MCDesc, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.MCDesc, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.RCode, "Restaurant", htmlAttributes: new { @class = "control-label" })
+                            <div class="col-md-10">
+                                <input name="RCode" class="form-control" value="@Model.RCode" readonly />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-3">
+                                @Html.LabelFor(model => model.Veg, htmlAttributes: new { @class = "control-label" })
+                                <div class="col-md-10">
+                                    <div class="checkbox">
+                                        @Html.EditorFor(model => model.Veg)
+                                        @Html.ValidationMessageFor(model => model.Veg, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-3">
+                                @Html.LabelFor(model => model.NonVeg, htmlAttributes: new { @class = "control-label" })
+                                <div class="col-md-10">
+                                    <div class="checkbox">
+                                        @Html.EditorFor(model => model.NonVeg)
+                                        @Html.ValidationMessageFor(model => model.NonVeg, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-3">
+                                @Html.LabelFor(model => model.Bar, htmlAttributes: new { @class = "control-label" })
+                                <div class="col-md-10">
+                                    <div class="checkbox">
+                                        @Html.EditorFor(model => model.Bar)
+                                        @Html.ValidationMessageFor(model => model.Bar, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-3">
+                                @Html.LabelFor(model => model.Beverages, htmlAttributes: new { @class = "control-label" })
+                                <div class="col-md-10">
+                                    <div class="checkbox">
+                                        @Html.EditorFor(model => model.Beverages)
+                                        @Html.ValidationMessageFor(model => model.Beverages, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.CreatedBy, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                <input type="text" name="CreatedBy" value="@rname" class="form-control" readonly/>
+                            </div>
+                        </div>
+
+                        <label style="color:red">@error</label>
+
+                        <div class="form-group row">
+                            <div class="col-md-offset-2 col-md-10">
+                                <input type="submit" value="Create" class="btn btn-outline-primary" />
+                            </div>
+                            <div class="col-md-offset-2 col-md-2 align-self-end">
+                                @Html.ActionLink("Back to List", "AdminMenuCategories", new { id = Model.RCode })
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
